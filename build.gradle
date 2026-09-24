@@ -4,3 +4,54 @@
  * This is a general purpose Gradle build.
  * Learn more about Gradle by exploring our Samples at https://docs.gradle.org/9.1.0/samples
  */
+
+plugins {
+    id 'org.openapi.generator' version '7.25.0'
+    id 'com.diffplug.spotless' version '8.10.2' apply false
+}
+
+subprojects {
+    plugins.withId('java') {
+        apply plugin: 'com.diffplug.spotless'
+        spotless {
+            java {
+                target 'src/**/*.java'
+                palantirJavaFormat()
+            }
+        }
+    }
+}
+
+project(':engine') {
+    plugins.withId('java') {
+        def lombokDependency = 'org.projectlombok:lombok:1.18.48'
+        dependencies {
+            compileOnly lombokDependency
+            annotationProcessor lombokDependency
+            testCompileOnly lombokDependency
+            testAnnotationProcessor lombokDependency
+        }
+    }
+}
+
+openApiGenerate {
+    generatorName = 'java'
+    inputSpec = layout.projectDirectory.file('openapi/src/main/open-hab/spec.json').asFile.absolutePath
+    outputDir = layout.buildDirectory.dir('generated/openapi').get().asFile.absolutePath
+    apiPackage = 'org.openhab.cli.client.api'
+    modelPackage = 'org.openhab.cli.client.model'
+    invokerPackage = 'org.openhab.cli.client'
+    generateApiTests = false
+    generateModelTests = false
+    // Keep array aliases as named models when they are used in oneOf schemas.
+    generateAliasAsModel = true
+    // Avoid collisions between schema names and Gson's JSON types.
+    modelNameMappings = [
+        JsonElement: 'OpenHabJsonElement',
+        JsonArray: 'OpenHabJsonArray',
+        JsonObject: 'OpenHabJsonObject',
+        JsonPrimitive: 'OpenHabJsonPrimitive',
+        JsonNull: 'OpenHabJsonNull'
+    ]
+    configOptions = [hideGenerationTimestamp: 'true']
+}
