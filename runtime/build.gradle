@@ -13,6 +13,7 @@ dependencies {
 
     implementation project(':engine')
     implementation project(':openapi')
+    implementation libs.gson
 
     implementation 'org.slf4j:slf4j-api:2.0.17'
     implementation 'info.picocli:picocli:4.7.7'
