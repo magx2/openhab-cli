@@ -23,6 +23,6 @@ class PropertiesTest {
 
     private Properties properties(String token, String username, String password) {
         return new Properties(
-                null, token, username, password, true, true, false, null, null, null, 10000, 10000, 10000);
+                null, null, token, username, password, true, true, false, null, null, null, 10000, 10000, 10000);
     }
 }

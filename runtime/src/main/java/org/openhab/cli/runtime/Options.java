@@ -33,6 +33,11 @@ public class Options {
     /** Connection options. */
     static class Connection {
         @Option(
+                names = "--base-url",
+                description = "openHAB server URL (required unless config.baseUrl is set in the properties file)")
+        private String baseUrl;
+
+        @Option(
                 names = {"--base-path"},
                 description = "REST API base path (default: /rest)")
         private String basePath;
@@ -137,6 +142,7 @@ public class Options {
         var certificate = tls.certificate;
         boolean replacesCertificate = certificate.sslCaCert != null || certificate.sslCaCertPath != null;
         return new Properties(
+                value(connection.baseUrl, props.baseUrl()),
                 value(connection.basePath, props.basePath()),
                 value(authentication.oAuthToken, props.oAuthToken()),
                 value(authentication.username, props.username()),

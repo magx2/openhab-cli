@@ -173,12 +173,27 @@ class EndpointDelegationTest {
     @Test
     void publicConstructorsShareConfiguredClient() throws ReflectiveOperationException {
         var nativeClient = new org.openhab.cli.client.ApiClient().setBasePath("http://localhost:12345/rest");
-        var client = new ApiClient(org.openhab.cli.engine.properties.Properties.DEFAULT) {
-            @Override
-            public org.openhab.cli.client.ApiClient toNative() {
-                return nativeClient;
-            }
-        };
+        var client =
+                new ApiClient(new org.openhab.cli.engine.properties.Properties(
+                        "http://localhost:12345",
+                        null,
+                        null,
+                        null,
+                        null,
+                        true,
+                        true,
+                        false,
+                        null,
+                        null,
+                        null,
+                        10000,
+                        10000,
+                        10000)) {
+                    @Override
+                    public org.openhab.cli.client.ApiClient toNative() {
+                        return nativeClient;
+                    }
+                };
         assertSame(nativeClient, client.toNative());
         for (var type : Endpoint.class.getPermittedSubclasses()) {
             if (type == EngineInternal.class) {

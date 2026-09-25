@@ -12,6 +12,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 
 public record Properties(
+        String baseUrl,
         String basePath,
         String oAuthToken,
         String username,
@@ -30,6 +31,7 @@ public record Properties(
     public static final int DEFAULT_READ_TIMEOUT = 10_000;
     public static final int DEFAULT_WRITE_TIMEOUT = 10_000;
     public static final Properties DEFAULT = new Properties(
+            null,
             null,
             null,
             null,
@@ -62,6 +64,27 @@ public record Properties(
         if (connectTimeout < 0) connectTimeout = DEFAULT_CONNECT_TIMEOUT;
         if (readTimeout < 0) readTimeout = DEFAULT_READ_TIMEOUT;
         if (writeTimeout < 0) writeTimeout = DEFAULT_WRITE_TIMEOUT;
+    }
+
+    /**
+     * Resolves the REST URL after file and CLI settings have been merged.
+     *
+     * @return the server URL followed by the configured REST path
+     * @throws IllegalArgumentException if the required base URL is missing or is not an HTTP(S) server URL
+     */
+    public String apiBaseUrl() {
+        if (baseUrl == null || baseUrl.isBlank()) {
+            throw new IllegalArgumentException(
+                    "baseUrl is required: set --base-url or config.baseUrl in the properties file");
+        }
+        var uri = java.net.URI.create(baseUrl);
+        if ((!"http".equalsIgnoreCase(uri.getScheme()) && !"https".equalsIgnoreCase(uri.getScheme()))
+                || uri.getHost() == null
+                || uri.getRawQuery() != null
+                || uri.getRawFragment() != null) {
+            throw new IllegalArgumentException("baseUrl must be an absolute HTTP(S) URL without a query or fragment");
+        }
+        return baseUrl.replaceAll("/+$", "") + "/" + basePath.replaceAll("^/+", "");
     }
 
     public boolean hasOAuthToken() {

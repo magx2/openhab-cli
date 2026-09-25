@@ -5,7 +5,6 @@ import static org.openhab.cli.engine.Version.VERSION;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.properties.Properties;
 
@@ -13,9 +12,14 @@ import org.openhab.cli.engine.properties.Properties;
  * Provides the configured generated REST client shared by endpoint instances.
  */
 @Slf4j
-@RequiredArgsConstructor
 public class ApiClient {
     private final Properties properties;
+
+    /** Creates a client from merged settings, requiring an explicit server URL. */
+    public ApiClient(Properties properties) {
+        properties.apiBaseUrl();
+        this.properties = properties;
+    }
 
     /**
      * Returns the shared generated REST client.
@@ -28,7 +32,7 @@ public class ApiClient {
         // COMMON
         apiClient.setUserAgent("OpenHAB-CLI." + VERSION);
         apiClient.setDebugging(properties.apiClientDebugging());
-        apiClient.setBasePath(properties.basePath());
+        apiClient.setBasePath(properties.apiBaseUrl());
 
         // TIMEOUTS
         apiClient.setConnectTimeout(properties.connectTimeout());

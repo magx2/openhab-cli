@@ -34,6 +34,7 @@ public class PropertiesReader {
             var prettyPrint = Boolean.parseBoolean(javaProps.getProperty("config.prettyPrint", "true"));
             var certPath = javaProps.getProperty("config.sslCaCertPath");
             return new Properties(
+                    javaProps.getProperty("config.baseUrl"),
                     javaProps.getProperty("config.basePath"),
                     oAuthToken,
                     username,
