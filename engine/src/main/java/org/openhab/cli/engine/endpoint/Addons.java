@@ -17,7 +17,7 @@ import org.openhab.cli.engine.rest.ApiClient;
  */
 @Slf4j
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public final class Addons implements Endpoint {
+public final class Addons {
     private final AddonsApi api;
 
     /**

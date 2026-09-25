@@ -16,7 +16,7 @@ import org.openhab.cli.engine.rest.ApiClient;
  */
 @Slf4j
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public final class Action implements Endpoint {
+public final class Action {
     private final ActionsApi api;
 
     /**

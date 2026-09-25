@@ -28,6 +28,39 @@ import org.openhab.cli.client.api.ActionsApi;
 import org.openhab.cli.engine.rest.ApiClient;
 
 class EndpointDelegationTest {
+    private static final Class<?>[] ENDPOINT_CLASSES = {
+        Action.class,
+        Addons.class,
+        Audio.class,
+        Auth.class,
+        ChannelTypes.class,
+        ConfigDescriptions.class,
+        Discovery.class,
+        Events.class,
+        FileFormat.class,
+        Iconsets.class,
+        Inbox.class,
+        Items.class,
+        Links.class,
+        Logging.class,
+        ModuleTypes.class,
+        Persistence.class,
+        ProfileTypes.class,
+        Root.class,
+        Rules.class,
+        Services.class,
+        Sitemaps.class,
+        SystemInfo.class,
+        Tags.class,
+        Templates.class,
+        ThingTypes.class,
+        Things.class,
+        Transformations.class,
+        Ui.class,
+        Uuid.class,
+        Voice.class
+    };
+
     private record Operation(Class<?> endpoint, Class<?> api, Method method) {
         String wrapperName() {
             var name = method.getName().replaceFirst("WithHttpInfo$", "");
@@ -60,18 +93,16 @@ class EndpointDelegationTest {
     }
 
     private static Stream<Operation> operations() {
-        return Arrays.stream(Endpoint.class.getPermittedSubclasses())
-                .filter(endpoint -> endpoint != EngineInternal.class)
-                .flatMap(endpoint -> {
-                    try {
-                        var api = endpoint.getDeclaredField("api").getType();
-                        return Arrays.stream(api.getDeclaredMethods())
-                                .filter(method -> method.getName().endsWith("WithHttpInfo"))
-                                .map(method -> new Operation(endpoint, api, method));
-                    } catch (NoSuchFieldException e) {
-                        throw new AssertionError("Missing API client for " + endpoint, e);
-                    }
-                });
+        return Arrays.stream(ENDPOINT_CLASSES).flatMap(endpoint -> {
+            try {
+                var api = endpoint.getDeclaredField("api").getType();
+                return Arrays.stream(api.getDeclaredMethods())
+                        .filter(method -> method.getName().endsWith("WithHttpInfo"))
+                        .map(method -> new Operation(endpoint, api, method));
+            } catch (NoSuchFieldException e) {
+                throw new AssertionError("Missing API client for " + endpoint, e);
+            }
+        });
     }
 
     @Test
@@ -195,10 +226,7 @@ class EndpointDelegationTest {
                     }
                 };
         assertSame(nativeClient, client.toNative());
-        for (var type : Endpoint.class.getPermittedSubclasses()) {
-            if (type == EngineInternal.class) {
-                continue;
-            }
+        for (var type : ENDPOINT_CLASSES) {
             var endpoint = type.getConstructor(ApiClient.class).newInstance(client);
             var field = type.getDeclaredField("api");
             field.setAccessible(true);

@@ -15,7 +15,7 @@ import org.openhab.cli.engine.rest.ApiClient;
  */
 @Slf4j
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public final class Logging implements Endpoint {
+public final class Logging {
     private final LoggingApi api;
 
     /**

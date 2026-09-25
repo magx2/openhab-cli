@@ -20,7 +20,7 @@ import org.openhab.cli.engine.rest.ApiClient;
  */
 @Slf4j
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public final class Persistence implements Endpoint {
+public final class Persistence {
     private final PersistenceApi api;
 
     /**

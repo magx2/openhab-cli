@@ -17,7 +17,7 @@ import org.openhab.cli.engine.rest.ApiClient;
  */
 @Slf4j
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public final class Links implements Endpoint {
+public final class Links {
     private final LinksApi api;
 
     /**

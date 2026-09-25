@@ -15,7 +15,7 @@ import org.openhab.cli.engine.rest.ApiClient;
  */
 @Slf4j
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public final class Templates implements Endpoint {
+public final class Templates {
     private final TemplatesApi api;
 
     /**

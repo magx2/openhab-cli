@@ -17,7 +17,7 @@ import org.openhab.cli.engine.rest.ApiClient;
  */
 @Slf4j
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public final class Ui implements Endpoint {
+public final class Ui {
     private final UiApi api;
 
     /**

@@ -16,7 +16,7 @@ import org.openhab.cli.engine.rest.ApiClient;
  */
 @Slf4j
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public final class Audio implements Endpoint {
+public final class Audio {
     private final AudioApi api;
 
     /**

@@ -17,7 +17,7 @@ import org.openhab.cli.engine.rest.ApiClient;
  */
 @Slf4j
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public final class FileFormat implements Endpoint {
+public final class FileFormat {
     private final FileFormatApi api;
 
     /**

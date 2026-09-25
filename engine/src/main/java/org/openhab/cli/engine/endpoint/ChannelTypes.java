@@ -15,7 +15,7 @@ import org.openhab.cli.engine.rest.ApiClient;
  */
 @Slf4j
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public final class ChannelTypes implements Endpoint {
+public final class ChannelTypes {
     private final ChannelTypesApi api;
 
     /**

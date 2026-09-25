@@ -15,7 +15,7 @@ import org.openhab.cli.engine.rest.ApiClient;
  */
 @Slf4j
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public final class ModuleTypes implements Endpoint {
+public final class ModuleTypes {
     private final ModuleTypesApi api;
 
     /**

@@ -22,7 +22,7 @@ import org.openhab.cli.engine.rest.ApiClient;
  */
 @Slf4j
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public final class Rules implements Endpoint {
+public final class Rules {
     private final RulesApi api;
 
     /**

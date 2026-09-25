@@ -18,13 +18,11 @@ public class EndpointException extends RuntimeException {
      * @param params request parameters for diagnostics; values may be null or redacted
      * @param apiEx the original API exception
      */
-    public EndpointException(
-            Class<? extends Endpoint> endpointClass, String name, Map<String, ?> params, ApiException apiEx) {
+    public EndpointException(Class<?> endpointClass, String name, Map<String, ?> params, ApiException apiEx) {
         super(buildMessage(endpointClass, name, params, apiEx), apiEx);
     }
 
-    private static String buildMessage(
-            Class<? extends Endpoint> endpointClass, String name, Map<String, ?> params, ApiException apiEx) {
+    private static String buildMessage(Class<?> endpointClass, String name, Map<String, ?> params, ApiException apiEx) {
         var paramsString = params.entrySet().stream()
                 .map(e -> "%s=%s".formatted(e.getKey(), e.getValue()))
                 .collect(Collectors.joining(", "));
