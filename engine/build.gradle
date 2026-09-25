@@ -20,4 +20,13 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
+    systemProperty 'expectedProjectVersion', project.version.toString()
+}
+
+tasks.named('processResources') {
+    def projectVersion = project.version.toString()
+    inputs.property('projectVersion', projectVersion)
+    filesMatching('org/openhab/cli/engine/version.properties') {
+        expand(version: projectVersion)
+    }
 }

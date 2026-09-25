@@ -11,7 +11,12 @@ plugins {
 }
 
 subprojects {
+    version = rootProject.version
+
     plugins.withId('java') {
+        tasks.named('jar') {
+            manifest.attributes('Implementation-Version': project.version.toString())
+        }
         apply plugin: 'com.diffplug.spotless'
         spotless {
             java {
@@ -53,5 +58,5 @@ openApiGenerate {
         JsonPrimitive: 'OpenHabJsonPrimitive',
         JsonNull: 'OpenHabJsonNull'
     ]
-    configOptions = [hideGenerationTimestamp: 'true']
+    configOptions = [hideGenerationTimestamp: 'true', artifactVersion: project.version.toString()]
 }
