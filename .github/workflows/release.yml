@@ -1,0 +1,224 @@
+name: Release
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-master
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  check:
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: gradle
+      - name: Clean and check before preparing the release
+        run: ./gradlew --no-daemon clean check
+      - name: Upload failed test reports
+        if: ${{ failure() && !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-test-reports
+          path: |
+            **/build/reports/tests/**
+            **/build/test-results/**
+          retention-days: 3
+          if-no-files-found: ignore
+
+  prepare:
+    needs: check
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      tag: ${{ steps.version.outputs.tag }}
+      sha: ${{ steps.commit.outputs.sha }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - name: Verify master has not advanced
+        run: test "$(git rev-parse origin/master)" = "$GITHUB_SHA"
+      - name: Remove SNAPSHOT
+        id: version
+        run: python3 .github/scripts/release-version.py release >> "$GITHUB_OUTPUT"
+      - name: Commit and tag locally
+        id: commit
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+          TAG: ${{ steps.version.outputs.tag }}
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git checkout -B master "$GITHUB_SHA"
+          git add gradle.properties
+          git commit -m "Release $VERSION"
+          git tag -a "$TAG" -m "Release $VERSION"
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          git bundle create release.bundle master "refs/tags/$TAG" "^$GITHUB_SHA"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-git
+          path: release.bundle
+          retention-days: 3
+          if-no-files-found: error
+
+  jar:
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/download-artifact@v4
+        with:
+          name: release-git
+          path: .release
+      - name: Restore the unpushed release commit
+        env:
+          RELEASE_SHA: ${{ needs.prepare.outputs.sha }}
+        run: |
+          git fetch .release/release.bundle refs/heads/master:refs/remotes/release/master
+          git checkout --detach "$RELEASE_SHA"
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: gradle
+      - name: Build and smoke-test the runnable JAR
+        env:
+          VERSION: ${{ needs.prepare.outputs.version }}
+        run: |
+          ./gradlew --no-daemon :runtime:shadowJar
+          mkdir -p dist
+          cp "runtime/build/libs/oh-$VERSION-all.jar" "dist/oh-$VERSION.jar"
+          python3 .github/scripts/smoke-release.py java -jar "dist/oh-$VERSION.jar"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-jar
+          path: dist/*
+          retention-days: 3
+          if-no-files-found: error
+
+  native:
+    needs: prepare
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-22.04
+            platform: linux-x86_64
+            extension: ''
+          - os: windows-2022
+            platform: windows-x86_64
+            extension: .exe
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/download-artifact@v4
+        with:
+          name: release-git
+          path: .release
+      - name: Restore the unpushed release commit
+        env:
+          RELEASE_SHA: ${{ needs.prepare.outputs.sha }}
+        run: |
+          git fetch .release/release.bundle refs/heads/master:refs/remotes/release/master
+          git checkout --detach "$RELEASE_SHA"
+      - uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: '21'
+          distribution: graalvm-community
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          cache: gradle
+      - name: Install Linux native build dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes build-essential zlib1g-dev
+      - name: Build and smoke-test the native executable
+        env:
+          VERSION: ${{ needs.prepare.outputs.version }}
+          PLATFORM: ${{ matrix.platform }}
+          EXTENSION: ${{ matrix.extension }}
+        run: |
+          ./gradlew --no-daemon :runtime:nativeCompile
+          mkdir -p dist
+          cp "runtime/build/native/nativeCompile/oh$EXTENSION" "dist/oh-$VERSION-$PLATFORM$EXTENSION"
+          python3 .github/scripts/smoke-release.py "dist/oh-$VERSION-$PLATFORM$EXTENSION"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-${{ matrix.platform }}
+          path: dist/*
+          retention-days: 3
+          if-no-files-found: error
+
+  publish:
+    needs: [prepare, jar, native]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    env:
+      VERSION: ${{ needs.prepare.outputs.version }}
+      TAG: ${{ needs.prepare.outputs.tag }}
+      RELEASE_SHA: ${{ needs.prepare.outputs.sha }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: actions/download-artifact@v4
+        with:
+          name: release-git
+          path: .release
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: release-jar
+          path: dist
+          merge-multiple: true
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: release-*-x86_64
+          path: dist
+          merge-multiple: true
+      - name: Bump the minor version and commit locally
+        run: |
+          git fetch .release/release.bundle refs/heads/master:refs/remotes/release/master 'refs/tags/*:refs/tags/*'
+          git checkout -B master "$RELEASE_SHA"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          python3 .github/scripts/release-version.py snapshot
+          git add gradle.properties
+          git commit -m "Start next development version after $VERSION"
+      - name: Check remote state before creating the draft
+        run: |
+          git fetch origin master
+          test "$(git rev-parse FETCH_HEAD)" = "$GITHUB_SHA"
+          test -z "$(git ls-remote origin "refs/tags/$TAG")"
+          test -f "dist/oh-$VERSION.jar"
+          test -f "dist/oh-$VERSION-linux-x86_64"
+          test -f "dist/oh-$VERSION-windows-x86_64.exe"
+      # A draft keeps the new tag pending until the local commits and tag are pushed.
+      - name: Create draft release and upload assets
+        run: |
+          gh release create "$TAG" dist/* --draft --target "$GITHUB_SHA" \
+            --title "$TAG" --notes "openHAB CLI $VERSION: runnable JAR and Linux/Windows x86_64 executables."
+      - name: Push both version commits and the release tag atomically
+        run: git push --atomic origin HEAD:refs/heads/master "refs/tags/$TAG:refs/tags/$TAG"
+      - name: Publish the uploaded release
+        run: gh release edit "$TAG" --draft=false

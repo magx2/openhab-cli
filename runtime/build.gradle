@@ -1,5 +1,58 @@
 plugins {
-    id 'java'
+    id 'application'
+    id 'com.gradleup.shadow' version '9.3.1'
+    id 'org.graalvm.buildtools.native' version '0.11.5'
+}
+
+application {
+    mainClass = 'org.openhab.cli.runtime.Cli'
+}
+
+tasks.named('shadowJar') {
+    mergeServiceFiles()
+    transform(com.github.jengelman.gradle.plugins.shadow.transformers.Log4j2PluginsCacheFileTransformer)
+}
+
+// Gson also reflects on generated models, including their nested adapters and enums.
+def modelClasses = project(':openapi').layout.buildDirectory.dir('classes/java/main')
+def modelClassFiles = fileTree(modelClasses).matching {
+    include 'org/openhab/cli/client/model/**/*.class'
+}
+def nativeMetadata = layout.buildDirectory.dir('generated/native-metadata')
+def generateNativeMetadata = tasks.register('generateNativeMetadata') {
+    dependsOn ':openapi:classes'
+    inputs.dir(modelClasses)
+    outputs.dir(nativeMetadata)
+    doLast {
+        def root = modelClasses.get().asFile.toPath()
+        def models = modelClassFiles.files.collect { file ->
+            [name: root.relativize(file.toPath()).toString().replace('\\', '/').replace('/', '.').replaceAll(/\.class$/, ''),
+             allDeclaredConstructors: true, allDeclaredFields: true, allDeclaredMethods: true,
+             unsafeAllocated: true]
+        }.sort { it.name }
+        def output = nativeMetadata.get().file('reflect-config.json').asFile
+        output.parentFile.mkdirs()
+        output.setText(groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(models)) + '\n', 'UTF-8')
+    }
+}
+
+graalvmNative {
+    toolchainDetection = false
+    metadataRepository { enabled = true }
+    binaries {
+        main {
+            imageName = 'oh'
+            mainClass = application.mainClass
+            configurationFileDirectories.from(nativeMetadata)
+            resources.includedPatterns.addAll('log4j2.xml', 'org/openhab/cli/engine/version.properties')
+            buildArgs.add('--enable-url-protocols=http,https')
+            buildArgs.add('-march=compatibility')
+        }
+    }
+}
+
+tasks.named('nativeCompile') {
+    dependsOn generateNativeMetadata
 }
 
 base {

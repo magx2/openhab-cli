@@ -137,3 +137,35 @@ the shared authentication, connection, TLS, and timeout settings.
 
 `engineinternal` is registered as an empty group because the engine class does
 not currently expose any operations.
+
+## Releases
+
+Run **Release** from the GitHub Actions tab, selecting `master`. Other branches
+are skipped. The workflow first runs `./gradlew clean check`, then removes
+`-SNAPSHOT` from `gradle.properties`, commits the release version and creates an
+annotated `vMAJOR.MINOR.PATCH` tag locally. A Git bundle transfers that unpushed
+commit to three parallel builds: a runnable JAR, a Linux x86_64 executable and a
+Windows x86_64 executable.
+
+After all builds and smoke tests pass, the workflow increments the minor version,
+resets the patch to zero and commits the next `-SNAPSHOT` version. For example,
+`0.1.0-SNAPSHOT` releases `v0.1.0` and leaves `master` at `0.2.0-SNAPSHOT`.
+It creates a draft release and uploads all three assets before atomically pushing
+both commits and the tag. It then publishes the draft. Publishing must follow the
+push so that the release points to the actual release commit.
+
+The workflow needs `GITHUB_TOKEN` permission to write repository contents, and
+repository rules must allow it to push to `master` and create release tags. It
+refuses to push if `master` has advanced since the run started. If the final push
+fails, the draft remains available for inspection; delete it before retrying from
+the current `master`. If only publication fails after a successful push, publish
+the existing draft instead of running another release. Build artifacts and failed
+test reports are retained for three days.
+
+For local builds, use `./gradlew :runtime:shadowJar` and run the resulting
+`runtime/build/libs/oh-<version>-all.jar` with `java -jar` (Java 21 or newer).
+With GraalVM for Java 21 installed, `./gradlew :runtime:nativeCompile` creates
+`runtime/build/native/nativeCompile/oh` (`oh.exe` on Windows). Native executables
+must be built on their target operating system. The release workflow uses the
+[GraalVM setup action](https://github.com/graalvm/setup-graalvm) and
+[Native Build Tools](https://graalvm.github.io/native-build-tools/latest/gradle-plugin).
