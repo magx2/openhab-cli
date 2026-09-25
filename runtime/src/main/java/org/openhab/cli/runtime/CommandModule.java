@@ -4,6 +4,55 @@ import dagger.Binds;
 import dagger.Module;
 import dagger.multibindings.ClassKey;
 import dagger.multibindings.IntoMap;
+import org.openhab.cli.runtime.command.action.AvailableActionsForThing;
+import org.openhab.cli.runtime.command.action.ExecuteThingAction;
+import org.openhab.cli.runtime.command.addons.*;
+import org.openhab.cli.runtime.command.audio.AudioDefaultSink;
+import org.openhab.cli.runtime.command.audio.AudioDefaultSource;
+import org.openhab.cli.runtime.command.audio.AudioSinks;
+import org.openhab.cli.runtime.command.audio.AudioSources;
+import org.openhab.cli.runtime.command.auth.*;
+import org.openhab.cli.runtime.command.channeltypes.ChannelTypeByUID;
+import org.openhab.cli.runtime.command.channeltypes.ChannelTypes;
+import org.openhab.cli.runtime.command.channeltypes.LinkableItemTypesByChannelTypeUID;
+import org.openhab.cli.runtime.command.configdescriptions.ConfigDescriptionByURI;
+import org.openhab.cli.runtime.command.configdescriptions.ConfigDescriptions;
+import org.openhab.cli.runtime.command.discovery.BindingsWithDiscoverySupport;
+import org.openhab.cli.runtime.command.discovery.DiscoveryServicesInfo;
+import org.openhab.cli.runtime.command.discovery.Scan;
+import org.openhab.cli.runtime.command.events.Events;
+import org.openhab.cli.runtime.command.events.InitNewStateTacker;
+import org.openhab.cli.runtime.command.events.UpdateItemListForStateUpdates;
+import org.openhab.cli.runtime.command.fileformat.*;
+import org.openhab.cli.runtime.command.iconsets.IconSets;
+import org.openhab.cli.runtime.command.inbox.*;
+import org.openhab.cli.runtime.command.items.*;
+import org.openhab.cli.runtime.command.links.*;
+import org.openhab.cli.runtime.command.logging.Logger;
+import org.openhab.cli.runtime.command.logging.Logger1;
+import org.openhab.cli.runtime.command.logging.PutLogger;
+import org.openhab.cli.runtime.command.logging.RemoveLogger;
+import org.openhab.cli.runtime.command.moduletypes.ModuleTypeById;
+import org.openhab.cli.runtime.command.moduletypes.ModuleTypes;
+import org.openhab.cli.runtime.command.persistence.*;
+import org.openhab.cli.runtime.command.profiletypes.ProfileTypes;
+import org.openhab.cli.runtime.command.root.Root;
+import org.openhab.cli.runtime.command.rules.*;
+import org.openhab.cli.runtime.command.services.*;
+import org.openhab.cli.runtime.command.sitemaps.*;
+import org.openhab.cli.runtime.command.systeminfo.SystemInformation;
+import org.openhab.cli.runtime.command.systeminfo.UoMInformation;
+import org.openhab.cli.runtime.command.tags.*;
+import org.openhab.cli.runtime.command.templates.TemplateById;
+import org.openhab.cli.runtime.command.templates.Templates;
+import org.openhab.cli.runtime.command.things.*;
+import org.openhab.cli.runtime.command.thingtypes.ThingTypeById;
+import org.openhab.cli.runtime.command.thingtypes.ThingTypes;
+import org.openhab.cli.runtime.command.transformations.*;
+import org.openhab.cli.runtime.command.ui.*;
+import org.openhab.cli.runtime.command.uuid.Uuid;
+import org.openhab.cli.runtime.command.voice.*;
+
 import java.util.concurrent.Callable;
 
 /** Registers each operation command with the Dagger-backed Picocli factory. */
@@ -11,907 +60,907 @@ import java.util.concurrent.Callable;
 interface CommandModule {
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.action.ExecuteThingAction.class)
-    Callable<Integer> actionExecuteThingAction(org.openhab.cli.runtime.action.ExecuteThingAction command);
+    @ClassKey(ExecuteThingAction.class)
+    Callable<Integer> actionExecuteThingAction(ExecuteThingAction command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.action.AvailableActionsForThing.class)
-    Callable<Integer> actionAvailableActionsForThing(org.openhab.cli.runtime.action.AvailableActionsForThing command);
+    @ClassKey(AvailableActionsForThing.class)
+    Callable<Integer> actionAvailableActionsForThing(AvailableActionsForThing command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.addons.AddonById.class)
-    Callable<Integer> addonsAddonById(org.openhab.cli.runtime.addons.AddonById command);
+    @ClassKey(AddonById.class)
+    Callable<Integer> addonsAddonById(AddonById command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.addons.AddonConfiguration.class)
-    Callable<Integer> addonsAddonConfiguration(org.openhab.cli.runtime.addons.AddonConfiguration command);
+    @ClassKey(AddonConfiguration.class)
+    Callable<Integer> addonsAddonConfiguration(AddonConfiguration command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.addons.AddonServices.class)
-    Callable<Integer> addonsAddonServices(org.openhab.cli.runtime.addons.AddonServices command);
+    @ClassKey(AddonServices.class)
+    Callable<Integer> addonsAddonServices(AddonServices command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.addons.AddonTypes.class)
-    Callable<Integer> addonsAddonTypes(org.openhab.cli.runtime.addons.AddonTypes command);
+    @ClassKey(AddonTypes.class)
+    Callable<Integer> addonsAddonTypes(AddonTypes command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.addons.Addons.class)
-    Callable<Integer> addonsAddons(org.openhab.cli.runtime.addons.Addons command);
+    @ClassKey(Addons.class)
+    Callable<Integer> addonsAddons(Addons command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.addons.SuggestedAddons.class)
-    Callable<Integer> addonsSuggestedAddons(org.openhab.cli.runtime.addons.SuggestedAddons command);
+    @ClassKey(SuggestedAddons.class)
+    Callable<Integer> addonsSuggestedAddons(SuggestedAddons command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.addons.InstallAddonById.class)
-    Callable<Integer> addonsInstallAddonById(org.openhab.cli.runtime.addons.InstallAddonById command);
+    @ClassKey(InstallAddonById.class)
+    Callable<Integer> addonsInstallAddonById(InstallAddonById command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.addons.InstallAddonFromURL.class)
-    Callable<Integer> addonsInstallAddonFromURL(org.openhab.cli.runtime.addons.InstallAddonFromURL command);
+    @ClassKey(InstallAddonFromURL.class)
+    Callable<Integer> addonsInstallAddonFromURL(InstallAddonFromURL command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.addons.UninstallAddon.class)
-    Callable<Integer> addonsUninstallAddon(org.openhab.cli.runtime.addons.UninstallAddon command);
+    @ClassKey(UninstallAddon.class)
+    Callable<Integer> addonsUninstallAddon(UninstallAddon command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.addons.UpdateAddonConfiguration.class)
-    Callable<Integer> addonsUpdateAddonConfiguration(org.openhab.cli.runtime.addons.UpdateAddonConfiguration command);
+    @ClassKey(UpdateAddonConfiguration.class)
+    Callable<Integer> addonsUpdateAddonConfiguration(UpdateAddonConfiguration command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.audio.AudioDefaultSink.class)
-    Callable<Integer> audioAudioDefaultSink(org.openhab.cli.runtime.audio.AudioDefaultSink command);
+    @ClassKey(AudioDefaultSink.class)
+    Callable<Integer> audioAudioDefaultSink(AudioDefaultSink command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.audio.AudioDefaultSource.class)
-    Callable<Integer> audioAudioDefaultSource(org.openhab.cli.runtime.audio.AudioDefaultSource command);
+    @ClassKey(AudioDefaultSource.class)
+    Callable<Integer> audioAudioDefaultSource(AudioDefaultSource command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.audio.AudioSinks.class)
-    Callable<Integer> audioAudioSinks(org.openhab.cli.runtime.audio.AudioSinks command);
+    @ClassKey(AudioSinks.class)
+    Callable<Integer> audioAudioSinks(AudioSinks command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.audio.AudioSources.class)
-    Callable<Integer> audioAudioSources(org.openhab.cli.runtime.audio.AudioSources command);
+    @ClassKey(AudioSources.class)
+    Callable<Integer> audioAudioSources(AudioSources command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.auth.DeleteSession.class)
-    Callable<Integer> authDeleteSession(org.openhab.cli.runtime.auth.DeleteSession command);
+    @ClassKey(DeleteSession.class)
+    Callable<Integer> authDeleteSession(DeleteSession command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.auth.ApiTokens.class)
-    Callable<Integer> authApiTokens(org.openhab.cli.runtime.auth.ApiTokens command);
+    @ClassKey(ApiTokens.class)
+    Callable<Integer> authApiTokens(ApiTokens command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.auth.OAuthToken.class)
-    Callable<Integer> authOAuthToken(org.openhab.cli.runtime.auth.OAuthToken command);
+    @ClassKey(OAuthToken.class)
+    Callable<Integer> authOAuthToken(OAuthToken command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.auth.SessionsForCurrentUser.class)
-    Callable<Integer> authSessionsForCurrentUser(org.openhab.cli.runtime.auth.SessionsForCurrentUser command);
+    @ClassKey(SessionsForCurrentUser.class)
+    Callable<Integer> authSessionsForCurrentUser(SessionsForCurrentUser command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.auth.RemoveApiToken.class)
-    Callable<Integer> authRemoveApiToken(org.openhab.cli.runtime.auth.RemoveApiToken command);
+    @ClassKey(RemoveApiToken.class)
+    Callable<Integer> authRemoveApiToken(RemoveApiToken command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.channeltypes.ChannelTypeByUID.class)
-    Callable<Integer> channelTypesChannelTypeByUID(org.openhab.cli.runtime.channeltypes.ChannelTypeByUID command);
+    @ClassKey(ChannelTypeByUID.class)
+    Callable<Integer> channelTypesChannelTypeByUID(ChannelTypeByUID command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.channeltypes.ChannelTypes.class)
-    Callable<Integer> channelTypesChannelTypes(org.openhab.cli.runtime.channeltypes.ChannelTypes command);
+    @ClassKey(ChannelTypes.class)
+    Callable<Integer> channelTypesChannelTypes(ChannelTypes command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.channeltypes.LinkableItemTypesByChannelTypeUID.class)
+    @ClassKey(LinkableItemTypesByChannelTypeUID.class)
     Callable<Integer> channelTypesLinkableItemTypesByChannelTypeUID(
-            org.openhab.cli.runtime.channeltypes.LinkableItemTypesByChannelTypeUID command);
+            LinkableItemTypesByChannelTypeUID command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.configdescriptions.ConfigDescriptionByURI.class)
+    @ClassKey(ConfigDescriptionByURI.class)
     Callable<Integer> configDescriptionsConfigDescriptionByURI(
-            org.openhab.cli.runtime.configdescriptions.ConfigDescriptionByURI command);
+            ConfigDescriptionByURI command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.configdescriptions.ConfigDescriptions.class)
+    @ClassKey(ConfigDescriptions.class)
     Callable<Integer> configDescriptionsConfigDescriptions(
-            org.openhab.cli.runtime.configdescriptions.ConfigDescriptions command);
+            ConfigDescriptions command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.discovery.BindingsWithDiscoverySupport.class)
+    @ClassKey(BindingsWithDiscoverySupport.class)
     Callable<Integer> discoveryBindingsWithDiscoverySupport(
-            org.openhab.cli.runtime.discovery.BindingsWithDiscoverySupport command);
+            BindingsWithDiscoverySupport command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.discovery.DiscoveryServicesInfo.class)
-    Callable<Integer> discoveryDiscoveryServicesInfo(org.openhab.cli.runtime.discovery.DiscoveryServicesInfo command);
+    @ClassKey(DiscoveryServicesInfo.class)
+    Callable<Integer> discoveryDiscoveryServicesInfo(DiscoveryServicesInfo command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.discovery.Scan.class)
-    Callable<Integer> discoveryScan(org.openhab.cli.runtime.discovery.Scan command);
+    @ClassKey(Scan.class)
+    Callable<Integer> discoveryScan(Scan command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.events.Events.class)
-    Callable<Integer> eventsEvents(org.openhab.cli.runtime.events.Events command);
+    @ClassKey(Events.class)
+    Callable<Integer> eventsEvents(Events command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.events.InitNewStateTacker.class)
-    Callable<Integer> eventsInitNewStateTacker(org.openhab.cli.runtime.events.InitNewStateTacker command);
+    @ClassKey(InitNewStateTacker.class)
+    Callable<Integer> eventsInitNewStateTacker(InitNewStateTacker command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.events.UpdateItemListForStateUpdates.class)
+    @ClassKey(UpdateItemListForStateUpdates.class)
     Callable<Integer> eventsUpdateItemListForStateUpdates(
-            org.openhab.cli.runtime.events.UpdateItemListForStateUpdates command);
+            UpdateItemListForStateUpdates command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.fileformat.CanSerializeRules.class)
-    Callable<Integer> fileFormatCanSerializeRules(org.openhab.cli.runtime.fileformat.CanSerializeRules command);
+    @ClassKey(CanSerializeRules.class)
+    Callable<Integer> fileFormatCanSerializeRules(CanSerializeRules command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.fileformat.Create.class)
-    Callable<Integer> fileFormatCreate(org.openhab.cli.runtime.fileformat.Create command);
+    @ClassKey(Create.class)
+    Callable<Integer> fileFormatCreate(Create command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.fileformat.CreateFileFormatForItems.class)
+    @ClassKey(CreateFileFormatForItems.class)
     Callable<Integer> fileFormatCreateFileFormatForItems(
-            org.openhab.cli.runtime.fileformat.CreateFileFormatForItems command);
+            CreateFileFormatForItems command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.fileformat.CreateFileFormatForRuleTemplates.class)
+    @ClassKey(CreateFileFormatForRuleTemplates.class)
     Callable<Integer> fileFormatCreateFileFormatForRuleTemplates(
-            org.openhab.cli.runtime.fileformat.CreateFileFormatForRuleTemplates command);
+            CreateFileFormatForRuleTemplates command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.fileformat.CreateFileFormatForRules.class)
+    @ClassKey(CreateFileFormatForRules.class)
     Callable<Integer> fileFormatCreateFileFormatForRules(
-            org.openhab.cli.runtime.fileformat.CreateFileFormatForRules command);
+            CreateFileFormatForRules command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.fileformat.CreateFileFormatForSemanticTags.class)
+    @ClassKey(CreateFileFormatForSemanticTags.class)
     Callable<Integer> fileFormatCreateFileFormatForSemanticTags(
-            org.openhab.cli.runtime.fileformat.CreateFileFormatForSemanticTags command);
+            CreateFileFormatForSemanticTags command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.fileformat.CreateFileFormatForSitemaps.class)
+    @ClassKey(CreateFileFormatForSitemaps.class)
     Callable<Integer> fileFormatCreateFileFormatForSitemaps(
-            org.openhab.cli.runtime.fileformat.CreateFileFormatForSitemaps command);
+            CreateFileFormatForSitemaps command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.fileformat.CreateFileFormatForThings.class)
+    @ClassKey(CreateFileFormatForThings.class)
     Callable<Integer> fileFormatCreateFileFormatForThings(
-            org.openhab.cli.runtime.fileformat.CreateFileFormatForThings command);
+            CreateFileFormatForThings command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.fileformat.Parse.class)
-    Callable<Integer> fileFormatParse(org.openhab.cli.runtime.fileformat.Parse command);
+    @ClassKey(Parse.class)
+    Callable<Integer> fileFormatParse(Parse command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.iconsets.IconSets.class)
-    Callable<Integer> iconsetsIconSets(org.openhab.cli.runtime.iconsets.IconSets command);
+    @ClassKey(IconSets.class)
+    Callable<Integer> iconsetsIconSets(IconSets command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.inbox.ApproveInboxItemById.class)
-    Callable<Integer> inboxApproveInboxItemById(org.openhab.cli.runtime.inbox.ApproveInboxItemById command);
+    @ClassKey(ApproveInboxItemById.class)
+    Callable<Integer> inboxApproveInboxItemById(ApproveInboxItemById command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.inbox.FlagInboxItemAsIgnored.class)
-    Callable<Integer> inboxFlagInboxItemAsIgnored(org.openhab.cli.runtime.inbox.FlagInboxItemAsIgnored command);
+    @ClassKey(FlagInboxItemAsIgnored.class)
+    Callable<Integer> inboxFlagInboxItemAsIgnored(FlagInboxItemAsIgnored command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.inbox.DiscoveredInboxItems.class)
-    Callable<Integer> inboxDiscoveredInboxItems(org.openhab.cli.runtime.inbox.DiscoveredInboxItems command);
+    @ClassKey(DiscoveredInboxItems.class)
+    Callable<Integer> inboxDiscoveredInboxItems(DiscoveredInboxItems command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.inbox.RemoveIgnoreFlagOnInboxItem.class)
+    @ClassKey(RemoveIgnoreFlagOnInboxItem.class)
     Callable<Integer> inboxRemoveIgnoreFlagOnInboxItem(
-            org.openhab.cli.runtime.inbox.RemoveIgnoreFlagOnInboxItem command);
+            RemoveIgnoreFlagOnInboxItem command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.inbox.RemoveItemFromInbox.class)
-    Callable<Integer> inboxRemoveItemFromInbox(org.openhab.cli.runtime.inbox.RemoveItemFromInbox command);
+    @ClassKey(RemoveItemFromInbox.class)
+    Callable<Integer> inboxRemoveItemFromInbox(RemoveItemFromInbox command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.items.AddMemberToGroupItem.class)
-    Callable<Integer> itemsAddMemberToGroupItem(org.openhab.cli.runtime.items.AddMemberToGroupItem command);
+    @ClassKey(AddMemberToGroupItem.class)
+    Callable<Integer> itemsAddMemberToGroupItem(AddMemberToGroupItem command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.items.AddMetadataToItem.class)
-    Callable<Integer> itemsAddMetadataToItem(org.openhab.cli.runtime.items.AddMetadataToItem command);
+    @ClassKey(AddMetadataToItem.class)
+    Callable<Integer> itemsAddMetadataToItem(AddMetadataToItem command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.items.AddOrUpdateItemInRegistry.class)
-    Callable<Integer> itemsAddOrUpdateItemInRegistry(org.openhab.cli.runtime.items.AddOrUpdateItemInRegistry command);
+    @ClassKey(AddOrUpdateItemInRegistry.class)
+    Callable<Integer> itemsAddOrUpdateItemInRegistry(AddOrUpdateItemInRegistry command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.items.AddOrUpdateItemsInRegistry.class)
-    Callable<Integer> itemsAddOrUpdateItemsInRegistry(org.openhab.cli.runtime.items.AddOrUpdateItemsInRegistry command);
+    @ClassKey(AddOrUpdateItemsInRegistry.class)
+    Callable<Integer> itemsAddOrUpdateItemsInRegistry(AddOrUpdateItemsInRegistry command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.items.AddTagToItem.class)
-    Callable<Integer> itemsAddTagToItem(org.openhab.cli.runtime.items.AddTagToItem command);
+    @ClassKey(AddTagToItem.class)
+    Callable<Integer> itemsAddTagToItem(AddTagToItem command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.items.ItemByName.class)
-    Callable<Integer> itemsItemByName(org.openhab.cli.runtime.items.ItemByName command);
+    @ClassKey(ItemByName.class)
+    Callable<Integer> itemsItemByName(ItemByName command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.items.ItemNamespaces.class)
-    Callable<Integer> itemsItemNamespaces(org.openhab.cli.runtime.items.ItemNamespaces command);
+    @ClassKey(ItemNamespaces.class)
+    Callable<Integer> itemsItemNamespaces(ItemNamespaces command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.items.ItemState1.class)
-    Callable<Integer> itemsItemState1(org.openhab.cli.runtime.items.ItemState1 command);
+    @ClassKey(ItemState1.class)
+    Callable<Integer> itemsItemState1(ItemState1 command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.items.Items.class)
-    Callable<Integer> itemsItems(org.openhab.cli.runtime.items.Items command);
+    @ClassKey(Items.class)
+    Callable<Integer> itemsItems(Items command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.items.SemanticItem.class)
-    Callable<Integer> itemsSemanticItem(org.openhab.cli.runtime.items.SemanticItem command);
+    @ClassKey(SemanticItem.class)
+    Callable<Integer> itemsSemanticItem(SemanticItem command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.items.SemanticsHealth.class)
-    Callable<Integer> itemsSemanticsHealth(org.openhab.cli.runtime.items.SemanticsHealth command);
+    @ClassKey(SemanticsHealth.class)
+    Callable<Integer> itemsSemanticsHealth(SemanticsHealth command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.items.PurgeDatabase.class)
-    Callable<Integer> itemsPurgeDatabase(org.openhab.cli.runtime.items.PurgeDatabase command);
+    @ClassKey(PurgeDatabase.class)
+    Callable<Integer> itemsPurgeDatabase(PurgeDatabase command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.items.RemoveAllMetadataFromItem.class)
-    Callable<Integer> itemsRemoveAllMetadataFromItem(org.openhab.cli.runtime.items.RemoveAllMetadataFromItem command);
+    @ClassKey(RemoveAllMetadataFromItem.class)
+    Callable<Integer> itemsRemoveAllMetadataFromItem(RemoveAllMetadataFromItem command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.items.RemoveItemFromRegistry.class)
-    Callable<Integer> itemsRemoveItemFromRegistry(org.openhab.cli.runtime.items.RemoveItemFromRegistry command);
+    @ClassKey(RemoveItemFromRegistry.class)
+    Callable<Integer> itemsRemoveItemFromRegistry(RemoveItemFromRegistry command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.items.RemoveMemberFromGroupItem.class)
-    Callable<Integer> itemsRemoveMemberFromGroupItem(org.openhab.cli.runtime.items.RemoveMemberFromGroupItem command);
+    @ClassKey(RemoveMemberFromGroupItem.class)
+    Callable<Integer> itemsRemoveMemberFromGroupItem(RemoveMemberFromGroupItem command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.items.RemoveMetadataFromItem.class)
-    Callable<Integer> itemsRemoveMetadataFromItem(org.openhab.cli.runtime.items.RemoveMetadataFromItem command);
+    @ClassKey(RemoveMetadataFromItem.class)
+    Callable<Integer> itemsRemoveMetadataFromItem(RemoveMetadataFromItem command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.items.RemoveTagFromItem.class)
-    Callable<Integer> itemsRemoveTagFromItem(org.openhab.cli.runtime.items.RemoveTagFromItem command);
+    @ClassKey(RemoveTagFromItem.class)
+    Callable<Integer> itemsRemoveTagFromItem(RemoveTagFromItem command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.items.SendItemCommand.class)
-    Callable<Integer> itemsSendItemCommand(org.openhab.cli.runtime.items.SendItemCommand command);
+    @ClassKey(SendItemCommand.class)
+    Callable<Integer> itemsSendItemCommand(SendItemCommand command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.items.UpdateItemState.class)
-    Callable<Integer> itemsUpdateItemState(org.openhab.cli.runtime.items.UpdateItemState command);
+    @ClassKey(UpdateItemState.class)
+    Callable<Integer> itemsUpdateItemState(UpdateItemState command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.links.ItemLink.class)
-    Callable<Integer> linksItemLink(org.openhab.cli.runtime.links.ItemLink command);
+    @ClassKey(ItemLink.class)
+    Callable<Integer> linksItemLink(ItemLink command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.links.ItemLinks.class)
-    Callable<Integer> linksItemLinks(org.openhab.cli.runtime.links.ItemLinks command);
+    @ClassKey(ItemLinks.class)
+    Callable<Integer> linksItemLinks(ItemLinks command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.links.OrphanLinks.class)
-    Callable<Integer> linksOrphanLinks(org.openhab.cli.runtime.links.OrphanLinks command);
+    @ClassKey(OrphanLinks.class)
+    Callable<Integer> linksOrphanLinks(OrphanLinks command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.links.LinkItemToChannel.class)
-    Callable<Integer> linksLinkItemToChannel(org.openhab.cli.runtime.links.LinkItemToChannel command);
+    @ClassKey(LinkItemToChannel.class)
+    Callable<Integer> linksLinkItemToChannel(LinkItemToChannel command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.links.PurgeDatabase1.class)
-    Callable<Integer> linksPurgeDatabase1(org.openhab.cli.runtime.links.PurgeDatabase1 command);
+    @ClassKey(PurgeDatabase1.class)
+    Callable<Integer> linksPurgeDatabase1(PurgeDatabase1 command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.links.RemoveAllLinksForObject.class)
-    Callable<Integer> linksRemoveAllLinksForObject(org.openhab.cli.runtime.links.RemoveAllLinksForObject command);
+    @ClassKey(RemoveAllLinksForObject.class)
+    Callable<Integer> linksRemoveAllLinksForObject(RemoveAllLinksForObject command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.links.UnlinkItemFromChannel.class)
-    Callable<Integer> linksUnlinkItemFromChannel(org.openhab.cli.runtime.links.UnlinkItemFromChannel command);
+    @ClassKey(UnlinkItemFromChannel.class)
+    Callable<Integer> linksUnlinkItemFromChannel(UnlinkItemFromChannel command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.logging.Logger.class)
-    Callable<Integer> loggingLogger(org.openhab.cli.runtime.logging.Logger command);
+    @ClassKey(Logger.class)
+    Callable<Integer> loggingLogger(Logger command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.logging.Logger1.class)
-    Callable<Integer> loggingLogger1(org.openhab.cli.runtime.logging.Logger1 command);
+    @ClassKey(Logger1.class)
+    Callable<Integer> loggingLogger1(Logger1 command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.logging.PutLogger.class)
-    Callable<Integer> loggingPutLogger(org.openhab.cli.runtime.logging.PutLogger command);
+    @ClassKey(PutLogger.class)
+    Callable<Integer> loggingPutLogger(PutLogger command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.logging.RemoveLogger.class)
-    Callable<Integer> loggingRemoveLogger(org.openhab.cli.runtime.logging.RemoveLogger command);
+    @ClassKey(RemoveLogger.class)
+    Callable<Integer> loggingRemoveLogger(RemoveLogger command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.moduletypes.ModuleTypeById.class)
-    Callable<Integer> moduleTypesModuleTypeById(org.openhab.cli.runtime.moduletypes.ModuleTypeById command);
+    @ClassKey(ModuleTypeById.class)
+    Callable<Integer> moduleTypesModuleTypeById(ModuleTypeById command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.moduletypes.ModuleTypes.class)
-    Callable<Integer> moduleTypesModuleTypes(org.openhab.cli.runtime.moduletypes.ModuleTypes command);
+    @ClassKey(ModuleTypes.class)
+    Callable<Integer> moduleTypesModuleTypes(ModuleTypes command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.persistence.DeleteItemFromPersistenceService.class)
+    @ClassKey(DeleteItemFromPersistenceService.class)
     Callable<Integer> persistenceDeleteItemFromPersistenceService(
-            org.openhab.cli.runtime.persistence.DeleteItemFromPersistenceService command);
+            DeleteItemFromPersistenceService command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.persistence.DeletePersistenceServiceConfiguration.class)
+    @ClassKey(DeletePersistenceServiceConfiguration.class)
     Callable<Integer> persistenceDeletePersistenceServiceConfiguration(
-            org.openhab.cli.runtime.persistence.DeletePersistenceServiceConfiguration command);
+            DeletePersistenceServiceConfiguration command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.persistence.ItemDataFromPersistenceService.class)
+    @ClassKey(ItemDataFromPersistenceService.class)
     Callable<Integer> persistenceItemDataFromPersistenceService(
-            org.openhab.cli.runtime.persistence.ItemDataFromPersistenceService command);
+            ItemDataFromPersistenceService command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.persistence.ItemsForPersistenceService.class)
+    @ClassKey(ItemsForPersistenceService.class)
     Callable<Integer> persistenceItemsForPersistenceService(
-            org.openhab.cli.runtime.persistence.ItemsForPersistenceService command);
+            ItemsForPersistenceService command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.persistence.PersistenceHealth.class)
-    Callable<Integer> persistencePersistenceHealth(org.openhab.cli.runtime.persistence.PersistenceHealth command);
+    @ClassKey(PersistenceHealth.class)
+    Callable<Integer> persistencePersistenceHealth(PersistenceHealth command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.persistence.PersistenceServiceConfiguration.class)
+    @ClassKey(PersistenceServiceConfiguration.class)
     Callable<Integer> persistencePersistenceServiceConfiguration(
-            org.openhab.cli.runtime.persistence.PersistenceServiceConfiguration command);
+            PersistenceServiceConfiguration command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.persistence.PersistenceServiceStrategySuggestions.class)
+    @ClassKey(PersistenceServiceStrategySuggestions.class)
     Callable<Integer> persistencePersistenceServiceStrategySuggestions(
-            org.openhab.cli.runtime.persistence.PersistenceServiceStrategySuggestions command);
+            PersistenceServiceStrategySuggestions command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.persistence.PersistenceServices.class)
-    Callable<Integer> persistencePersistenceServices(org.openhab.cli.runtime.persistence.PersistenceServices command);
+    @ClassKey(PersistenceServices.class)
+    Callable<Integer> persistencePersistenceServices(PersistenceServices command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.persistence.PutPersistenceServiceConfiguration.class)
+    @ClassKey(PutPersistenceServiceConfiguration.class)
     Callable<Integer> persistencePutPersistenceServiceConfiguration(
-            org.openhab.cli.runtime.persistence.PutPersistenceServiceConfiguration command);
+            PutPersistenceServiceConfiguration command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.persistence.StoreItemDataInPersistenceService.class)
+    @ClassKey(StoreItemDataInPersistenceService.class)
     Callable<Integer> persistenceStoreItemDataInPersistenceService(
-            org.openhab.cli.runtime.persistence.StoreItemDataInPersistenceService command);
+            StoreItemDataInPersistenceService command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.profiletypes.ProfileTypes.class)
-    Callable<Integer> profileTypesProfileTypes(org.openhab.cli.runtime.profiletypes.ProfileTypes command);
+    @ClassKey(ProfileTypes.class)
+    Callable<Integer> profileTypesProfileTypes(ProfileTypes command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.root.Root.class)
-    Callable<Integer> rootRoot(org.openhab.cli.runtime.root.Root command);
+    @ClassKey(Root.class)
+    Callable<Integer> rootRoot(Root command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.rules.CreateRule.class)
-    Callable<Integer> rulesCreateRule(org.openhab.cli.runtime.rules.CreateRule command);
+    @ClassKey(CreateRule.class)
+    Callable<Integer> rulesCreateRule(CreateRule command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.rules.DeleteRule.class)
-    Callable<Integer> rulesDeleteRule(org.openhab.cli.runtime.rules.DeleteRule command);
+    @ClassKey(DeleteRule.class)
+    Callable<Integer> rulesDeleteRule(DeleteRule command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.rules.EnableRule.class)
-    Callable<Integer> rulesEnableRule(org.openhab.cli.runtime.rules.EnableRule command);
+    @ClassKey(EnableRule.class)
+    Callable<Integer> rulesEnableRule(EnableRule command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.rules.RuleActions.class)
-    Callable<Integer> rulesRuleActions(org.openhab.cli.runtime.rules.RuleActions command);
+    @ClassKey(RuleActions.class)
+    Callable<Integer> rulesRuleActions(RuleActions command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.rules.RuleById.class)
-    Callable<Integer> rulesRuleById(org.openhab.cli.runtime.rules.RuleById command);
+    @ClassKey(RuleById.class)
+    Callable<Integer> rulesRuleById(RuleById command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.rules.RuleConditions.class)
-    Callable<Integer> rulesRuleConditions(org.openhab.cli.runtime.rules.RuleConditions command);
+    @ClassKey(RuleConditions.class)
+    Callable<Integer> rulesRuleConditions(RuleConditions command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.rules.RuleConfiguration.class)
-    Callable<Integer> rulesRuleConfiguration(org.openhab.cli.runtime.rules.RuleConfiguration command);
+    @ClassKey(RuleConfiguration.class)
+    Callable<Integer> rulesRuleConfiguration(RuleConfiguration command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.rules.RuleModuleById.class)
-    Callable<Integer> rulesRuleModuleById(org.openhab.cli.runtime.rules.RuleModuleById command);
+    @ClassKey(RuleModuleById.class)
+    Callable<Integer> rulesRuleModuleById(RuleModuleById command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.rules.RuleModuleConfig.class)
-    Callable<Integer> rulesRuleModuleConfig(org.openhab.cli.runtime.rules.RuleModuleConfig command);
+    @ClassKey(RuleModuleConfig.class)
+    Callable<Integer> rulesRuleModuleConfig(RuleModuleConfig command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.rules.RuleModuleConfigParameter.class)
-    Callable<Integer> rulesRuleModuleConfigParameter(org.openhab.cli.runtime.rules.RuleModuleConfigParameter command);
+    @ClassKey(RuleModuleConfigParameter.class)
+    Callable<Integer> rulesRuleModuleConfigParameter(RuleModuleConfigParameter command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.rules.RuleTriggers.class)
-    Callable<Integer> rulesRuleTriggers(org.openhab.cli.runtime.rules.RuleTriggers command);
+    @ClassKey(RuleTriggers.class)
+    Callable<Integer> rulesRuleTriggers(RuleTriggers command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.rules.Rules.class)
-    Callable<Integer> rulesRules(org.openhab.cli.runtime.rules.Rules command);
+    @ClassKey(Rules.class)
+    Callable<Integer> rulesRules(Rules command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.rules.ScheduleRuleSimulations.class)
-    Callable<Integer> rulesScheduleRuleSimulations(org.openhab.cli.runtime.rules.ScheduleRuleSimulations command);
+    @ClassKey(ScheduleRuleSimulations.class)
+    Callable<Integer> rulesScheduleRuleSimulations(ScheduleRuleSimulations command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.rules.RegenerateRule.class)
-    Callable<Integer> rulesRegenerateRule(org.openhab.cli.runtime.rules.RegenerateRule command);
+    @ClassKey(RegenerateRule.class)
+    Callable<Integer> rulesRegenerateRule(RegenerateRule command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.rules.RunRuleNow1.class)
-    Callable<Integer> rulesRunRuleNow1(org.openhab.cli.runtime.rules.RunRuleNow1 command);
+    @ClassKey(RunRuleNow1.class)
+    Callable<Integer> rulesRunRuleNow1(RunRuleNow1 command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.rules.SetRuleModuleConfigParameter.class)
+    @ClassKey(SetRuleModuleConfigParameter.class)
     Callable<Integer> rulesSetRuleModuleConfigParameter(
-            org.openhab.cli.runtime.rules.SetRuleModuleConfigParameter command);
+            SetRuleModuleConfigParameter command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.rules.UpdateRule.class)
-    Callable<Integer> rulesUpdateRule(org.openhab.cli.runtime.rules.UpdateRule command);
+    @ClassKey(UpdateRule.class)
+    Callable<Integer> rulesUpdateRule(UpdateRule command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.rules.UpdateRuleConfiguration.class)
-    Callable<Integer> rulesUpdateRuleConfiguration(org.openhab.cli.runtime.rules.UpdateRuleConfiguration command);
+    @ClassKey(UpdateRuleConfiguration.class)
+    Callable<Integer> rulesUpdateRuleConfiguration(UpdateRuleConfiguration command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.services.DeleteServiceConfig.class)
-    Callable<Integer> servicesDeleteServiceConfig(org.openhab.cli.runtime.services.DeleteServiceConfig command);
+    @ClassKey(DeleteServiceConfig.class)
+    Callable<Integer> servicesDeleteServiceConfig(DeleteServiceConfig command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.services.ServiceConfig.class)
-    Callable<Integer> servicesServiceConfig(org.openhab.cli.runtime.services.ServiceConfig command);
+    @ClassKey(ServiceConfig.class)
+    Callable<Integer> servicesServiceConfig(ServiceConfig command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.services.ServiceContext.class)
-    Callable<Integer> servicesServiceContext(org.openhab.cli.runtime.services.ServiceContext command);
+    @ClassKey(ServiceContext.class)
+    Callable<Integer> servicesServiceContext(ServiceContext command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.services.Services.class)
-    Callable<Integer> servicesServices(org.openhab.cli.runtime.services.Services command);
+    @ClassKey(Services.class)
+    Callable<Integer> servicesServices(Services command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.services.ServicesById.class)
-    Callable<Integer> servicesServicesById(org.openhab.cli.runtime.services.ServicesById command);
+    @ClassKey(ServicesById.class)
+    Callable<Integer> servicesServicesById(ServicesById command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.services.UpdateServiceConfig.class)
-    Callable<Integer> servicesUpdateServiceConfig(org.openhab.cli.runtime.services.UpdateServiceConfig command);
+    @ClassKey(UpdateServiceConfig.class)
+    Callable<Integer> servicesUpdateServiceConfig(UpdateServiceConfig command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.sitemaps.AddOrUpdateSitemapInRegistry.class)
+    @ClassKey(AddOrUpdateSitemapInRegistry.class)
     Callable<Integer> sitemapsAddOrUpdateSitemapInRegistry(
-            org.openhab.cli.runtime.sitemaps.AddOrUpdateSitemapInRegistry command);
+            AddOrUpdateSitemapInRegistry command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.sitemaps.CreateSitemapEventSubscription.class)
+    @ClassKey(CreateSitemapEventSubscription.class)
     Callable<Integer> sitemapsCreateSitemapEventSubscription(
-            org.openhab.cli.runtime.sitemaps.CreateSitemapEventSubscription command);
+            CreateSitemapEventSubscription command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.sitemaps.SitemapByName.class)
-    Callable<Integer> sitemapsSitemapByName(org.openhab.cli.runtime.sitemaps.SitemapByName command);
+    @ClassKey(SitemapByName.class)
+    Callable<Integer> sitemapsSitemapByName(SitemapByName command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.sitemaps.SitemapDefinitionByName.class)
-    Callable<Integer> sitemapsSitemapDefinitionByName(org.openhab.cli.runtime.sitemaps.SitemapDefinitionByName command);
+    @ClassKey(SitemapDefinitionByName.class)
+    Callable<Integer> sitemapsSitemapDefinitionByName(SitemapDefinitionByName command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.sitemaps.SitemapDefinitions.class)
-    Callable<Integer> sitemapsSitemapDefinitions(org.openhab.cli.runtime.sitemaps.SitemapDefinitions command);
+    @ClassKey(SitemapDefinitions.class)
+    Callable<Integer> sitemapsSitemapDefinitions(SitemapDefinitions command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.sitemaps.SitemapEvents.class)
-    Callable<Integer> sitemapsSitemapEvents(org.openhab.cli.runtime.sitemaps.SitemapEvents command);
+    @ClassKey(SitemapEvents.class)
+    Callable<Integer> sitemapsSitemapEvents(SitemapEvents command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.sitemaps.SitemapEvents1.class)
-    Callable<Integer> sitemapsSitemapEvents1(org.openhab.cli.runtime.sitemaps.SitemapEvents1 command);
+    @ClassKey(SitemapEvents1.class)
+    Callable<Integer> sitemapsSitemapEvents1(SitemapEvents1 command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.sitemaps.Sitemaps.class)
-    Callable<Integer> sitemapsSitemaps(org.openhab.cli.runtime.sitemaps.Sitemaps command);
+    @ClassKey(Sitemaps.class)
+    Callable<Integer> sitemapsSitemaps(Sitemaps command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.sitemaps.PollDataForPage.class)
-    Callable<Integer> sitemapsPollDataForPage(org.openhab.cli.runtime.sitemaps.PollDataForPage command);
+    @ClassKey(PollDataForPage.class)
+    Callable<Integer> sitemapsPollDataForPage(PollDataForPage command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.sitemaps.PollDataForSitemap.class)
-    Callable<Integer> sitemapsPollDataForSitemap(org.openhab.cli.runtime.sitemaps.PollDataForSitemap command);
+    @ClassKey(PollDataForSitemap.class)
+    Callable<Integer> sitemapsPollDataForSitemap(PollDataForSitemap command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.sitemaps.RemoveSitemapFromRegistry.class)
+    @ClassKey(RemoveSitemapFromRegistry.class)
     Callable<Integer> sitemapsRemoveSitemapFromRegistry(
-            org.openhab.cli.runtime.sitemaps.RemoveSitemapFromRegistry command);
+            RemoveSitemapFromRegistry command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.systeminfo.SystemInformation.class)
-    Callable<Integer> systemInfoSystemInformation(org.openhab.cli.runtime.systeminfo.SystemInformation command);
+    @ClassKey(SystemInformation.class)
+    Callable<Integer> systemInfoSystemInformation(SystemInformation command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.systeminfo.UoMInformation.class)
-    Callable<Integer> systemInfoUoMInformation(org.openhab.cli.runtime.systeminfo.UoMInformation command);
+    @ClassKey(UoMInformation.class)
+    Callable<Integer> systemInfoUoMInformation(UoMInformation command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.tags.CreateSemanticTag.class)
-    Callable<Integer> tagsCreateSemanticTag(org.openhab.cli.runtime.tags.CreateSemanticTag command);
+    @ClassKey(CreateSemanticTag.class)
+    Callable<Integer> tagsCreateSemanticTag(CreateSemanticTag command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.tags.SemanticTagAndSubTags.class)
-    Callable<Integer> tagsSemanticTagAndSubTags(org.openhab.cli.runtime.tags.SemanticTagAndSubTags command);
+    @ClassKey(SemanticTagAndSubTags.class)
+    Callable<Integer> tagsSemanticTagAndSubTags(SemanticTagAndSubTags command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.tags.SemanticTags.class)
-    Callable<Integer> tagsSemanticTags(org.openhab.cli.runtime.tags.SemanticTags command);
+    @ClassKey(SemanticTags.class)
+    Callable<Integer> tagsSemanticTags(SemanticTags command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.tags.RemoveSemanticTag.class)
-    Callable<Integer> tagsRemoveSemanticTag(org.openhab.cli.runtime.tags.RemoveSemanticTag command);
+    @ClassKey(RemoveSemanticTag.class)
+    Callable<Integer> tagsRemoveSemanticTag(RemoveSemanticTag command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.tags.UpdateSemanticTag.class)
-    Callable<Integer> tagsUpdateSemanticTag(org.openhab.cli.runtime.tags.UpdateSemanticTag command);
+    @ClassKey(UpdateSemanticTag.class)
+    Callable<Integer> tagsUpdateSemanticTag(UpdateSemanticTag command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.templates.TemplateById.class)
-    Callable<Integer> templatesTemplateById(org.openhab.cli.runtime.templates.TemplateById command);
+    @ClassKey(TemplateById.class)
+    Callable<Integer> templatesTemplateById(TemplateById command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.templates.Templates.class)
-    Callable<Integer> templatesTemplates(org.openhab.cli.runtime.templates.Templates command);
+    @ClassKey(Templates.class)
+    Callable<Integer> templatesTemplates(Templates command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.thingtypes.ThingTypeById.class)
-    Callable<Integer> thingTypesThingTypeById(org.openhab.cli.runtime.thingtypes.ThingTypeById command);
+    @ClassKey(ThingTypeById.class)
+    Callable<Integer> thingTypesThingTypeById(ThingTypeById command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.thingtypes.ThingTypes.class)
-    Callable<Integer> thingTypesThingTypes(org.openhab.cli.runtime.thingtypes.ThingTypes command);
+    @ClassKey(ThingTypes.class)
+    Callable<Integer> thingTypesThingTypes(ThingTypes command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.things.CreateThingInRegistry.class)
-    Callable<Integer> thingsCreateThingInRegistry(org.openhab.cli.runtime.things.CreateThingInRegistry command);
+    @ClassKey(CreateThingInRegistry.class)
+    Callable<Integer> thingsCreateThingInRegistry(CreateThingInRegistry command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.things.EnableThing.class)
-    Callable<Integer> thingsEnableThing(org.openhab.cli.runtime.things.EnableThing command);
+    @ClassKey(EnableThing.class)
+    Callable<Integer> thingsEnableThing(EnableThing command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.things.AvailableFirmwaresForThing.class)
+    @ClassKey(AvailableFirmwaresForThing.class)
     Callable<Integer> thingsAvailableFirmwaresForThing(
-            org.openhab.cli.runtime.things.AvailableFirmwaresForThing command);
+            AvailableFirmwaresForThing command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.things.ThingById.class)
-    Callable<Integer> thingsThingById(org.openhab.cli.runtime.things.ThingById command);
+    @ClassKey(ThingById.class)
+    Callable<Integer> thingsThingById(ThingById command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.things.ThingConfigStatus.class)
-    Callable<Integer> thingsThingConfigStatus(org.openhab.cli.runtime.things.ThingConfigStatus command);
+    @ClassKey(ThingConfigStatus.class)
+    Callable<Integer> thingsThingConfigStatus(ThingConfigStatus command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.things.ThingFirmwareStatus.class)
-    Callable<Integer> thingsThingFirmwareStatus(org.openhab.cli.runtime.things.ThingFirmwareStatus command);
+    @ClassKey(ThingFirmwareStatus.class)
+    Callable<Integer> thingsThingFirmwareStatus(ThingFirmwareStatus command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.things.ThingStatus.class)
-    Callable<Integer> thingsThingStatus(org.openhab.cli.runtime.things.ThingStatus command);
+    @ClassKey(ThingStatus.class)
+    Callable<Integer> thingsThingStatus(ThingStatus command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.things.Things.class)
-    Callable<Integer> thingsThings(org.openhab.cli.runtime.things.Things command);
+    @ClassKey(Things.class)
+    Callable<Integer> thingsThings(Things command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.things.RemoveThingById.class)
-    Callable<Integer> thingsRemoveThingById(org.openhab.cli.runtime.things.RemoveThingById command);
+    @ClassKey(RemoveThingById.class)
+    Callable<Integer> thingsRemoveThingById(RemoveThingById command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.things.UpdateThing.class)
-    Callable<Integer> thingsUpdateThing(org.openhab.cli.runtime.things.UpdateThing command);
+    @ClassKey(UpdateThing.class)
+    Callable<Integer> thingsUpdateThing(UpdateThing command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.things.UpdateThingConfig.class)
-    Callable<Integer> thingsUpdateThingConfig(org.openhab.cli.runtime.things.UpdateThingConfig command);
+    @ClassKey(UpdateThingConfig.class)
+    Callable<Integer> thingsUpdateThingConfig(UpdateThingConfig command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.things.UpdateThingFirmware.class)
-    Callable<Integer> thingsUpdateThingFirmware(org.openhab.cli.runtime.things.UpdateThingFirmware command);
+    @ClassKey(UpdateThingFirmware.class)
+    Callable<Integer> thingsUpdateThingFirmware(UpdateThingFirmware command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.transformations.DeleteTransformation.class)
+    @ClassKey(DeleteTransformation.class)
     Callable<Integer> transformationsDeleteTransformation(
-            org.openhab.cli.runtime.transformations.DeleteTransformation command);
+            DeleteTransformation command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.transformations.Transformation.class)
-    Callable<Integer> transformationsTransformation(org.openhab.cli.runtime.transformations.Transformation command);
+    @ClassKey(Transformation.class)
+    Callable<Integer> transformationsTransformation(Transformation command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.transformations.TransformationServices.class)
+    @ClassKey(TransformationServices.class)
     Callable<Integer> transformationsTransformationServices(
-            org.openhab.cli.runtime.transformations.TransformationServices command);
+            TransformationServices command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.transformations.Transformations.class)
-    Callable<Integer> transformationsTransformations(org.openhab.cli.runtime.transformations.Transformations command);
+    @ClassKey(Transformations.class)
+    Callable<Integer> transformationsTransformations(Transformations command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.transformations.PutTransformation.class)
+    @ClassKey(PutTransformation.class)
     Callable<Integer> transformationsPutTransformation(
-            org.openhab.cli.runtime.transformations.PutTransformation command);
+            PutTransformation command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.ui.AddUIComponentToNamespace.class)
-    Callable<Integer> uiAddUIComponentToNamespace(org.openhab.cli.runtime.ui.AddUIComponentToNamespace command);
+    @ClassKey(AddUIComponentToNamespace.class)
+    Callable<Integer> uiAddUIComponentToNamespace(AddUIComponentToNamespace command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.ui.RegisteredUIComponentsInNamespace.class)
+    @ClassKey(RegisteredUIComponentsInNamespace.class)
     Callable<Integer> uiRegisteredUIComponentsInNamespace(
-            org.openhab.cli.runtime.ui.RegisteredUIComponentsInNamespace command);
+            RegisteredUIComponentsInNamespace command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.ui.UiComponentInNamespace.class)
-    Callable<Integer> uiUiComponentInNamespace(org.openhab.cli.runtime.ui.UiComponentInNamespace command);
+    @ClassKey(UiComponentInNamespace.class)
+    Callable<Integer> uiUiComponentInNamespace(UiComponentInNamespace command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.ui.UiTiles.class)
-    Callable<Integer> uiUiTiles(org.openhab.cli.runtime.ui.UiTiles command);
+    @ClassKey(UiTiles.class)
+    Callable<Integer> uiUiTiles(UiTiles command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.ui.RemoveUIComponentFromNamespace.class)
+    @ClassKey(RemoveUIComponentFromNamespace.class)
     Callable<Integer> uiRemoveUIComponentFromNamespace(
-            org.openhab.cli.runtime.ui.RemoveUIComponentFromNamespace command);
+            RemoveUIComponentFromNamespace command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.ui.UpdateUIComponentInNamespace.class)
-    Callable<Integer> uiUpdateUIComponentInNamespace(org.openhab.cli.runtime.ui.UpdateUIComponentInNamespace command);
+    @ClassKey(UpdateUIComponentInNamespace.class)
+    Callable<Integer> uiUpdateUIComponentInNamespace(UpdateUIComponentInNamespace command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.uuid.Uuid.class)
-    Callable<Integer> uuidUuid(org.openhab.cli.runtime.uuid.Uuid command);
+    @ClassKey(Uuid.class)
+    Callable<Integer> uuidUuid(Uuid command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.voice.DeleteConversationById.class)
-    Callable<Integer> voiceDeleteConversationById(org.openhab.cli.runtime.voice.DeleteConversationById command);
+    @ClassKey(DeleteConversationById.class)
+    Callable<Integer> voiceDeleteConversationById(DeleteConversationById command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.voice.ConversationById.class)
-    Callable<Integer> voiceConversationById(org.openhab.cli.runtime.voice.ConversationById command);
+    @ClassKey(ConversationById.class)
+    Callable<Integer> voiceConversationById(ConversationById command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.voice.DefaultVoice.class)
-    Callable<Integer> voiceDefaultVoice(org.openhab.cli.runtime.voice.DefaultVoice command);
+    @ClassKey(DefaultVoice.class)
+    Callable<Integer> voiceDefaultVoice(DefaultVoice command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.voice.LlmTools.class)
-    Callable<Integer> voiceLlmTools(org.openhab.cli.runtime.voice.LlmTools command);
+    @ClassKey(LlmTools.class)
+    Callable<Integer> voiceLlmTools(LlmTools command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.voice.VoiceInterpreterByUID.class)
-    Callable<Integer> voiceVoiceInterpreterByUID(org.openhab.cli.runtime.voice.VoiceInterpreterByUID command);
+    @ClassKey(VoiceInterpreterByUID.class)
+    Callable<Integer> voiceVoiceInterpreterByUID(VoiceInterpreterByUID command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.voice.VoiceInterpreters.class)
-    Callable<Integer> voiceVoiceInterpreters(org.openhab.cli.runtime.voice.VoiceInterpreters command);
+    @ClassKey(VoiceInterpreters.class)
+    Callable<Integer> voiceVoiceInterpreters(VoiceInterpreters command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.voice.Voices.class)
-    Callable<Integer> voiceVoices(org.openhab.cli.runtime.voice.Voices command);
+    @ClassKey(Voices.class)
+    Callable<Integer> voiceVoices(Voices command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.voice.InterpretText.class)
-    Callable<Integer> voiceInterpretText(org.openhab.cli.runtime.voice.InterpretText command);
+    @ClassKey(InterpretText.class)
+    Callable<Integer> voiceInterpretText(InterpretText command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.voice.InterpretTextByDefaultInterpreter.class)
+    @ClassKey(InterpretTextByDefaultInterpreter.class)
     Callable<Integer> voiceInterpretTextByDefaultInterpreter(
-            org.openhab.cli.runtime.voice.InterpretTextByDefaultInterpreter command);
+            InterpretTextByDefaultInterpreter command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.voice.ListConversations.class)
-    Callable<Integer> voiceListConversations(org.openhab.cli.runtime.voice.ListConversations command);
+    @ClassKey(ListConversations.class)
+    Callable<Integer> voiceListConversations(ListConversations command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.voice.ListenAndAnswer.class)
-    Callable<Integer> voiceListenAndAnswer(org.openhab.cli.runtime.voice.ListenAndAnswer command);
+    @ClassKey(ListenAndAnswer.class)
+    Callable<Integer> voiceListenAndAnswer(ListenAndAnswer command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.voice.StartDialog.class)
-    Callable<Integer> voiceStartDialog(org.openhab.cli.runtime.voice.StartDialog command);
+    @ClassKey(StartDialog.class)
+    Callable<Integer> voiceStartDialog(StartDialog command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.voice.StopDialog.class)
-    Callable<Integer> voiceStopDialog(org.openhab.cli.runtime.voice.StopDialog command);
+    @ClassKey(StopDialog.class)
+    Callable<Integer> voiceStopDialog(StopDialog command);
 
     @Binds
     @IntoMap
-    @ClassKey(org.openhab.cli.runtime.voice.TextToSpeech.class)
-    Callable<Integer> voiceTextToSpeech(org.openhab.cli.runtime.voice.TextToSpeech command);
+    @ClassKey(TextToSpeech.class)
+    Callable<Integer> voiceTextToSpeech(TextToSpeech command);
 }

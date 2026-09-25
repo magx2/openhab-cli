@@ -13,7 +13,7 @@ import org.junit.jupiter.api.io.TempDir;
 import org.openhab.cli.client.ApiException;
 import org.openhab.cli.engine.endpoint.Action;
 import org.openhab.cli.engine.endpoint.EndpointException;
-import org.openhab.cli.runtime.action.AvailableActionsForThing;
+import org.openhab.cli.runtime.command.action.AvailableActionsForThing;
 
 class CommandFactoryTest {
     @Test
