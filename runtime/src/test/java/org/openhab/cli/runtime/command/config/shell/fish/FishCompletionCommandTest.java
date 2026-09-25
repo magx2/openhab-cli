@@ -1,4 +1,4 @@
-package org.openhab.cli.runtime.command.config.shell;
+package org.openhab.cli.runtime.command.config.shell.fish;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -14,8 +14,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.ArgumentCaptor;
 import org.openhab.cli.runtime.Options;
-import org.openhab.cli.runtime.command.config.shell.fish.FishCompletionCommand;
-import org.openhab.cli.runtime.command.config.shell.fish.FishCompletions;
 import org.openhab.cli.runtime.service.Console;
 import picocli.CommandLine;
 

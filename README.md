@@ -159,6 +159,27 @@ file or start a new Fish session. Run `install` again after upgrading the CLI.
 Completions include command groups, operations, options and enum values; they do
 not query an openHAB server for item or thing identifiers.
 
+## Bash completions
+
+```sh
+oh _config shell bash completion show     # Print the script (default action)
+oh _config shell bash completion install  # Install it for your user
+```
+
+Actions are case-insensitive. Installation writes `completions/oh.bash` under
+the first absolute directory in `$BASH_COMPLETION_USER_DIR`, or under
+`$XDG_DATA_HOME/bash-completion` (default: `~/.local/share/bash-completion`).
+The `bash-completion` package must be enabled in your shell for automatic loading.
+Alternatively, load the script directly without that package:
+
+```bash
+source <(oh _config shell bash completion show)
+```
+
+Start a new Bash session or source the installed file to refresh completions.
+Run `install` again after upgrading the CLI. Completion generation uses Picocli's
+command model and does not contact an openHAB server.
+
 ## Releases
 
 Run **Release** from the GitHub Actions tab, selecting `master`. Other branches
