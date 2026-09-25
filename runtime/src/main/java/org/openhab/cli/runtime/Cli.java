@@ -18,9 +18,9 @@ import picocli.CommandLine.Command;
         exitCodeListHeading = "Exit Codes:%n",
         exitCodeList = { //
             " 0: Successful program execution", //
-            " 1: ", //
-            "98: ", //
-            "99: " //
+            " 1: Command execution failed", //
+            "98: I/O operation failed (for example, reading the properties file)", //
+            "99: openHAB API request failed" //
         })
 @Slf4j
 public class Cli implements Callable<Integer> {
