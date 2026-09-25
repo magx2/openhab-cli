@@ -2,6 +2,10 @@ plugins {
     id 'java'
 }
 
+base {
+    archivesName = 'oh'
+}
+
 repositories {
     mavenLocal()
     mavenCentral()
