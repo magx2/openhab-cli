@@ -7,11 +7,11 @@ import org.openhab.cli.runtime.service.Console;
 import org.openhab.cli.runtime.service.PropertiesReader;
 import picocli.CommandLine;
 
-/** Prints CLI configuration properties as JSON, including defaults for unspecified settings. */
+/** Prints stored Java properties as one key=value entry per line, ordered by key. */
 @Slf4j
 @CommandLine.Command(
         name = "list",
-        description = "List CLI configuration properties as JSON, including defaults for unspecified settings.",
+        description = "List stored Java properties as key=value, one per line ordered by key, without CLI defaults.",
         mixinStandardHelpOptions = true)
 public class ListCommand implements Runnable {
     @CommandLine.Mixin
@@ -20,7 +20,7 @@ public class ListCommand implements Runnable {
     private final PropertiesReader propertiesReader;
     private final Console console;
 
-    /** Creates the command with services for reading configuration properties and printing JSON. */
+    /** Creates the command with services for reading stored properties and printing text. */
     @Inject
     public ListCommand(PropertiesReader propertiesReader, Console console) {
         this.propertiesReader = propertiesReader;
@@ -28,14 +28,16 @@ public class ListCommand implements Runnable {
     }
 
     /**
-     * Reads the selected properties file and prints its configuration using the stored pretty-print setting.
+     * Reads the selected properties file and prints each stored entry as key=value on its own line.
      *
      * @throws java.io.UncheckedIOException if the existing properties file cannot be read
      */
     @Override
     public void run() {
         log.info("List properties");
-        var properties = propertiesReader.read(options.getPropertiesFile());
-        console.writeJson(properties, properties.prettyPrint());
+        var properties = propertiesReader.readProperties(options.getPropertiesFile());
+        properties.stringPropertyNames().stream()
+                .sorted()
+                .forEach(key -> console.write(key + "=" + properties.getProperty(key)));
     }
 }

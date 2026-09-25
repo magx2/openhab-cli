@@ -127,15 +127,26 @@ public class PropertiesReader {
      * @throws UncheckedIOException if the existing file cannot be read
      */
     public String get(String propertiesFile, String key) {
+        return readProperties(propertiesFile).getProperty(key);
+    }
+
+    /**
+     * Loads stored Java properties without applying CLI defaults or converting values.
+     *
+     * @param propertiesFile file to read, or null to use the default file in the working directory
+     * @return stored properties, or an empty set if the file does not exist
+     * @throws UncheckedIOException if the existing file cannot be read
+     */
+    public java.util.Properties readProperties(String propertiesFile) {
         var path = buildPath(propertiesFile);
+        var javaProps = new java.util.Properties();
         if (Files.notExists(path)) {
             log.warn("Path `{}` does not exist", path);
-            return null;
+            return javaProps;
         }
         try (var stream = Files.newInputStream(path)) {
-            var javaProps = new java.util.Properties();
             javaProps.load(stream);
-            return javaProps.getProperty(key);
+            return javaProps;
         } catch (IOException e) {
             throw new UncheckedIOException("Cannot read properties from file %s.".formatted(path), e);
         }
