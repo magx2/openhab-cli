@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.transformations;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Transformations;
@@ -15,7 +14,7 @@ import picocli.CommandLine;
         name = "transformation",
         description = "Get a single transformation",
         mixinStandardHelpOptions = true)
-public class Transformation implements Callable<Integer> {
+public class Transformation implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -36,14 +35,13 @@ public class Transformation implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Transformations#transformation} and returns zero on success. */
+    /** Executes {@link Transformations#transformation}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Transformations.transformation");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Transformations(apiClient);
         var result = endpoint.transformation(uid);
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

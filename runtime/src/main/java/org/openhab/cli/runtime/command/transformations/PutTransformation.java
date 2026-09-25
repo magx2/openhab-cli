@@ -1,7 +1,6 @@
 package org.openhab.cli.runtime.command.transformations;
 
 import com.google.gson.reflect.TypeToken;
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.client.model.Transformation;
@@ -18,7 +17,7 @@ import picocli.CommandLine;
         name = "putTransformation",
         description = "Put a single transformation",
         mixinStandardHelpOptions = true)
-public class PutTransformation implements Callable<Integer> {
+public class PutTransformation implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -46,15 +45,14 @@ public class PutTransformation implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Transformations#putTransformation} and returns zero on success. */
+    /** Executes {@link Transformations#putTransformation}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Transformations.putTransformation");
         Transformation transformationValue =
                 JsonArguments.parse(transformation, new TypeToken<Transformation>() {}.getType(), "transformation");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Transformations(apiClient);
         endpoint.putTransformation(uid, transformationValue);
-        return 0;
     }
 }

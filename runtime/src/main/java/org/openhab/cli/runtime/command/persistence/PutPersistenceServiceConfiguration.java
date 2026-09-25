@@ -1,7 +1,6 @@
 package org.openhab.cli.runtime.command.persistence;
 
 import com.google.gson.reflect.TypeToken;
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.client.model.PersistenceServiceConfiguration;
@@ -18,7 +17,7 @@ import picocli.CommandLine;
         name = "putPersistenceServiceConfiguration",
         description = "Sets a persistence service configuration.",
         mixinStandardHelpOptions = true)
-public class PutPersistenceServiceConfiguration implements Callable<Integer> {
+public class PutPersistenceServiceConfiguration implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -46,9 +45,9 @@ public class PutPersistenceServiceConfiguration implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Persistence#putPersistenceServiceConfiguration} and returns zero on success. */
+    /** Executes {@link Persistence#putPersistenceServiceConfiguration}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Persistence.putPersistenceServiceConfiguration");
         PersistenceServiceConfiguration persistenceServiceConfigurationValue = JsonArguments.parse(
                 persistenceServiceConfiguration,
@@ -58,6 +57,5 @@ public class PutPersistenceServiceConfiguration implements Callable<Integer> {
         var endpoint = new Persistence(apiClient);
         var result = endpoint.putPersistenceServiceConfiguration(serviceId, persistenceServiceConfigurationValue);
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

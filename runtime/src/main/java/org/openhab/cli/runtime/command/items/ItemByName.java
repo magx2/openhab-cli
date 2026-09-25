@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.items;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Items;
@@ -12,7 +11,7 @@ import picocli.CommandLine;
 /** Gets a single item. */
 @Slf4j
 @CommandLine.Command(name = "itemByName", description = "Gets a single item.", mixinStandardHelpOptions = true)
-public class ItemByName implements Callable<Integer> {
+public class ItemByName implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -58,14 +57,13 @@ public class ItemByName implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Items#itemByName} and returns zero on success. */
+    /** Executes {@link Items#itemByName}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Items.itemByName");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Items(apiClient);
         var result = endpoint.itemByName(itemName, acceptLanguage, metadata, recursive, parents);
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

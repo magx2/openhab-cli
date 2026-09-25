@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.sitemaps;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Sitemaps;
@@ -15,7 +14,7 @@ import picocli.CommandLine;
         name = "sitemapDefinitionByName",
         description = "Get sitemap definition by name.",
         mixinStandardHelpOptions = true)
-public class SitemapDefinitionByName implements Callable<Integer> {
+public class SitemapDefinitionByName implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -36,14 +35,13 @@ public class SitemapDefinitionByName implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Sitemaps#sitemapDefinitionByName} and returns zero on success. */
+    /** Executes {@link Sitemaps#sitemapDefinitionByName}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Sitemaps.sitemapDefinitionByName");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Sitemaps(apiClient);
         var result = endpoint.sitemapDefinitionByName(sitemapname);
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

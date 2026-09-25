@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.services;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.runtime.Options;
@@ -11,7 +10,7 @@ import picocli.CommandLine;
 /** Get all configurable services. */
 @Slf4j
 @CommandLine.Command(name = "services", description = "Get all configurable services.", mixinStandardHelpOptions = true)
-public class Services implements Callable<Integer> {
+public class Services implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -32,14 +31,13 @@ public class Services implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link org.openhab.cli.engine.endpoint.Services#services} and returns zero on success. */
+    /** Executes {@link org.openhab.cli.engine.endpoint.Services#services}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Services.services");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new org.openhab.cli.engine.endpoint.Services(apiClient);
         var result = endpoint.services(acceptLanguage);
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

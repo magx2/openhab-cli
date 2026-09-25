@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.persistence;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Persistence;
@@ -16,7 +15,7 @@ import picocli.CommandLine;
         description =
                 "Gets a list of stored Items available via a specific persistence service with their stored name.",
         mixinStandardHelpOptions = true)
-public class ItemsForPersistenceService implements Callable<Integer> {
+public class ItemsForPersistenceService implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -44,14 +43,13 @@ public class ItemsForPersistenceService implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Persistence#itemsForPersistenceService} and returns zero on success. */
+    /** Executes {@link Persistence#itemsForPersistenceService}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Persistence.itemsForPersistenceService");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Persistence(apiClient);
         var result = endpoint.itemsForPersistenceService(serviceId, itemName);
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.links;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Links;
@@ -12,7 +11,7 @@ import picocli.CommandLine;
 /** Retrieves an individual link. */
 @Slf4j
 @CommandLine.Command(name = "itemLink", description = "Retrieves an individual link.", mixinStandardHelpOptions = true)
-public class ItemLink implements Callable<Integer> {
+public class ItemLink implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -36,14 +35,13 @@ public class ItemLink implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Links#itemLink} and returns zero on success. */
+    /** Executes {@link Links#itemLink}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Links.itemLink");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Links(apiClient);
         var result = endpoint.itemLink(itemName, channelUID);
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

@@ -1,7 +1,6 @@
 package org.openhab.cli.runtime.command.tags;
 
 import com.google.gson.reflect.TypeToken;
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.client.model.EnrichedSemanticTag;
@@ -18,7 +17,7 @@ import picocli.CommandLine;
         name = "createSemanticTag",
         description = "Creates a new semantic tag and adds it to the registry.",
         mixinStandardHelpOptions = true)
-public class CreateSemanticTag implements Callable<Integer> {
+public class CreateSemanticTag implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -46,9 +45,9 @@ public class CreateSemanticTag implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Tags#createSemanticTag} and returns zero on success. */
+    /** Executes {@link Tags#createSemanticTag}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Tags.createSemanticTag");
         EnrichedSemanticTag enrichedSemanticTagValue = JsonArguments.parse(
                 enrichedSemanticTag, new TypeToken<EnrichedSemanticTag>() {}.getType(), "enrichedSemanticTag");
@@ -56,6 +55,5 @@ public class CreateSemanticTag implements Callable<Integer> {
         var endpoint = new Tags(apiClient);
         var result = endpoint.createSemanticTag(enrichedSemanticTagValue, acceptLanguage);
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

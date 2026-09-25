@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.links;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Links;
@@ -15,7 +14,7 @@ import picocli.CommandLine;
         name = "purgeDatabase1",
         description = "Remove unused/orphaned links.",
         mixinStandardHelpOptions = true)
-public class PurgeDatabase1 implements Callable<Integer> {
+public class PurgeDatabase1 implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -29,13 +28,12 @@ public class PurgeDatabase1 implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Links#purgeDatabase1} and returns zero on success. */
+    /** Executes {@link Links#purgeDatabase1}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Links.purgeDatabase1");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Links(apiClient);
         endpoint.purgeDatabase1();
-        return 0;
     }
 }

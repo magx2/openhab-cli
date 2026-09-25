@@ -2,7 +2,6 @@ package org.openhab.cli.runtime.command.fileformat;
 
 import com.google.gson.reflect.TypeToken;
 import java.util.List;
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.FileFormat;
@@ -18,7 +17,7 @@ import picocli.CommandLine;
         name = "createFileFormatForItems",
         description = "Create file format for a list of items in registry.",
         mixinStandardHelpOptions = true)
-public class CreateFileFormatForItems implements Callable<Integer> {
+public class CreateFileFormatForItems implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -47,9 +46,9 @@ public class CreateFileFormatForItems implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link FileFormat#createFileFormatForItems} and returns zero on success. */
+    /** Executes {@link FileFormat#createFileFormatForItems}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: FileFormat.createFileFormatForItems");
         List<String> requestBodyValue =
                 JsonArguments.parse(requestBody, new TypeToken<List<String>>() {}.getType(), "requestBody");
@@ -57,6 +56,5 @@ public class CreateFileFormatForItems implements Callable<Integer> {
         var endpoint = new FileFormat(apiClient);
         var result = endpoint.createFileFormatForItems(hideDefaultParameters, requestBodyValue);
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

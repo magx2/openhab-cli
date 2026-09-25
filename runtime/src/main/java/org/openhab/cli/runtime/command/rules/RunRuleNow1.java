@@ -2,7 +2,6 @@ package org.openhab.cli.runtime.command.rules;
 
 import com.google.gson.reflect.TypeToken;
 import java.util.Map;
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Rules;
@@ -18,7 +17,7 @@ import picocli.CommandLine;
         name = "runRuleNow1",
         description = "Executes actions of the rule.",
         mixinStandardHelpOptions = true)
-public class RunRuleNow1 implements Callable<Integer> {
+public class RunRuleNow1 implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -42,15 +41,14 @@ public class RunRuleNow1 implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Rules#runRuleNow1} and returns zero on success. */
+    /** Executes {@link Rules#runRuleNow1}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Rules.runRuleNow1");
         Map<String, Object> requestBodyValue =
                 JsonArguments.parse(requestBody, new TypeToken<Map<String, Object>>() {}.getType(), "requestBody");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Rules(apiClient);
         endpoint.runRuleNow1(ruleUID, requestBodyValue);
-        return 0;
     }
 }

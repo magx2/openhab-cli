@@ -1,7 +1,6 @@
 package org.openhab.cli.runtime.command.items;
 
 import com.google.gson.reflect.TypeToken;
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.client.model.GroupItem;
@@ -18,7 +17,7 @@ import picocli.CommandLine;
         name = "addOrUpdateItemInRegistry",
         description = "Adds a new item to the registry or updates the existing item.",
         mixinStandardHelpOptions = true)
-public class AddOrUpdateItemInRegistry implements Callable<Integer> {
+public class AddOrUpdateItemInRegistry implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -49,15 +48,14 @@ public class AddOrUpdateItemInRegistry implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Items#addOrUpdateItemInRegistry} and returns zero on success. */
+    /** Executes {@link Items#addOrUpdateItemInRegistry}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Items.addOrUpdateItemInRegistry");
         GroupItem groupItemValue = JsonArguments.parse(groupItem, new TypeToken<GroupItem>() {}.getType(), "groupItem");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Items(apiClient);
         var result = endpoint.addOrUpdateItemInRegistry(itemName, groupItemValue, acceptLanguage);
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

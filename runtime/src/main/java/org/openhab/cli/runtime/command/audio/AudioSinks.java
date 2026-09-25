@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.audio;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Audio;
@@ -12,7 +11,7 @@ import picocli.CommandLine;
 /** Get the list of all sinks. */
 @Slf4j
 @CommandLine.Command(name = "audioSinks", description = "Get the list of all sinks.", mixinStandardHelpOptions = true)
-public class AudioSinks implements Callable<Integer> {
+public class AudioSinks implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -33,14 +32,13 @@ public class AudioSinks implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Audio#audioSinks} and returns zero on success. */
+    /** Executes {@link Audio#audioSinks}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Audio.audioSinks");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Audio(apiClient);
         var result = endpoint.audioSinks(acceptLanguage);
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

@@ -2,7 +2,6 @@ package org.openhab.cli.runtime.command.rules;
 
 import com.google.gson.reflect.TypeToken;
 import java.util.List;
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.runtime.JsonArguments;
@@ -17,7 +16,7 @@ import picocli.CommandLine;
         name = "rules",
         description = "Get available rules, optionally filtered by tags and/or prefix.",
         mixinStandardHelpOptions = true)
-public class Rules implements Callable<Integer> {
+public class Rules implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -57,15 +56,14 @@ public class Rules implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link org.openhab.cli.engine.endpoint.Rules#rules} and returns zero on success. */
+    /** Executes {@link org.openhab.cli.engine.endpoint.Rules#rules}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Rules.rules");
         List<String> tagsValue = JsonArguments.parse(tags, new TypeToken<List<String>>() {}.getType(), "tags");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new org.openhab.cli.engine.endpoint.Rules(apiClient);
         var result = endpoint.rules(prefix, tagsValue, summary, staticDataOnly);
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

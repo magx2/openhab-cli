@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.inbox;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Inbox;
@@ -15,7 +14,7 @@ import picocli.CommandLine;
         name = "flagInboxItemAsIgnored",
         description = "Flags a discovery result as ignored for further processing.",
         mixinStandardHelpOptions = true)
-public class FlagInboxItemAsIgnored implements Callable<Integer> {
+public class FlagInboxItemAsIgnored implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -32,13 +31,12 @@ public class FlagInboxItemAsIgnored implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Inbox#flagInboxItemAsIgnored} and returns zero on success. */
+    /** Executes {@link Inbox#flagInboxItemAsIgnored}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Inbox.flagInboxItemAsIgnored");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Inbox(apiClient);
         endpoint.flagInboxItemAsIgnored(thingUID);
-        return 0;
     }
 }

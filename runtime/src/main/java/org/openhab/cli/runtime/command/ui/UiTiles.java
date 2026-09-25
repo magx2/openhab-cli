@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.ui;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Ui;
@@ -12,7 +11,7 @@ import picocli.CommandLine;
 /** Get all registered UI tiles. */
 @Slf4j
 @CommandLine.Command(name = "uiTiles", description = "Get all registered UI tiles.", mixinStandardHelpOptions = true)
-public class UiTiles implements Callable<Integer> {
+public class UiTiles implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -26,14 +25,13 @@ public class UiTiles implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Ui#uiTiles} and returns zero on success. */
+    /** Executes {@link Ui#uiTiles}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Ui.uiTiles");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Ui(apiClient);
         var result = endpoint.uiTiles();
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

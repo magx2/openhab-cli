@@ -1,7 +1,6 @@
 package org.openhab.cli.runtime.command.things;
 
 import com.google.gson.reflect.TypeToken;
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.client.model.Thing;
@@ -15,7 +14,7 @@ import picocli.CommandLine;
 /** Updates a thing. */
 @Slf4j
 @CommandLine.Command(name = "updateThing", description = "Updates a thing.", mixinStandardHelpOptions = true)
-public class UpdateThing implements Callable<Integer> {
+public class UpdateThing implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -46,15 +45,14 @@ public class UpdateThing implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Things#updateThing} and returns zero on success. */
+    /** Executes {@link Things#updateThing}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Things.updateThing");
         Thing thingValue = JsonArguments.parse(thing, new TypeToken<Thing>() {}.getType(), "thing");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Things(apiClient);
         var result = endpoint.updateThing(thingUID, thingValue, acceptLanguage);
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.uuid;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.runtime.Options;
@@ -11,7 +10,7 @@ import picocli.CommandLine;
 /** A unified unique id. */
 @Slf4j
 @CommandLine.Command(name = "uuid", description = "A unified unique id.", mixinStandardHelpOptions = true)
-public class Uuid implements Callable<Integer> {
+public class Uuid implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -25,14 +24,13 @@ public class Uuid implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link org.openhab.cli.engine.endpoint.Uuid#uuid} and returns zero on success. */
+    /** Executes {@link org.openhab.cli.engine.endpoint.Uuid#uuid}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Uuid.uuid");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new org.openhab.cli.engine.endpoint.Uuid(apiClient);
         var result = endpoint.uuid();
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

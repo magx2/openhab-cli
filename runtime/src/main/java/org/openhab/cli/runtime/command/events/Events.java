@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.events;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.runtime.Options;
@@ -11,7 +10,7 @@ import picocli.CommandLine;
 /** Get all events. */
 @Slf4j
 @CommandLine.Command(name = "events", description = "Get all events.", mixinStandardHelpOptions = true)
-public class Events implements Callable<Integer> {
+public class Events implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -28,13 +27,12 @@ public class Events implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link org.openhab.cli.engine.endpoint.Events#events} and returns zero on success. */
+    /** Executes {@link org.openhab.cli.engine.endpoint.Events#events}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Events.events");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new org.openhab.cli.engine.endpoint.Events(apiClient);
         endpoint.events(topics);
-        return 0;
     }
 }

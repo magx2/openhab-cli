@@ -1,7 +1,6 @@
 package org.openhab.cli.runtime.command.fileformat;
 
 import com.google.gson.reflect.TypeToken;
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.FileFormat;
@@ -14,7 +13,7 @@ import picocli.CommandLine;
 /** Create file format. */
 @Slf4j
 @CommandLine.Command(name = "create", description = "Create file format.", mixinStandardHelpOptions = true)
-public class Create implements Callable<Integer> {
+public class Create implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -67,9 +66,9 @@ public class Create implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link FileFormat#create} and returns zero on success. */
+    /** Executes {@link FileFormat#create}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: FileFormat.create");
         org.openhab.cli.client.model.FileFormat fileFormatValue = JsonArguments.parse(
                 fileFormat, new TypeToken<org.openhab.cli.client.model.FileFormat>() {}.getType(), "fileFormat");
@@ -82,6 +81,5 @@ public class Create implements Callable<Integer> {
                 hideChannelLinksAndMetadata,
                 ruleSerializationOption);
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

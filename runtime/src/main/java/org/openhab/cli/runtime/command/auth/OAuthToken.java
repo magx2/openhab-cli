@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.auth;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Auth;
@@ -15,7 +14,7 @@ import picocli.CommandLine;
         name = "oAuthToken",
         description = "Get access and refresh tokens.",
         mixinStandardHelpOptions = true)
-public class OAuthToken implements Callable<Integer> {
+public class OAuthToken implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -63,14 +62,13 @@ public class OAuthToken implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Auth#oAuthToken} and returns zero on success. */
+    /** Executes {@link Auth#oAuthToken}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Auth.oAuthToken");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Auth(apiClient);
         var result = endpoint.oAuthToken(useCookie, grantType, code, redirectUri, clientId, refreshToken, codeVerifier);
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

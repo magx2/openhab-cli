@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.logging;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Logging;
@@ -12,7 +11,7 @@ import picocli.CommandLine;
 /** Get a single logger. */
 @Slf4j
 @CommandLine.Command(name = "logger", description = "Get a single logger.", mixinStandardHelpOptions = true)
-public class Logger implements Callable<Integer> {
+public class Logger implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -33,14 +32,13 @@ public class Logger implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Logging#logger} and returns zero on success. */
+    /** Executes {@link Logging#logger}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Logging.logger");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Logging(apiClient);
         var result = endpoint.logger(loggerName);
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

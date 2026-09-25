@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.things;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Things;
@@ -15,7 +14,7 @@ import picocli.CommandLine;
         name = "thingConfigStatus",
         description = "Gets thing config status.",
         mixinStandardHelpOptions = true)
-public class ThingConfigStatus implements Callable<Integer> {
+public class ThingConfigStatus implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -39,14 +38,13 @@ public class ThingConfigStatus implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Things#thingConfigStatus} and returns zero on success. */
+    /** Executes {@link Things#thingConfigStatus}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Things.thingConfigStatus");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Things(apiClient);
         var result = endpoint.thingConfigStatus(thingUID, acceptLanguage);
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.persistence;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Persistence;
@@ -15,7 +14,7 @@ import picocli.CommandLine;
         name = "persistenceServices",
         description = "Gets a list of persistence services.",
         mixinStandardHelpOptions = true)
-public class PersistenceServices implements Callable<Integer> {
+public class PersistenceServices implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -36,14 +35,13 @@ public class PersistenceServices implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Persistence#persistenceServices} and returns zero on success. */
+    /** Executes {@link Persistence#persistenceServices}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Persistence.persistenceServices");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Persistence(apiClient);
         var result = endpoint.persistenceServices(acceptLanguage);
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

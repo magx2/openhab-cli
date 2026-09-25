@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.things;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Things;
@@ -15,7 +14,7 @@ import picocli.CommandLine;
         name = "updateThingFirmware",
         description = "Update thing firmware.",
         mixinStandardHelpOptions = true)
-public class UpdateThingFirmware implements Callable<Integer> {
+public class UpdateThingFirmware implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -46,13 +45,12 @@ public class UpdateThingFirmware implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Things#updateThingFirmware} and returns zero on success. */
+    /** Executes {@link Things#updateThingFirmware}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Things.updateThingFirmware");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Things(apiClient);
         endpoint.updateThingFirmware(thingUID, firmwareVersion, acceptLanguage);
-        return 0;
     }
 }

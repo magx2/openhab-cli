@@ -14,7 +14,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.DynamicTest;
@@ -96,7 +95,7 @@ class EndpointCommandsTest {
         when(builder.build(any())).thenReturn(apiClient);
         var constructor = operation.command().getDeclaredConstructor(Console.class, ApiClientBuilder.class);
         constructor.setAccessible(true);
-        var command = (Callable<?>) constructor.newInstance(console, builder);
+        var command = (Runnable) constructor.newInstance(console, builder);
         var fields = Arrays.stream(operation.command().getDeclaredFields())
                 .filter(field -> field.isAnnotationPresent(CommandLine.Parameters.class)
                         || field.isAnnotationPresent(CommandLine.Option.class))
@@ -123,7 +122,6 @@ class EndpointCommandsTest {
         }
         flags.add("--");
         flags.addAll(positionals);
-        new CommandLine(command).parseArgs(flags.toArray(String[]::new));
         var returnType = operation.method().getReturnType();
         Object response = returnType == void.class
                 ? null
@@ -145,7 +143,7 @@ class EndpointCommandsTest {
             arguments.set(invocation.getArguments());
             return response;
         }))) {
-            assertEquals(0, command.call());
+            assertEquals(0, new CommandLine(command).execute(flags.toArray(String[]::new)));
             assertEquals(1, mocked.constructed().size());
             assertEquals(operation.method(), invoked.get());
             for (int i = 0; i < expected.length; i++) {

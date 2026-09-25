@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.voice;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Voice;
@@ -15,7 +14,7 @@ import picocli.CommandLine;
         name = "voiceInterpreters",
         description = "Get the list of all interpreters.",
         mixinStandardHelpOptions = true)
-public class VoiceInterpreters implements Callable<Integer> {
+public class VoiceInterpreters implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -36,14 +35,13 @@ public class VoiceInterpreters implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Voice#voiceInterpreters} and returns zero on success. */
+    /** Executes {@link Voice#voiceInterpreters}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Voice.voiceInterpreters");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Voice(apiClient);
         var result = endpoint.voiceInterpreters(acceptLanguage);
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

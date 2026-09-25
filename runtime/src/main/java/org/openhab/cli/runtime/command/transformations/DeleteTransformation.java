@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.transformations;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Transformations;
@@ -15,7 +14,7 @@ import picocli.CommandLine;
         name = "deleteTransformation",
         description = "Get a single transformation",
         mixinStandardHelpOptions = true)
-public class DeleteTransformation implements Callable<Integer> {
+public class DeleteTransformation implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -36,13 +35,12 @@ public class DeleteTransformation implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Transformations#deleteTransformation} and returns zero on success. */
+    /** Executes {@link Transformations#deleteTransformation}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Transformations.deleteTransformation");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Transformations(apiClient);
         endpoint.deleteTransformation(uid);
-        return 0;
     }
 }

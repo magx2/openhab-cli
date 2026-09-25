@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.rules;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Rules;
@@ -15,7 +14,7 @@ import picocli.CommandLine;
         name = "regenerateRule",
         description = "Regenerates the rule from its template.",
         mixinStandardHelpOptions = true)
-public class RegenerateRule implements Callable<Integer> {
+public class RegenerateRule implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -32,13 +31,12 @@ public class RegenerateRule implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Rules#regenerateRule} and returns zero on success. */
+    /** Executes {@link Rules#regenerateRule}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Rules.regenerateRule");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Rules(apiClient);
         endpoint.regenerateRule(ruleUID);
-        return 0;
     }
 }

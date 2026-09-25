@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.thingtypes;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.ThingTypes;
@@ -12,7 +11,7 @@ import picocli.CommandLine;
 /** Gets thing type by UID. */
 @Slf4j
 @CommandLine.Command(name = "thingTypeById", description = "Gets thing type by UID.", mixinStandardHelpOptions = true)
-public class ThingTypeById implements Callable<Integer> {
+public class ThingTypeById implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -40,14 +39,13 @@ public class ThingTypeById implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link ThingTypes#thingTypeById} and returns zero on success. */
+    /** Executes {@link ThingTypes#thingTypeById}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: ThingTypes.thingTypeById");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new ThingTypes(apiClient);
         var result = endpoint.thingTypeById(thingTypeUID, acceptLanguage);
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

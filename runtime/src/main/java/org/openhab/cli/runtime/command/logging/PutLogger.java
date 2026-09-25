@@ -1,7 +1,6 @@
 package org.openhab.cli.runtime.command.logging;
 
 import com.google.gson.reflect.TypeToken;
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.client.model.LoggerInfo;
@@ -15,7 +14,7 @@ import picocli.CommandLine;
 /** Modify or add logger */
 @Slf4j
 @CommandLine.Command(name = "putLogger", description = "Modify or add logger", mixinStandardHelpOptions = true)
-public class PutLogger implements Callable<Integer> {
+public class PutLogger implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -43,15 +42,14 @@ public class PutLogger implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Logging#putLogger} and returns zero on success. */
+    /** Executes {@link Logging#putLogger}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Logging.putLogger");
         LoggerInfo loggerInfoValue =
                 JsonArguments.parse(loggerInfo, new TypeToken<LoggerInfo>() {}.getType(), "loggerInfo");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Logging(apiClient);
         endpoint.putLogger(loggerName, loggerInfoValue);
-        return 0;
     }
 }

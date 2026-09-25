@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.persistence;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Persistence;
@@ -15,7 +14,7 @@ import picocli.CommandLine;
         name = "storeItemDataInPersistenceService",
         description = "Stores Item persistence data into the persistence service.",
         mixinStandardHelpOptions = true)
-public class StoreItemDataInPersistenceService implements Callable<Integer> {
+public class StoreItemDataInPersistenceService implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -58,13 +57,12 @@ public class StoreItemDataInPersistenceService implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Persistence#storeItemDataInPersistenceService} and returns zero on success. */
+    /** Executes {@link Persistence#storeItemDataInPersistenceService}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Persistence.storeItemDataInPersistenceService");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Persistence(apiClient);
         endpoint.storeItemDataInPersistenceService(itemName, time, state, serviceId);
-        return 0;
     }
 }

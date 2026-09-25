@@ -1,7 +1,6 @@
 package org.openhab.cli.runtime.command.ui;
 
 import com.google.gson.reflect.TypeToken;
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.client.model.RootUIComponent;
@@ -18,7 +17,7 @@ import picocli.CommandLine;
         name = "addUIComponentToNamespace",
         description = "Add a UI component in the specified namespace.",
         mixinStandardHelpOptions = true)
-public class AddUIComponentToNamespace implements Callable<Integer> {
+public class AddUIComponentToNamespace implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -42,9 +41,9 @@ public class AddUIComponentToNamespace implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Ui#addUIComponentToNamespace} and returns zero on success. */
+    /** Executes {@link Ui#addUIComponentToNamespace}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Ui.addUIComponentToNamespace");
         RootUIComponent rootUIComponentValue =
                 JsonArguments.parse(rootUIComponent, new TypeToken<RootUIComponent>() {}.getType(), "rootUIComponent");
@@ -52,6 +51,5 @@ public class AddUIComponentToNamespace implements Callable<Integer> {
         var endpoint = new Ui(apiClient);
         var result = endpoint.addUIComponentToNamespace(namespace, rootUIComponentValue);
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

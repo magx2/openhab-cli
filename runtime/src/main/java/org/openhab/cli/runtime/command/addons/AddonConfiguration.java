@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.addons;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Addons;
@@ -15,7 +14,7 @@ import picocli.CommandLine;
         name = "addonConfiguration",
         description = "Get add-on configuration for given add-on ID.",
         mixinStandardHelpOptions = true)
-public class AddonConfiguration implements Callable<Integer> {
+public class AddonConfiguration implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -39,14 +38,13 @@ public class AddonConfiguration implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Addons#addonConfiguration} and returns zero on success. */
+    /** Executes {@link Addons#addonConfiguration}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Addons.addonConfiguration");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Addons(apiClient);
         var result = endpoint.addonConfiguration(addonId, serviceId);
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

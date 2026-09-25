@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.tags;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Tags;
@@ -15,7 +14,7 @@ import picocli.CommandLine;
         name = "removeSemanticTag",
         description = "Removes a semantic tag and its sub tags from the registry.",
         mixinStandardHelpOptions = true)
-public class RemoveSemanticTag implements Callable<Integer> {
+public class RemoveSemanticTag implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -39,13 +38,12 @@ public class RemoveSemanticTag implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Tags#removeSemanticTag} and returns zero on success. */
+    /** Executes {@link Tags#removeSemanticTag}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Tags.removeSemanticTag");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Tags(apiClient);
         endpoint.removeSemanticTag(tagId, acceptLanguage);
-        return 0;
     }
 }

@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.things;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Things;
@@ -15,7 +14,7 @@ import picocli.CommandLine;
         name = "availableFirmwaresForThing",
         description = "Get all available firmwares for provided thing UID",
         mixinStandardHelpOptions = true)
-public class AvailableFirmwaresForThing implements Callable<Integer> {
+public class AvailableFirmwaresForThing implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -39,14 +38,13 @@ public class AvailableFirmwaresForThing implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Things#availableFirmwaresForThing} and returns zero on success. */
+    /** Executes {@link Things#availableFirmwaresForThing}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Things.availableFirmwaresForThing");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Things(apiClient);
         var result = endpoint.availableFirmwaresForThing(thingUID, acceptLanguage);
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

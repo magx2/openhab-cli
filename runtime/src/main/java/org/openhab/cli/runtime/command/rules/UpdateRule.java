@@ -1,7 +1,6 @@
 package org.openhab.cli.runtime.command.rules;
 
 import com.google.gson.reflect.TypeToken;
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.client.model.Rule;
@@ -18,7 +17,7 @@ import picocli.CommandLine;
         name = "updateRule",
         description = "Updates an existing rule corresponding to the given UID.",
         mixinStandardHelpOptions = true)
-public class UpdateRule implements Callable<Integer> {
+public class UpdateRule implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -42,14 +41,13 @@ public class UpdateRule implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Rules#updateRule} and returns zero on success. */
+    /** Executes {@link Rules#updateRule}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Rules.updateRule");
         Rule ruleValue = JsonArguments.parse(rule, new TypeToken<Rule>() {}.getType(), "rule");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Rules(apiClient);
         endpoint.updateRule(ruleUID, ruleValue);
-        return 0;
     }
 }

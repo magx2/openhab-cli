@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.systeminfo;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.SystemInfo;
@@ -15,7 +14,7 @@ import picocli.CommandLine;
         name = "uoMInformation",
         description = "Get all supported dimensions and their system units.",
         mixinStandardHelpOptions = true)
-public class UoMInformation implements Callable<Integer> {
+public class UoMInformation implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -29,14 +28,13 @@ public class UoMInformation implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link SystemInfo#uoMInformation} and returns zero on success. */
+    /** Executes {@link SystemInfo#uoMInformation}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: SystemInfo.uoMInformation");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new SystemInfo(apiClient);
         var result = endpoint.uoMInformation();
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.items;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Items;
@@ -15,7 +14,7 @@ import picocli.CommandLine;
         name = "semanticsHealth",
         description = "Gets configuration problems with item semantics.",
         mixinStandardHelpOptions = true)
-public class SemanticsHealth implements Callable<Integer> {
+public class SemanticsHealth implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -29,14 +28,13 @@ public class SemanticsHealth implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Items#semanticsHealth} and returns zero on success. */
+    /** Executes {@link Items#semanticsHealth}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Items.semanticsHealth");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Items(apiClient);
         var result = endpoint.semanticsHealth();
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

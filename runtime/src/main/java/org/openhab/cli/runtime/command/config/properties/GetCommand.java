@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.config.properties;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.runtime.Options;
@@ -13,7 +12,7 @@ import picocli.CommandLine;
         name = "get",
         description = "Read a property from the CLI configuration file.",
         mixinStandardHelpOptions = true)
-public class GetCommand implements Callable<Integer> {
+public class GetCommand implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -28,11 +27,10 @@ public class GetCommand implements Callable<Integer> {
         this.propertiesReader = propertiesReader;
     }
 
-    /** Reads the requested property and returns zero on success. */
+    /** Reads the requested property. */
     @Override
-    public Integer call() throws Exception {
+    public void run() {
         log.info("Getting property value {}", key);
         propertiesReader.get(options.getPropertiesFile(), key);
-        return 0;
     }
 }

@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.addons;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Addons;
@@ -15,7 +14,7 @@ import picocli.CommandLine;
         name = "installAddonFromURL",
         description = "Installs the add-on from the given URL.",
         mixinStandardHelpOptions = true)
-public class InstallAddonFromURL implements Callable<Integer> {
+public class InstallAddonFromURL implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -36,13 +35,12 @@ public class InstallAddonFromURL implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Addons#installAddonFromURL} and returns zero on success. */
+    /** Executes {@link Addons#installAddonFromURL}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Addons.installAddonFromURL");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Addons(apiClient);
         endpoint.installAddonFromURL(url);
-        return 0;
     }
 }

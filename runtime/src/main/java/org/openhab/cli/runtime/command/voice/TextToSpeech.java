@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.voice;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Voice;
@@ -15,7 +14,7 @@ import picocli.CommandLine;
         name = "textToSpeech",
         description = "Speaks a given text with a given voice through the given audio sink.",
         mixinStandardHelpOptions = true)
-public class TextToSpeech implements Callable<Integer> {
+public class TextToSpeech implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -49,13 +48,12 @@ public class TextToSpeech implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Voice#textToSpeech} and returns zero on success. */
+    /** Executes {@link Voice#textToSpeech}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Voice.textToSpeech");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Voice(apiClient);
         endpoint.textToSpeech(body, voiceid, sinkid, volume);
-        return 0;
     }
 }

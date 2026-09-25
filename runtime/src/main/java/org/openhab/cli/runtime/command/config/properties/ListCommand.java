@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.config.properties;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.runtime.Options;
@@ -14,7 +13,7 @@ import picocli.CommandLine;
         name = "list",
         description = "List CLI configuration properties as JSON, including defaults for unspecified settings.",
         mixinStandardHelpOptions = true)
-public class ListCommand implements Callable<Integer> {
+public class ListCommand implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -31,14 +30,12 @@ public class ListCommand implements Callable<Integer> {
     /**
      * Reads the selected properties file and prints its configuration using the stored pretty-print setting.
      *
-     * @return zero on success
      * @throws java.io.UncheckedIOException if the existing properties file cannot be read
      */
     @Override
-    public Integer call() throws Exception {
+    public void run() {
         log.info("List properties");
         var properties = propertiesReader.read(options.getPropertiesFile());
         console.writeJson(properties, properties.prettyPrint());
-        return 0;
     }
 }

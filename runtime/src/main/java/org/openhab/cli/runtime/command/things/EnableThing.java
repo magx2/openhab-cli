@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.things;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Things;
@@ -15,7 +14,7 @@ import picocli.CommandLine;
         name = "enableThing",
         description = "Sets the thing enabled status.",
         mixinStandardHelpOptions = true)
-public class EnableThing implements Callable<Integer> {
+public class EnableThing implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -42,14 +41,13 @@ public class EnableThing implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Things#enableThing} and returns zero on success. */
+    /** Executes {@link Things#enableThing}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Things.enableThing");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Things(apiClient);
         var result = endpoint.enableThing(thingUID, acceptLanguage, body);
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

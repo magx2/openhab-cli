@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.persistence;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Persistence;
@@ -15,7 +14,7 @@ import picocli.CommandLine;
         name = "deleteItemFromPersistenceService",
         description = "Deletes Item persistence data from a specific persistence service in a given time range.",
         mixinStandardHelpOptions = true)
-public class DeleteItemFromPersistenceService implements Callable<Integer> {
+public class DeleteItemFromPersistenceService implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -57,14 +56,13 @@ public class DeleteItemFromPersistenceService implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Persistence#deleteItemFromPersistenceService} and returns zero on success. */
+    /** Executes {@link Persistence#deleteItemFromPersistenceService}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Persistence.deleteItemFromPersistenceService");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Persistence(apiClient);
         var result = endpoint.deleteItemFromPersistenceService(serviceId, itemName, starttime, endtime);
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

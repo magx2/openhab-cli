@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.rules;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Rules;
@@ -15,7 +14,7 @@ import picocli.CommandLine;
         name = "ruleById",
         description = "Gets the rule corresponding to the given UID.",
         mixinStandardHelpOptions = true)
-public class RuleById implements Callable<Integer> {
+public class RuleById implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -32,14 +31,13 @@ public class RuleById implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Rules#ruleById} and returns zero on success. */
+    /** Executes {@link Rules#ruleById}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Rules.ruleById");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Rules(apiClient);
         var result = endpoint.ruleById(ruleUID);
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.channeltypes;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.ChannelTypes;
@@ -15,7 +14,7 @@ import picocli.CommandLine;
         name = "channelTypeByUID",
         description = "Gets channel type by UID.",
         mixinStandardHelpOptions = true)
-public class ChannelTypeByUID implements Callable<Integer> {
+public class ChannelTypeByUID implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -43,14 +42,13 @@ public class ChannelTypeByUID implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link ChannelTypes#channelTypeByUID} and returns zero on success. */
+    /** Executes {@link ChannelTypes#channelTypeByUID}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: ChannelTypes.channelTypeByUID");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new ChannelTypes(apiClient);
         var result = endpoint.channelTypeByUID(channelTypeUID, acceptLanguage);
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

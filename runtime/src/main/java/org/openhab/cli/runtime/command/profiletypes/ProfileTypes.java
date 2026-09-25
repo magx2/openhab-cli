@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.profiletypes;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.runtime.Options;
@@ -14,7 +13,7 @@ import picocli.CommandLine;
         name = "profileTypes",
         description = "Gets all available profile types.",
         mixinStandardHelpOptions = true)
-public class ProfileTypes implements Callable<Integer> {
+public class ProfileTypes implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -49,14 +48,13 @@ public class ProfileTypes implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link org.openhab.cli.engine.endpoint.ProfileTypes#profileTypes} and returns zero on success. */
+    /** Executes {@link org.openhab.cli.engine.endpoint.ProfileTypes#profileTypes}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: ProfileTypes.profileTypes");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new org.openhab.cli.engine.endpoint.ProfileTypes(apiClient);
         var result = endpoint.profileTypes(acceptLanguage, channelTypeUID, itemType);
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

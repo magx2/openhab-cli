@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.voice;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Voice;
@@ -15,7 +14,7 @@ import picocli.CommandLine;
         name = "stopDialog",
         description = "Stop dialog processing for a given audio source.",
         mixinStandardHelpOptions = true)
-public class StopDialog implements Callable<Integer> {
+public class StopDialog implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -36,13 +35,12 @@ public class StopDialog implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Voice#stopDialog} and returns zero on success. */
+    /** Executes {@link Voice#stopDialog}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Voice.stopDialog");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Voice(apiClient);
         endpoint.stopDialog(sourceId);
-        return 0;
     }
 }

@@ -1,7 +1,6 @@
 package org.openhab.cli.runtime.command.sitemaps;
 
 import com.google.gson.reflect.TypeToken;
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.client.model.SitemapDefinition;
@@ -18,7 +17,7 @@ import picocli.CommandLine;
         name = "addOrUpdateSitemapInRegistry",
         description = "Adds a new sitemap to the registry or updates the existing sitemap.",
         mixinStandardHelpOptions = true)
-public class AddOrUpdateSitemapInRegistry implements Callable<Integer> {
+public class AddOrUpdateSitemapInRegistry implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -46,9 +45,9 @@ public class AddOrUpdateSitemapInRegistry implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Sitemaps#addOrUpdateSitemapInRegistry} and returns zero on success. */
+    /** Executes {@link Sitemaps#addOrUpdateSitemapInRegistry}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Sitemaps.addOrUpdateSitemapInRegistry");
         SitemapDefinition sitemapDefinitionValue = JsonArguments.parse(
                 sitemapDefinition, new TypeToken<SitemapDefinition>() {}.getType(), "sitemapDefinition");
@@ -56,6 +55,5 @@ public class AddOrUpdateSitemapInRegistry implements Callable<Integer> {
         var endpoint = new Sitemaps(apiClient);
         var result = endpoint.addOrUpdateSitemapInRegistry(sitemapname, sitemapDefinitionValue);
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.services;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Services;
@@ -15,7 +14,7 @@ import picocli.CommandLine;
         name = "deleteServiceConfig",
         description = "Deletes a service configuration for given service ID and returns the old configuration.",
         mixinStandardHelpOptions = true)
-public class DeleteServiceConfig implements Callable<Integer> {
+public class DeleteServiceConfig implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -32,14 +31,13 @@ public class DeleteServiceConfig implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Services#deleteServiceConfig} and returns zero on success. */
+    /** Executes {@link Services#deleteServiceConfig}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Services.deleteServiceConfig");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Services(apiClient);
         var result = endpoint.deleteServiceConfig(serviceId);
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

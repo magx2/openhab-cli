@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.discovery;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Discovery;
@@ -15,7 +14,7 @@ import picocli.CommandLine;
         name = "bindingsWithDiscoverySupport",
         description = "Gets all bindings that support discovery.",
         mixinStandardHelpOptions = true)
-public class BindingsWithDiscoverySupport implements Callable<Integer> {
+public class BindingsWithDiscoverySupport implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -29,14 +28,13 @@ public class BindingsWithDiscoverySupport implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Discovery#bindingsWithDiscoverySupport} and returns zero on success. */
+    /** Executes {@link Discovery#bindingsWithDiscoverySupport}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Discovery.bindingsWithDiscoverySupport");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Discovery(apiClient);
         var result = endpoint.bindingsWithDiscoverySupport();
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

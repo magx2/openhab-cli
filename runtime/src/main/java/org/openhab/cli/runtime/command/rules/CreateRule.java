@@ -1,7 +1,6 @@
 package org.openhab.cli.runtime.command.rules;
 
 import com.google.gson.reflect.TypeToken;
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.client.model.Rule;
@@ -15,7 +14,7 @@ import picocli.CommandLine;
 /** Creates a rule. */
 @Slf4j
 @CommandLine.Command(name = "createRule", description = "Creates a rule.", mixinStandardHelpOptions = true)
-public class CreateRule implements Callable<Integer> {
+public class CreateRule implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -36,14 +35,13 @@ public class CreateRule implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Rules#createRule} and returns zero on success. */
+    /** Executes {@link Rules#createRule}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Rules.createRule");
         Rule ruleValue = JsonArguments.parse(rule, new TypeToken<Rule>() {}.getType(), "rule");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Rules(apiClient);
         endpoint.createRule(ruleValue);
-        return 0;
     }
 }

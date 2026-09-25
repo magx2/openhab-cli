@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.tags;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Tags;
@@ -15,7 +14,7 @@ import picocli.CommandLine;
         name = "semanticTags",
         description = "Get all available semantic tags.",
         mixinStandardHelpOptions = true)
-public class SemanticTags implements Callable<Integer> {
+public class SemanticTags implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -36,14 +35,13 @@ public class SemanticTags implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Tags#semanticTags} and returns zero on success. */
+    /** Executes {@link Tags#semanticTags}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Tags.semanticTags");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Tags(apiClient);
         var result = endpoint.semanticTags(acceptLanguage);
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

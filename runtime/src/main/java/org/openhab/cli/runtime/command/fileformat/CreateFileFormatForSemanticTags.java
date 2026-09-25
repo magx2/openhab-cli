@@ -2,7 +2,6 @@ package org.openhab.cli.runtime.command.fileformat;
 
 import com.google.gson.reflect.TypeToken;
 import java.util.List;
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.FileFormat;
@@ -18,7 +17,7 @@ import picocli.CommandLine;
         name = "createFileFormatForSemanticTags",
         description = "Create file format for a list of semantic tags in registry.",
         mixinStandardHelpOptions = true)
-public class CreateFileFormatForSemanticTags implements Callable<Integer> {
+public class CreateFileFormatForSemanticTags implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -55,9 +54,9 @@ public class CreateFileFormatForSemanticTags implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link FileFormat#createFileFormatForSemanticTags} and returns zero on success. */
+    /** Executes {@link FileFormat#createFileFormatForSemanticTags}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: FileFormat.createFileFormatForSemanticTags");
         List<String> requestBodyValue =
                 JsonArguments.parse(requestBody, new TypeToken<List<String>>() {}.getType(), "requestBody");
@@ -65,6 +64,5 @@ public class CreateFileFormatForSemanticTags implements Callable<Integer> {
         var endpoint = new FileFormat(apiClient);
         var result = endpoint.createFileFormatForSemanticTags(hideNonEditableTags, hideDefaultTags, requestBodyValue);
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

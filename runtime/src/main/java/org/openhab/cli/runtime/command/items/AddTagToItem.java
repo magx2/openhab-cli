@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.items;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Items;
@@ -12,7 +11,7 @@ import picocli.CommandLine;
 /** Adds a tag to an item. */
 @Slf4j
 @CommandLine.Command(name = "addTagToItem", description = "Adds a tag to an item.", mixinStandardHelpOptions = true)
-public class AddTagToItem implements Callable<Integer> {
+public class AddTagToItem implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -32,13 +31,12 @@ public class AddTagToItem implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Items#addTagToItem} and returns zero on success. */
+    /** Executes {@link Items#addTagToItem}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Items.addTagToItem");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Items(apiClient);
         endpoint.addTagToItem(itemName, tag);
-        return 0;
     }
 }

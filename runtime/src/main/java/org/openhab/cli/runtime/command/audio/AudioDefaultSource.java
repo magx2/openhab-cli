@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.audio;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Audio;
@@ -15,7 +14,7 @@ import picocli.CommandLine;
         name = "audioDefaultSource",
         description = "Get the default source if defined or the first available source.",
         mixinStandardHelpOptions = true)
-public class AudioDefaultSource implements Callable<Integer> {
+public class AudioDefaultSource implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -36,14 +35,13 @@ public class AudioDefaultSource implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Audio#audioDefaultSource} and returns zero on success. */
+    /** Executes {@link Audio#audioDefaultSource}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Audio.audioDefaultSource");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Audio(apiClient);
         var result = endpoint.audioDefaultSource(acceptLanguage);
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.auth;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Auth;
@@ -15,7 +14,7 @@ import picocli.CommandLine;
         name = "removeApiToken",
         description = "Revoke a specified API token associated to the authenticated user.",
         mixinStandardHelpOptions = true)
-public class RemoveApiToken implements Callable<Integer> {
+public class RemoveApiToken implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -32,13 +31,12 @@ public class RemoveApiToken implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Auth#removeApiToken} and returns zero on success. */
+    /** Executes {@link Auth#removeApiToken}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Auth.removeApiToken");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Auth(apiClient);
         endpoint.removeApiToken(name);
-        return 0;
     }
 }

@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.items;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Items;
@@ -15,7 +14,7 @@ import picocli.CommandLine;
         name = "removeItemFromRegistry",
         description = "Removes an item from the registry.",
         mixinStandardHelpOptions = true)
-public class RemoveItemFromRegistry implements Callable<Integer> {
+public class RemoveItemFromRegistry implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -32,13 +31,12 @@ public class RemoveItemFromRegistry implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Items#removeItemFromRegistry} and returns zero on success. */
+    /** Executes {@link Items#removeItemFromRegistry}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Items.removeItemFromRegistry");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Items(apiClient);
         endpoint.removeItemFromRegistry(itemName);
-        return 0;
     }
 }

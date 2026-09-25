@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.sitemaps;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.runtime.Options;
@@ -11,7 +10,7 @@ import picocli.CommandLine;
 /** Get all available sitemaps. */
 @Slf4j
 @CommandLine.Command(name = "sitemaps", description = "Get all available sitemaps.", mixinStandardHelpOptions = true)
-public class Sitemaps implements Callable<Integer> {
+public class Sitemaps implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -25,14 +24,13 @@ public class Sitemaps implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link org.openhab.cli.engine.endpoint.Sitemaps#sitemaps} and returns zero on success. */
+    /** Executes {@link org.openhab.cli.engine.endpoint.Sitemaps#sitemaps}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Sitemaps.sitemaps");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new org.openhab.cli.engine.endpoint.Sitemaps(apiClient);
         var result = endpoint.sitemaps();
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

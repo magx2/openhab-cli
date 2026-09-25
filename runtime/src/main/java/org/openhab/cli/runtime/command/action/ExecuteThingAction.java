@@ -2,7 +2,6 @@ package org.openhab.cli.runtime.command.action;
 
 import com.google.gson.reflect.TypeToken;
 import java.util.Map;
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Action;
@@ -18,7 +17,7 @@ import picocli.CommandLine;
         name = "executeThingAction",
         description = "Executes a thing action.",
         mixinStandardHelpOptions = true)
-public class ExecuteThingAction implements Callable<Integer> {
+public class ExecuteThingAction implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -57,9 +56,9 @@ public class ExecuteThingAction implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Action#executeThingAction} and returns zero on success. */
+    /** Executes {@link Action#executeThingAction}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Action.executeThingAction");
         Map<String, Object> requestBodyValue =
                 JsonArguments.parse(requestBody, new TypeToken<Map<String, Object>>() {}.getType(), "requestBody");
@@ -67,6 +66,5 @@ public class ExecuteThingAction implements Callable<Integer> {
         var endpoint = new Action(apiClient);
         var result = endpoint.executeThingAction(thingUID, actionUid, acceptLanguage, requestBodyValue);
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

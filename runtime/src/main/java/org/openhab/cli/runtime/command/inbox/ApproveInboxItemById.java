@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.inbox;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Inbox;
@@ -15,7 +14,7 @@ import picocli.CommandLine;
         name = "approveInboxItemById",
         description = "Approves the discovery result by adding the thing to the registry.",
         mixinStandardHelpOptions = true)
-public class ApproveInboxItemById implements Callable<Integer> {
+public class ApproveInboxItemById implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -49,13 +48,12 @@ public class ApproveInboxItemById implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Inbox#approveInboxItemById} and returns zero on success. */
+    /** Executes {@link Inbox#approveInboxItemById}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Inbox.approveInboxItemById");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Inbox(apiClient);
         endpoint.approveInboxItemById(thingUID, acceptLanguage, newThingId, body);
-        return 0;
     }
 }

@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.addons;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Addons;
@@ -15,7 +14,7 @@ import picocli.CommandLine;
         name = "suggestedAddons",
         description = "Get suggested add-ons to be installed.",
         mixinStandardHelpOptions = true)
-public class SuggestedAddons implements Callable<Integer> {
+public class SuggestedAddons implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -36,14 +35,13 @@ public class SuggestedAddons implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Addons#suggestedAddons} and returns zero on success. */
+    /** Executes {@link Addons#suggestedAddons}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Addons.suggestedAddons");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Addons(apiClient);
         var result = endpoint.suggestedAddons(acceptLanguage);
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

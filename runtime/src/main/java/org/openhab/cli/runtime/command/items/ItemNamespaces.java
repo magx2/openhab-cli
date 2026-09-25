@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.items;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Items;
@@ -15,7 +14,7 @@ import picocli.CommandLine;
         name = "itemNamespaces",
         description = "Gets the namespace of an item.",
         mixinStandardHelpOptions = true)
-public class ItemNamespaces implements Callable<Integer> {
+public class ItemNamespaces implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -39,14 +38,13 @@ public class ItemNamespaces implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Items#itemNamespaces} and returns zero on success. */
+    /** Executes {@link Items#itemNamespaces}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Items.itemNamespaces");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Items(apiClient);
         var result = endpoint.itemNamespaces(itemName, acceptLanguage);
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

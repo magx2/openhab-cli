@@ -1,7 +1,6 @@
 package org.openhab.cli.runtime.command.ui;
 
 import com.google.gson.reflect.TypeToken;
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.client.model.RootUIComponent;
@@ -18,7 +17,7 @@ import picocli.CommandLine;
         name = "updateUIComponentInNamespace",
         description = "Update a specific UI component in the specified namespace.",
         mixinStandardHelpOptions = true)
-public class UpdateUIComponentInNamespace implements Callable<Integer> {
+public class UpdateUIComponentInNamespace implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -45,9 +44,9 @@ public class UpdateUIComponentInNamespace implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Ui#updateUIComponentInNamespace} and returns zero on success. */
+    /** Executes {@link Ui#updateUIComponentInNamespace}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Ui.updateUIComponentInNamespace");
         RootUIComponent rootUIComponentValue =
                 JsonArguments.parse(rootUIComponent, new TypeToken<RootUIComponent>() {}.getType(), "rootUIComponent");
@@ -55,6 +54,5 @@ public class UpdateUIComponentInNamespace implements Callable<Integer> {
         var endpoint = new Ui(apiClient);
         var result = endpoint.updateUIComponentInNamespace(namespace, componentUID, rootUIComponentValue);
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.audio;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Audio;
@@ -15,7 +14,7 @@ import picocli.CommandLine;
         name = "audioDefaultSink",
         description = "Get the default sink if defined or the first available sink.",
         mixinStandardHelpOptions = true)
-public class AudioDefaultSink implements Callable<Integer> {
+public class AudioDefaultSink implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -36,14 +35,13 @@ public class AudioDefaultSink implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Audio#audioDefaultSink} and returns zero on success. */
+    /** Executes {@link Audio#audioDefaultSink}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Audio.audioDefaultSink");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Audio(apiClient);
         var result = endpoint.audioDefaultSink(acceptLanguage);
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

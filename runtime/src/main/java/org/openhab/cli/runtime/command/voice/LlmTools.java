@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.voice;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Voice;
@@ -12,7 +11,7 @@ import picocli.CommandLine;
 /** Get the list of all LLM tools. */
 @Slf4j
 @CommandLine.Command(name = "llmTools", description = "Get the list of all LLM tools.", mixinStandardHelpOptions = true)
-public class LlmTools implements Callable<Integer> {
+public class LlmTools implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -33,14 +32,13 @@ public class LlmTools implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Voice#llmTools} and returns zero on success. */
+    /** Executes {@link Voice#llmTools}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Voice.llmTools");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Voice(apiClient);
         var result = endpoint.llmTools(acceptLanguage);
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

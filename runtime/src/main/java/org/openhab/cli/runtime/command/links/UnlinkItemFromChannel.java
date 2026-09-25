@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.links;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Links;
@@ -15,7 +14,7 @@ import picocli.CommandLine;
         name = "unlinkItemFromChannel",
         description = "Unlinks an item from a channel.",
         mixinStandardHelpOptions = true)
-public class UnlinkItemFromChannel implements Callable<Integer> {
+public class UnlinkItemFromChannel implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -39,13 +38,12 @@ public class UnlinkItemFromChannel implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Links#unlinkItemFromChannel} and returns zero on success. */
+    /** Executes {@link Links#unlinkItemFromChannel}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Links.unlinkItemFromChannel");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Links(apiClient);
         endpoint.unlinkItemFromChannel(itemName, channelUID);
-        return 0;
     }
 }

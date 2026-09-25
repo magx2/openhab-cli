@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.systeminfo;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.SystemInfo;
@@ -15,7 +14,7 @@ import picocli.CommandLine;
         name = "systemInformation",
         description = "Gets information about the system.",
         mixinStandardHelpOptions = true)
-public class SystemInformation implements Callable<Integer> {
+public class SystemInformation implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -29,14 +28,13 @@ public class SystemInformation implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link SystemInfo#systemInformation} and returns zero on success. */
+    /** Executes {@link SystemInfo#systemInformation}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: SystemInfo.systemInformation");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new SystemInfo(apiClient);
         var result = endpoint.systemInformation();
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

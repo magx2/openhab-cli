@@ -2,7 +2,6 @@ package org.openhab.cli.runtime.command.addons;
 
 import com.google.gson.reflect.TypeToken;
 import java.util.Map;
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Addons;
@@ -18,7 +17,7 @@ import picocli.CommandLine;
         name = "updateAddonConfiguration",
         description = "Updates an add-on configuration for given ID and returns the old configuration.",
         mixinStandardHelpOptions = true)
-public class UpdateAddonConfiguration implements Callable<Integer> {
+public class UpdateAddonConfiguration implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -49,9 +48,9 @@ public class UpdateAddonConfiguration implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Addons#updateAddonConfiguration} and returns zero on success. */
+    /** Executes {@link Addons#updateAddonConfiguration}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Addons.updateAddonConfiguration");
         Map<String, Object> requestBodyValue =
                 JsonArguments.parse(requestBody, new TypeToken<Map<String, Object>>() {}.getType(), "requestBody");
@@ -59,6 +58,5 @@ public class UpdateAddonConfiguration implements Callable<Integer> {
         var endpoint = new Addons(apiClient);
         var result = endpoint.updateAddonConfiguration(addonId, serviceId, requestBodyValue);
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

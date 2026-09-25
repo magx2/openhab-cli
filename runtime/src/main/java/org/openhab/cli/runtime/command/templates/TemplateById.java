@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.templates;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Templates;
@@ -15,7 +14,7 @@ import picocli.CommandLine;
         name = "templateById",
         description = "Gets a template corresponding to the given UID.",
         mixinStandardHelpOptions = true)
-public class TemplateById implements Callable<Integer> {
+public class TemplateById implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -43,14 +42,13 @@ public class TemplateById implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Templates#templateById} and returns zero on success. */
+    /** Executes {@link Templates#templateById}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Templates.templateById");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Templates(apiClient);
         var result = endpoint.templateById(templateUID, acceptLanguage);
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

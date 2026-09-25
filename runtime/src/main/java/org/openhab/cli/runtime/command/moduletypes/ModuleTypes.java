@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.moduletypes;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.runtime.Options;
@@ -14,7 +13,7 @@ import picocli.CommandLine;
         name = "moduleTypes",
         description = "Get all available module types.",
         mixinStandardHelpOptions = true)
-public class ModuleTypes implements Callable<Integer> {
+public class ModuleTypes implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -57,14 +56,13 @@ public class ModuleTypes implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link org.openhab.cli.engine.endpoint.ModuleTypes#moduleTypes} and returns zero on success. */
+    /** Executes {@link org.openhab.cli.engine.endpoint.ModuleTypes#moduleTypes}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: ModuleTypes.moduleTypes");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new org.openhab.cli.engine.endpoint.ModuleTypes(apiClient);
         var result = endpoint.moduleTypes(acceptLanguage, tags, type, asMap);
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

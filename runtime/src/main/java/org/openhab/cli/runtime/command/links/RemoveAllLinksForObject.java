@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.links;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Links;
@@ -15,7 +14,7 @@ import picocli.CommandLine;
         name = "removeAllLinksForObject",
         description = "Delete all links that refer to an item or thing.",
         mixinStandardHelpOptions = true)
-public class RemoveAllLinksForObject implements Callable<Integer> {
+public class RemoveAllLinksForObject implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -36,13 +35,12 @@ public class RemoveAllLinksForObject implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Links#removeAllLinksForObject} and returns zero on success. */
+    /** Executes {@link Links#removeAllLinksForObject}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Links.removeAllLinksForObject");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Links(apiClient);
         endpoint.removeAllLinksForObject(_object);
-        return 0;
     }
 }

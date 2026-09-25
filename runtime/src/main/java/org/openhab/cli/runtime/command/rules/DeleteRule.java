@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.rules;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Rules;
@@ -15,7 +14,7 @@ import picocli.CommandLine;
         name = "deleteRule",
         description = "Removes an existing rule corresponding to the given UID.",
         mixinStandardHelpOptions = true)
-public class DeleteRule implements Callable<Integer> {
+public class DeleteRule implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -32,13 +31,12 @@ public class DeleteRule implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Rules#deleteRule} and returns zero on success. */
+    /** Executes {@link Rules#deleteRule}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Rules.deleteRule");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Rules(apiClient);
         endpoint.deleteRule(ruleUID);
-        return 0;
     }
 }

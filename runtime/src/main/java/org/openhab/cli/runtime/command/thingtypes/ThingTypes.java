@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.thingtypes;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.runtime.Options;
@@ -14,7 +13,7 @@ import picocli.CommandLine;
         name = "thingTypes",
         description = "Gets all available thing types without config description, channels and properties.",
         mixinStandardHelpOptions = true)
-public class ThingTypes implements Callable<Integer> {
+public class ThingTypes implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -42,14 +41,13 @@ public class ThingTypes implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link org.openhab.cli.engine.endpoint.ThingTypes#thingTypes} and returns zero on success. */
+    /** Executes {@link org.openhab.cli.engine.endpoint.ThingTypes#thingTypes}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: ThingTypes.thingTypes");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new org.openhab.cli.engine.endpoint.ThingTypes(apiClient);
         var result = endpoint.thingTypes(acceptLanguage, bindingId);
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

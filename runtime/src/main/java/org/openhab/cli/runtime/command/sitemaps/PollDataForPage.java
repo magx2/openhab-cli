@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.sitemaps;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Sitemaps;
@@ -15,7 +14,7 @@ import picocli.CommandLine;
         name = "pollDataForPage",
         description = "Polls the data for one page of a sitemap.",
         mixinStandardHelpOptions = true)
-public class PollDataForPage implements Callable<Integer> {
+public class PollDataForPage implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -61,14 +60,13 @@ public class PollDataForPage implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Sitemaps#pollDataForPage} and returns zero on success. */
+    /** Executes {@link Sitemaps#pollDataForPage}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Sitemaps.pollDataForPage");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Sitemaps(apiClient);
         var result = endpoint.pollDataForPage(sitemapname, pageid, acceptLanguage, subscriptionid, includeHidden);
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

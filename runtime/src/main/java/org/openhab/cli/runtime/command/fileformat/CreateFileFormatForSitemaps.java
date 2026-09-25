@@ -2,7 +2,6 @@ package org.openhab.cli.runtime.command.fileformat;
 
 import com.google.gson.reflect.TypeToken;
 import java.util.List;
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.FileFormat;
@@ -18,7 +17,7 @@ import picocli.CommandLine;
         name = "createFileFormatForSitemaps",
         description = "Create file format for a list of sitemaps in registry.",
         mixinStandardHelpOptions = true)
-public class CreateFileFormatForSitemaps implements Callable<Integer> {
+public class CreateFileFormatForSitemaps implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -40,9 +39,9 @@ public class CreateFileFormatForSitemaps implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link FileFormat#createFileFormatForSitemaps} and returns zero on success. */
+    /** Executes {@link FileFormat#createFileFormatForSitemaps}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: FileFormat.createFileFormatForSitemaps");
         List<String> requestBodyValue =
                 JsonArguments.parse(requestBody, new TypeToken<List<String>>() {}.getType(), "requestBody");
@@ -50,6 +49,5 @@ public class CreateFileFormatForSitemaps implements Callable<Integer> {
         var endpoint = new FileFormat(apiClient);
         var result = endpoint.createFileFormatForSitemaps(requestBodyValue);
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.fileformat;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.FileFormat;
@@ -12,7 +11,7 @@ import picocli.CommandLine;
 /** Parse file format. */
 @Slf4j
 @CommandLine.Command(name = "parse", description = "Parse file format.", mixinStandardHelpOptions = true)
-public class Parse implements Callable<Integer> {
+public class Parse implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -33,14 +32,13 @@ public class Parse implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link FileFormat#parse} and returns zero on success. */
+    /** Executes {@link FileFormat#parse}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: FileFormat.parse");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new FileFormat(apiClient);
         var result = endpoint.parse(body);
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

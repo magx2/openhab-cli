@@ -1,7 +1,6 @@
 package org.openhab.cli.runtime.command.items;
 
 import com.google.gson.reflect.TypeToken;
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.client.model.Metadata;
@@ -18,7 +17,7 @@ import picocli.CommandLine;
         name = "addMetadataToItem",
         description = "Adds metadata to an item.",
         mixinStandardHelpOptions = true)
-public class AddMetadataToItem implements Callable<Integer> {
+public class AddMetadataToItem implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -45,14 +44,13 @@ public class AddMetadataToItem implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Items#addMetadataToItem} and returns zero on success. */
+    /** Executes {@link Items#addMetadataToItem}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Items.addMetadataToItem");
         Metadata metadataValue = JsonArguments.parse(metadata, new TypeToken<Metadata>() {}.getType(), "metadata");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Items(apiClient);
         endpoint.addMetadataToItem(itemName, namespace, metadataValue);
-        return 0;
     }
 }

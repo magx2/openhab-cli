@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.inbox;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Inbox;
@@ -15,7 +14,7 @@ import picocli.CommandLine;
         name = "removeItemFromInbox",
         description = "Removes the discovery result from the inbox.",
         mixinStandardHelpOptions = true)
-public class RemoveItemFromInbox implements Callable<Integer> {
+public class RemoveItemFromInbox implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -32,13 +31,12 @@ public class RemoveItemFromInbox implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Inbox#removeItemFromInbox} and returns zero on success. */
+    /** Executes {@link Inbox#removeItemFromInbox}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Inbox.removeItemFromInbox");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Inbox(apiClient);
         endpoint.removeItemFromInbox(thingUID);
-        return 0;
     }
 }

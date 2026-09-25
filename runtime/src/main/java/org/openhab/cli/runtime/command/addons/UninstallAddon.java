@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.addons;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Addons;
@@ -15,7 +14,7 @@ import picocli.CommandLine;
         name = "uninstallAddon",
         description = "Uninstalls the add-on with the given ID.",
         mixinStandardHelpOptions = true)
-public class UninstallAddon implements Callable<Integer> {
+public class UninstallAddon implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -39,13 +38,12 @@ public class UninstallAddon implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Addons#uninstallAddon} and returns zero on success. */
+    /** Executes {@link Addons#uninstallAddon}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Addons.uninstallAddon");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Addons(apiClient);
         endpoint.uninstallAddon(addonId, serviceId);
-        return 0;
     }
 }

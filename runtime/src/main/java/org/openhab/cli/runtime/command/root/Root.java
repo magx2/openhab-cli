@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.root;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.runtime.Options;
@@ -14,7 +13,7 @@ import picocli.CommandLine;
         name = "root",
         description = "Gets information about the runtime, the API version and links to resources.",
         mixinStandardHelpOptions = true)
-public class Root implements Callable<Integer> {
+public class Root implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -28,14 +27,13 @@ public class Root implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link org.openhab.cli.engine.endpoint.Root#root} and returns zero on success. */
+    /** Executes {@link org.openhab.cli.engine.endpoint.Root#root}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Root.root");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new org.openhab.cli.engine.endpoint.Root(apiClient);
         var result = endpoint.root();
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

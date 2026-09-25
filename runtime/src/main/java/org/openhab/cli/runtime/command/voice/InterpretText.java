@@ -2,7 +2,6 @@ package org.openhab.cli.runtime.command.voice;
 
 import com.google.gson.reflect.TypeToken;
 import java.util.List;
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Voice;
@@ -18,7 +17,7 @@ import picocli.CommandLine;
         name = "interpretText",
         description = "Sends a text to a given human language interpreter(s).",
         mixinStandardHelpOptions = true)
-public class InterpretText implements Callable<Integer> {
+public class InterpretText implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -74,9 +73,9 @@ public class InterpretText implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Voice#interpretText} and returns zero on success. */
+    /** Executes {@link Voice#interpretText}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Voice.interpretText");
         List<String> idsValue = JsonArguments.parse(ids, new TypeToken<List<String>>() {}.getType(), "ids");
         List<String> llmToolsValue =
@@ -85,6 +84,5 @@ public class InterpretText implements Callable<Integer> {
         var endpoint = new Voice(apiClient);
         var result = endpoint.interpretText(idsValue, body, acceptLanguage, conversation, llmToolsValue, locationItem);
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

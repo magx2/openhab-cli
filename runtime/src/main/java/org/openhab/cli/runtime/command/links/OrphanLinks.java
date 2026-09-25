@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.links;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Links;
@@ -15,7 +14,7 @@ import picocli.CommandLine;
         name = "orphanLinks",
         description = "Get orphan links between items and broken/non-existent thing channels",
         mixinStandardHelpOptions = true)
-public class OrphanLinks implements Callable<Integer> {
+public class OrphanLinks implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -29,14 +28,13 @@ public class OrphanLinks implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Links#orphanLinks} and returns zero on success. */
+    /** Executes {@link Links#orphanLinks}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Links.orphanLinks");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Links(apiClient);
         var result = endpoint.orphanLinks();
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

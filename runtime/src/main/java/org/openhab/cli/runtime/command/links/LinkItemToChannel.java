@@ -1,7 +1,6 @@
 package org.openhab.cli.runtime.command.links;
 
 import com.google.gson.reflect.TypeToken;
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.client.model.ItemChannelLink;
@@ -18,7 +17,7 @@ import picocli.CommandLine;
         name = "linkItemToChannel",
         description = "Links an item to a channel.",
         mixinStandardHelpOptions = true)
-public class LinkItemToChannel implements Callable<Integer> {
+public class LinkItemToChannel implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -49,15 +48,14 @@ public class LinkItemToChannel implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Links#linkItemToChannel} and returns zero on success. */
+    /** Executes {@link Links#linkItemToChannel}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Links.linkItemToChannel");
         ItemChannelLink itemChannelLinkValue =
                 JsonArguments.parse(itemChannelLink, new TypeToken<ItemChannelLink>() {}.getType(), "itemChannelLink");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Links(apiClient);
         endpoint.linkItemToChannel(itemName, channelUID, itemChannelLinkValue);
-        return 0;
     }
 }

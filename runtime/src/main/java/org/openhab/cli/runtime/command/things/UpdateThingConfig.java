@@ -2,7 +2,6 @@ package org.openhab.cli.runtime.command.things;
 
 import com.google.gson.reflect.TypeToken;
 import java.util.Map;
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Things;
@@ -18,7 +17,7 @@ import picocli.CommandLine;
         name = "updateThingConfig",
         description = "Updates thing's configuration.",
         mixinStandardHelpOptions = true)
-public class UpdateThingConfig implements Callable<Integer> {
+public class UpdateThingConfig implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -49,9 +48,9 @@ public class UpdateThingConfig implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Things#updateThingConfig} and returns zero on success. */
+    /** Executes {@link Things#updateThingConfig}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Things.updateThingConfig");
         Map<String, Object> requestBodyValue =
                 JsonArguments.parse(requestBody, new TypeToken<Map<String, Object>>() {}.getType(), "requestBody");
@@ -59,6 +58,5 @@ public class UpdateThingConfig implements Callable<Integer> {
         var endpoint = new Things(apiClient);
         var result = endpoint.updateThingConfig(thingUID, acceptLanguage, requestBodyValue);
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

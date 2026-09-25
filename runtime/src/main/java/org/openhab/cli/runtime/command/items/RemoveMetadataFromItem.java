@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.items;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Items;
@@ -15,7 +14,7 @@ import picocli.CommandLine;
         name = "removeMetadataFromItem",
         description = "Removes metadata in a specific namespace from an item.",
         mixinStandardHelpOptions = true)
-public class RemoveMetadataFromItem implements Callable<Integer> {
+public class RemoveMetadataFromItem implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -35,13 +34,12 @@ public class RemoveMetadataFromItem implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Items#removeMetadataFromItem} and returns zero on success. */
+    /** Executes {@link Items#removeMetadataFromItem}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Items.removeMetadataFromItem");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Items(apiClient);
         endpoint.removeMetadataFromItem(itemName, namespace);
-        return 0;
     }
 }

@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.voice;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Voice;
@@ -15,7 +14,7 @@ import picocli.CommandLine;
         name = "startDialog",
         description = "Start dialog processing for a given audio source.",
         mixinStandardHelpOptions = true)
-public class StartDialog implements Callable<Integer> {
+public class StartDialog implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -95,14 +94,13 @@ public class StartDialog implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Voice#startDialog} and returns zero on success. */
+    /** Executes {@link Voice#startDialog}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Voice.startDialog");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Voice(apiClient);
         endpoint.startDialog(
                 acceptLanguage, sourceId, ksId, sttId, ttsId, voiceId, hliIds, sinkId, keyword, listeningItem);
-        return 0;
     }
 }

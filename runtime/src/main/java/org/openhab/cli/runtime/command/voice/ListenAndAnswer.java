@@ -2,7 +2,6 @@ package org.openhab.cli.runtime.command.voice;
 
 import com.google.gson.reflect.TypeToken;
 import java.util.List;
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Voice;
@@ -18,7 +17,7 @@ import picocli.CommandLine;
         name = "listenAndAnswer",
         description = "Executes a simple dialog sequence without keyword spotting for a given audio source.",
         mixinStandardHelpOptions = true)
-public class ListenAndAnswer implements Callable<Integer> {
+public class ListenAndAnswer implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -88,14 +87,13 @@ public class ListenAndAnswer implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Voice#listenAndAnswer} and returns zero on success. */
+    /** Executes {@link Voice#listenAndAnswer}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Voice.listenAndAnswer");
         List<String> hliIdsValue = JsonArguments.parse(hliIds, new TypeToken<List<String>>() {}.getType(), "hliIds");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Voice(apiClient);
         endpoint.listenAndAnswer(acceptLanguage, sourceId, sttId, ttsId, voiceId, hliIdsValue, sinkId, listeningItem);
-        return 0;
     }
 }

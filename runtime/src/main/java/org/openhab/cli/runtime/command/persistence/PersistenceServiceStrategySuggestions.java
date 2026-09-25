@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.persistence;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Persistence;
@@ -15,7 +14,7 @@ import picocli.CommandLine;
         name = "persistenceServiceStrategySuggestions",
         description = "Gets a persistence service suggested strategies.",
         mixinStandardHelpOptions = true)
-public class PersistenceServiceStrategySuggestions implements Callable<Integer> {
+public class PersistenceServiceStrategySuggestions implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -36,14 +35,13 @@ public class PersistenceServiceStrategySuggestions implements Callable<Integer> 
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Persistence#persistenceServiceStrategySuggestions} and returns zero on success. */
+    /** Executes {@link Persistence#persistenceServiceStrategySuggestions}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Persistence.persistenceServiceStrategySuggestions");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Persistence(apiClient);
         var result = endpoint.persistenceServiceStrategySuggestions(serviceId);
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

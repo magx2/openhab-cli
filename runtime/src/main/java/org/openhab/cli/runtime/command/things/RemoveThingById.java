@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.things;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Things;
@@ -16,7 +15,7 @@ import picocli.CommandLine;
         description =
                 "Removes a thing from the registry. Set 'force' to __true__ if you want the thing to be removed immediately.",
         mixinStandardHelpOptions = true)
-public class RemoveThingById implements Callable<Integer> {
+public class RemoveThingById implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -47,13 +46,12 @@ public class RemoveThingById implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Things#removeThingById} and returns zero on success. */
+    /** Executes {@link Things#removeThingById}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Things.removeThingById");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Things(apiClient);
         endpoint.removeThingById(thingUID, acceptLanguage, force);
-        return 0;
     }
 }

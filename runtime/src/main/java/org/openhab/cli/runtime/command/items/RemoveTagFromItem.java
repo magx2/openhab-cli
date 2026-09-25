@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.items;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Items;
@@ -15,7 +14,7 @@ import picocli.CommandLine;
         name = "removeTagFromItem",
         description = "Removes a tag from an item.",
         mixinStandardHelpOptions = true)
-public class RemoveTagFromItem implements Callable<Integer> {
+public class RemoveTagFromItem implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -35,13 +34,12 @@ public class RemoveTagFromItem implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Items#removeTagFromItem} and returns zero on success. */
+    /** Executes {@link Items#removeTagFromItem}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Items.removeTagFromItem");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Items(apiClient);
         endpoint.removeTagFromItem(itemName, tag);
-        return 0;
     }
 }

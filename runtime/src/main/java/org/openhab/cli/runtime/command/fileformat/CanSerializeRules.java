@@ -1,7 +1,6 @@
 package org.openhab.cli.runtime.command.fileformat;
 
 import com.google.gson.reflect.TypeToken;
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.client.model.CanSerializeRulesRequest;
@@ -18,7 +17,7 @@ import picocli.CommandLine;
         name = "canSerializeRules",
         description = "Checks if the specified rule(s) can be serialized to the target format.",
         mixinStandardHelpOptions = true)
-public class CanSerializeRules implements Callable<Integer> {
+public class CanSerializeRules implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -46,9 +45,9 @@ public class CanSerializeRules implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link FileFormat#canSerializeRules} and returns zero on success. */
+    /** Executes {@link FileFormat#canSerializeRules}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: FileFormat.canSerializeRules");
         CanSerializeRulesRequest canSerializeRulesRequestValue = JsonArguments.parse(
                 canSerializeRulesRequest,
@@ -58,6 +57,5 @@ public class CanSerializeRules implements Callable<Integer> {
         var endpoint = new FileFormat(apiClient);
         var result = endpoint.canSerializeRules(targetFormat, canSerializeRulesRequestValue);
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

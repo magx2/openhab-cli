@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.persistence;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Persistence;
@@ -15,7 +14,7 @@ import picocli.CommandLine;
         name = "deletePersistenceServiceConfiguration",
         description = "Deletes a persistence service configuration.",
         mixinStandardHelpOptions = true)
-public class DeletePersistenceServiceConfiguration implements Callable<Integer> {
+public class DeletePersistenceServiceConfiguration implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -36,13 +35,12 @@ public class DeletePersistenceServiceConfiguration implements Callable<Integer> 
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Persistence#deletePersistenceServiceConfiguration} and returns zero on success. */
+    /** Executes {@link Persistence#deletePersistenceServiceConfiguration}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Persistence.deletePersistenceServiceConfiguration");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Persistence(apiClient);
         endpoint.deletePersistenceServiceConfiguration(serviceId);
-        return 0;
     }
 }

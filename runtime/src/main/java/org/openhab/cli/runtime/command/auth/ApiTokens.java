@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.auth;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Auth;
@@ -15,7 +14,7 @@ import picocli.CommandLine;
         name = "apiTokens",
         description = "List the API tokens associated to the authenticated user.",
         mixinStandardHelpOptions = true)
-public class ApiTokens implements Callable<Integer> {
+public class ApiTokens implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -29,14 +28,13 @@ public class ApiTokens implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Auth#apiTokens} and returns zero on success. */
+    /** Executes {@link Auth#apiTokens}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Auth.apiTokens");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Auth(apiClient);
         var result = endpoint.apiTokens();
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

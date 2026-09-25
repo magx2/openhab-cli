@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.inbox;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Inbox;
@@ -15,7 +14,7 @@ import picocli.CommandLine;
         name = "removeIgnoreFlagOnInboxItem",
         description = "Removes ignore flag from a discovery result.",
         mixinStandardHelpOptions = true)
-public class RemoveIgnoreFlagOnInboxItem implements Callable<Integer> {
+public class RemoveIgnoreFlagOnInboxItem implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -32,13 +31,12 @@ public class RemoveIgnoreFlagOnInboxItem implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Inbox#removeIgnoreFlagOnInboxItem} and returns zero on success. */
+    /** Executes {@link Inbox#removeIgnoreFlagOnInboxItem}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Inbox.removeIgnoreFlagOnInboxItem");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Inbox(apiClient);
         endpoint.removeIgnoreFlagOnInboxItem(thingUID);
-        return 0;
     }
 }

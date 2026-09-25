@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.ui;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Ui;
@@ -15,7 +14,7 @@ import picocli.CommandLine;
         name = "registeredUIComponentsInNamespace",
         description = "Get all registered UI components in the specified namespace.",
         mixinStandardHelpOptions = true)
-public class RegisteredUIComponentsInNamespace implements Callable<Integer> {
+public class RegisteredUIComponentsInNamespace implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -40,14 +39,13 @@ public class RegisteredUIComponentsInNamespace implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Ui#registeredUIComponentsInNamespace} and returns zero on success. */
+    /** Executes {@link Ui#registeredUIComponentsInNamespace}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Ui.registeredUIComponentsInNamespace");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Ui(apiClient);
         var result = endpoint.registeredUIComponentsInNamespace(namespace, summary);
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

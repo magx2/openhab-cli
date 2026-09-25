@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.items;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Items;
@@ -12,7 +11,7 @@ import picocli.CommandLine;
 /** Gets the state of an item. */
 @Slf4j
 @CommandLine.Command(name = "itemState1", description = "Gets the state of an item.", mixinStandardHelpOptions = true)
-public class ItemState1 implements Callable<Integer> {
+public class ItemState1 implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -29,14 +28,13 @@ public class ItemState1 implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Items#itemState1} and returns zero on success. */
+    /** Executes {@link Items#itemState1}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Items.itemState1");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Items(apiClient);
         var result = endpoint.itemState1(itemName);
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.items;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.runtime.Options;
@@ -11,7 +10,7 @@ import picocli.CommandLine;
 /** Get all available items. */
 @Slf4j
 @CommandLine.Command(name = "items", description = "Get all available items.", mixinStandardHelpOptions = true)
-public class Items implements Callable<Integer> {
+public class Items implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -83,14 +82,13 @@ public class Items implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link org.openhab.cli.engine.endpoint.Items#items} and returns zero on success. */
+    /** Executes {@link org.openhab.cli.engine.endpoint.Items#items}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Items.items");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new org.openhab.cli.engine.endpoint.Items(apiClient);
         var result = endpoint.items(acceptLanguage, type, tags, metadata, recursive, parents, fields, staticDataOnly);
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

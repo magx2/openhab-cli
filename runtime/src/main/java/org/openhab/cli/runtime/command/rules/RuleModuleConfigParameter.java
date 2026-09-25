@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.rules;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Rules;
@@ -15,7 +14,7 @@ import picocli.CommandLine;
         name = "ruleModuleConfigParameter",
         description = "Gets the module's configuration parameter.",
         mixinStandardHelpOptions = true)
-public class RuleModuleConfigParameter implements Callable<Integer> {
+public class RuleModuleConfigParameter implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -45,14 +44,13 @@ public class RuleModuleConfigParameter implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Rules#ruleModuleConfigParameter} and returns zero on success. */
+    /** Executes {@link Rules#ruleModuleConfigParameter}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Rules.ruleModuleConfigParameter");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Rules(apiClient);
         var result = endpoint.ruleModuleConfigParameter(ruleUID, moduleCategory, id, param);
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

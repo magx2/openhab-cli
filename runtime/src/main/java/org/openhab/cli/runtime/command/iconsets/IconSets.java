@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.iconsets;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Iconsets;
@@ -12,7 +11,7 @@ import picocli.CommandLine;
 /** Gets all icon sets. */
 @Slf4j
 @CommandLine.Command(name = "iconSets", description = "Gets all icon sets.", mixinStandardHelpOptions = true)
-public class IconSets implements Callable<Integer> {
+public class IconSets implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -33,14 +32,13 @@ public class IconSets implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Iconsets#iconSets} and returns zero on success. */
+    /** Executes {@link Iconsets#iconSets}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Iconsets.iconSets");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Iconsets(apiClient);
         var result = endpoint.iconSets(acceptLanguage);
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

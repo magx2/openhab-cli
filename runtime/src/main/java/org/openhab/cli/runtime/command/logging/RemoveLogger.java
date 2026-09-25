@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.logging;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Logging;
@@ -12,7 +11,7 @@ import picocli.CommandLine;
 /** Remove a single logger. */
 @Slf4j
 @CommandLine.Command(name = "removeLogger", description = "Remove a single logger.", mixinStandardHelpOptions = true)
-public class RemoveLogger implements Callable<Integer> {
+public class RemoveLogger implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -33,13 +32,12 @@ public class RemoveLogger implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Logging#removeLogger} and returns zero on success. */
+    /** Executes {@link Logging#removeLogger}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Logging.removeLogger");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Logging(apiClient);
         endpoint.removeLogger(loggerName);
-        return 0;
     }
 }

@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.sitemaps;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Sitemaps;
@@ -12,7 +11,7 @@ import picocli.CommandLine;
 /** Get sitemap events. */
 @Slf4j
 @CommandLine.Command(name = "sitemapEvents1", description = "Get sitemap events.", mixinStandardHelpOptions = true)
-public class SitemapEvents1 implements Callable<Integer> {
+public class SitemapEvents1 implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -43,13 +42,12 @@ public class SitemapEvents1 implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Sitemaps#sitemapEvents1} and returns zero on success. */
+    /** Executes {@link Sitemaps#sitemapEvents1}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Sitemaps.sitemapEvents1");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Sitemaps(apiClient);
         endpoint.sitemapEvents1(subscriptionid, sitemap, pageid);
-        return 0;
     }
 }

@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.inbox;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Inbox;
@@ -15,7 +14,7 @@ import picocli.CommandLine;
         name = "discoveredInboxItems",
         description = "Get all discovered things.",
         mixinStandardHelpOptions = true)
-public class DiscoveredInboxItems implements Callable<Integer> {
+public class DiscoveredInboxItems implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -36,14 +35,13 @@ public class DiscoveredInboxItems implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Inbox#discoveredInboxItems} and returns zero on success. */
+    /** Executes {@link Inbox#discoveredInboxItems}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Inbox.discoveredInboxItems");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Inbox(apiClient);
         var result = endpoint.discoveredInboxItems(includeIgnored);
         console.writeJson(result, options.isPrettyPrint());
-        return 0;
     }
 }

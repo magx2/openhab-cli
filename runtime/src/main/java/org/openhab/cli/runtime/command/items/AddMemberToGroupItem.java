@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime.command.items;
 
-import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Items;
@@ -15,7 +14,7 @@ import picocli.CommandLine;
         name = "addMemberToGroupItem",
         description = "Adds a new member to a group item.",
         mixinStandardHelpOptions = true)
-public class AddMemberToGroupItem implements Callable<Integer> {
+public class AddMemberToGroupItem implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
@@ -39,13 +38,12 @@ public class AddMemberToGroupItem implements Callable<Integer> {
         this.apiClientBuilder = apiClientBuilder;
     }
 
-    /** Executes {@link Items#addMemberToGroupItem} and returns zero on success. */
+    /** Executes {@link Items#addMemberToGroupItem}. */
     @Override
-    public Integer call() {
+    public void run() {
         log.debug("Command: Items.addMemberToGroupItem");
         var apiClient = apiClientBuilder.build(options);
         var endpoint = new Items(apiClient);
         endpoint.addMemberToGroupItem(itemName, memberItemName);
-        return 0;
     }
 }
