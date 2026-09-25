@@ -17,6 +17,19 @@ import org.openhab.cli.runtime.command.action.AvailableActionsForThing;
 
 class CommandFactoryTest {
     @Test
+    void enumValuesAreCaseInsensitiveInNestedCommands() {
+        for (var value : new String[] {"show", "SHOW", "ShOw", "install", "INSTALL", "InStAlL"}) {
+            var parsed = Cli.commandLine().parseArgs("_config", "shell", "fish", "completion", value);
+            while (parsed.subcommand() != null) {
+                parsed = parsed.subcommand();
+            }
+            assertEquals(
+                    value.toLowerCase(java.util.Locale.ROOT),
+                    parsed.matchedPositionalValue(0, (Enum<?>) null).name());
+        }
+    }
+
+    @Test
     void injectedCommandAcceptsPicocliMixinAndPositionalArguments() {
         var command = Cli.commandLine();
 

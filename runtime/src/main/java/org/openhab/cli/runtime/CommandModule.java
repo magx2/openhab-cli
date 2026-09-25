@@ -18,7 +18,9 @@ import org.openhab.cli.runtime.command.channeltypes.ChannelTypes;
 import org.openhab.cli.runtime.command.channeltypes.LinkableItemTypesByChannelTypeUID;
 import org.openhab.cli.runtime.command.config.properties.ClearCommand;
 import org.openhab.cli.runtime.command.config.properties.GetCommand;
+import org.openhab.cli.runtime.command.config.properties.ListCommand;
 import org.openhab.cli.runtime.command.config.properties.SetCommand;
+import org.openhab.cli.runtime.command.config.shell.fish.FishCompletionCommand;
 import org.openhab.cli.runtime.command.configdescriptions.ConfigDescriptionByURI;
 import org.openhab.cli.runtime.command.configdescriptions.ConfigDescriptions;
 import org.openhab.cli.runtime.command.discovery.BindingsWithDiscoverySupport;
@@ -949,4 +951,14 @@ interface CommandModule {
     @IntoMap
     @ClassKey(ClearCommand.class)
     Callable<Integer> clearProperty(ClearCommand command);
+
+    @Binds
+    @IntoMap
+    @ClassKey(ListCommand.class)
+    Callable<Integer> listProperties(ListCommand command);
+
+    @Binds
+    @IntoMap
+    @ClassKey(FishCompletionCommand.class)
+    Callable<Integer> fishCompletions(FishCompletionCommand command);
 }

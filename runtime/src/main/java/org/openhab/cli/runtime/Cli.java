@@ -107,6 +107,7 @@ public class Cli implements Callable<Integer> {
     static CommandLine commandLine() {
         var component = DaggerRuntimeComponent.create();
         return new CommandLine(new Cli(), component.commandFactory())
+                .setCaseInsensitiveEnumValuesAllowed(true)
                 .setExitCodeExceptionMapper(component.exitCodeMapper());
     }
 

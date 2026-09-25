@@ -17,9 +17,21 @@ public class Console {
         System.out.println(json);
     }
 
-    public void writeError(String msg, Object... params) {
+    public void writeError(String msg, Exception ex, Object... params) {
+        var fullMsg = msg.formatted(params);
+        if (ex == null) {
+            // creating new exception to get the stack trace
+            ex = new RuntimeException("");
+        }
         System.err.println("[ERROR] " + msg.formatted(params));
-        // creating new exception to get the stack trace
-        log.error(msg, new RuntimeException(msg));
+        log.error(msg, ex);
+    }
+
+    public void writeError(String msg, Object... params) {
+        writeError(msg, null, params);
+    }
+
+    public void write(String msg) {
+        System.out.println(msg);
     }
 }

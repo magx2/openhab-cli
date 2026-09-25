@@ -138,6 +138,27 @@ the shared authentication, connection, TLS, and timeout settings.
 `engineinternal` is registered as an empty group because the engine class does
 not currently expose any operations.
 
+## Fish completions
+
+Print the completion script to stdout (the default action is `show`):
+
+```sh
+oh _config shell fish completion show
+```
+
+Install it for your user:
+
+```sh
+oh _config shell fish completion install
+```
+
+This writes `oh.fish` to `$XDG_CONFIG_HOME/fish/completions`, or
+`~/.config/fish/completions` when `XDG_CONFIG_HOME` is unset. Fish autoloads the
+file for `oh`. To refresh completions in an existing shell, source the installed
+file or start a new Fish session. Run `install` again after upgrading the CLI.
+Completions include command groups, operations, options and enum values; they do
+not query an openHAB server for item or thing identifiers.
+
 ## Releases
 
 Run **Release** from the GitHub Actions tab, selecting `master`. Other branches
