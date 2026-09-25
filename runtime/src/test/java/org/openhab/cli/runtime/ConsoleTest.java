@@ -8,6 +8,7 @@ import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
+import org.openhab.cli.runtime.service.Console;
 
 class ConsoleTest {
     @Test

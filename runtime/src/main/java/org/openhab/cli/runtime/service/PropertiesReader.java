@@ -1,4 +1,4 @@
-package org.openhab.cli.runtime;
+package org.openhab.cli.runtime.service;
 
 import java.io.FileInputStream;
 import java.io.IOException;

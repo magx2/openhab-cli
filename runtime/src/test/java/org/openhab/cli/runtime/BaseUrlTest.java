@@ -7,6 +7,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.openhab.cli.runtime.service.ApiClientBuilder;
+import org.openhab.cli.runtime.service.PropertiesReader;
 import picocli.CommandLine;
 
 class BaseUrlTest {

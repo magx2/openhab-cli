@@ -4,9 +4,9 @@ import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Action;
-import org.openhab.cli.runtime.ApiClientBuilder;
-import org.openhab.cli.runtime.Console;
 import org.openhab.cli.runtime.Options;
+import org.openhab.cli.runtime.service.ApiClientBuilder;
+import org.openhab.cli.runtime.service.Console;
 import picocli.CommandLine;
 import picocli.CommandLine.Parameters;
 

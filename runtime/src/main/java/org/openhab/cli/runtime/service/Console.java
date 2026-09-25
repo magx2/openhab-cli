@@ -1,4 +1,4 @@
-package org.openhab.cli.runtime;
+package org.openhab.cli.runtime.service;
 
 import javax.inject.Inject;
 import org.openhab.cli.client.JSON;

@@ -1,7 +1,8 @@
-package org.openhab.cli.runtime;
+package org.openhab.cli.runtime.service;
 
 import javax.inject.Inject;
 import org.openhab.cli.engine.rest.ApiClient;
+import org.openhab.cli.runtime.Options;
 
 public class ApiClientBuilder {
     private final PropertiesReader propertiesReader;
