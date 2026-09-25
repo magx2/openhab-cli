@@ -10,6 +10,8 @@ class VersionTest {
     void returnsVersionEmbeddedByGradle() {
         var expected = System.getProperty("expectedProjectVersion");
         assertNotNull(expected);
-        assertEquals(expected, Version.VERSION);
+        var expectedApiVersion = System.getProperty("expectedApiVersion");
+        assertNotNull(expectedApiVersion);
+        assertEquals(expectedApiVersion + "." + expected, Version.VERSION);
     }
 }

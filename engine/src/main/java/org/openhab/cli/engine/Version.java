@@ -4,9 +4,10 @@ import java.io.IOException;
 import java.util.Properties;
 import lombok.experimental.UtilityClass;
 
-/** Provides the application version embedded by Gradle during the build. */
+/** Provides the application and supported REST API versions embedded by Gradle during the build. */
 @UtilityClass
 public class Version {
+    /** Supported openHAB REST API version followed by the application version. */
     public static final String VERSION = loadVersion();
 
     private static String loadVersion() {
@@ -20,7 +21,11 @@ public class Version {
             if (version == null || version.isBlank() || version.equals("${version}")) {
                 throw new IllegalStateException("Application version was not populated by the build");
             }
-            return version;
+            var apiVersion = properties.getProperty("apiVersion");
+            if (apiVersion == null || apiVersion.isBlank() || apiVersion.equals("${apiVersion}")) {
+                throw new IllegalStateException("REST API version was not populated by the build");
+            }
+            return "%s.%s".formatted(apiVersion, version);
         } catch (IOException e) {
             throw new IllegalStateException("Cannot read application version", e);
         }
