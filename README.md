@@ -82,3 +82,58 @@ To customize this example:
 Restart the CLI after editing the file. This file replaces the bundled
 configuration completely; remove or rename it to restore the defaults. The
 example retains all archived logs, so remove old archives as needed.
+
+Use `<group> --help` to list operations and `<group> <operation> --help` to see
+arguments. Every engine API operation has a matching CLI command. Required
+operation arguments are positional; optional values use named kebab-case flags.
+The existing `action availableActionsForThing <thingUID> [<acceptLanguage>]`
+syntax is also preserved. Optional booleans accept `--flag` or `--flag=false`.
+
+Pass models, maps, and collections as a single JSON argument. For example, these
+argument lists can be passed to the CLI (examples use Bash quoting):
+
+```sh
+action availableActionsForThing --base-url=http://localhost:8080 -- thing:test en
+action executeThingAction --base-url=http://localhost:8080 --request-body='{"input":"value"}' -- thing:test action:test
+things updateThing --base-url=http://localhost:8080 --accept-language=en -- thing:test '{"UID":"thing:test","thingTypeUID":"binding:type","channels":[],"configuration":{},"properties":{}}'
+```
+
+Operations with a response print JSON using the shared output options. Operations
+with no response body return successfully without printing JSON. Commands use
+the shared authentication, connection, TLS, and timeout settings.
+
+| Command group | Operations |
+| --- | ---: |
+| `action` | 2 |
+| `addons` | 10 |
+| `audio` | 4 |
+| `auth` | 5 |
+| `channeltypes` | 3 |
+| `configdescriptions` | 2 |
+| `discovery` | 3 |
+| `events` | 3 |
+| `fileformat` | 9 |
+| `iconsets` | 1 |
+| `inbox` | 5 |
+| `items` | 19 |
+| `links` | 7 |
+| `logging` | 4 |
+| `moduletypes` | 2 |
+| `persistence` | 10 |
+| `profiletypes` | 1 |
+| `root` | 1 |
+| `rules` | 18 |
+| `services` | 6 |
+| `sitemaps` | 11 |
+| `systeminfo` | 2 |
+| `tags` | 5 |
+| `templates` | 2 |
+| `things` | 12 |
+| `thingtypes` | 2 |
+| `transformations` | 5 |
+| `ui` | 6 |
+| `uuid` | 1 |
+| `voice` | 14 |
+
+`engineinternal` is registered as an empty group because the engine class does
+not currently expose any operations.

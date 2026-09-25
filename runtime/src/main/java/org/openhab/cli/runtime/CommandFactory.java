@@ -1,25 +1,24 @@
 package org.openhab.cli.runtime;
 
+import java.util.Map;
+import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import javax.inject.Provider;
-import org.openhab.cli.runtime.action.AvailableActionsForThing;
 import picocli.CommandLine;
 
 /** Creates injected commands with Dagger and delegates other Picocli objects to its default factory. */
 public final class CommandFactory implements CommandLine.IFactory {
-    private final Provider<AvailableActionsForThing> availableActionsForThing;
+    private final Map<Class<?>, Provider<Callable<Integer>>> commands;
     private final CommandLine.IFactory fallback = CommandLine.defaultFactory();
 
     @Inject
-    CommandFactory(Provider<AvailableActionsForThing> availableActionsForThing) {
-        this.availableActionsForThing = availableActionsForThing;
+    CommandFactory(Map<Class<?>, Provider<Callable<Integer>>> commands) {
+        this.commands = commands;
     }
 
     @Override
     public <K> K create(Class<K> type) throws Exception {
-        if (type == AvailableActionsForThing.class) {
-            return type.cast(availableActionsForThing.get());
-        }
-        return fallback.create(type);
+        var provider = commands.get(type);
+        return provider == null ? fallback.create(type) : type.cast(provider.get());
     }
 }

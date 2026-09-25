@@ -21,6 +21,8 @@ class LoggingTest {
         var first = Files.readString(log);
         assertLog(first, "first");
 
+        // Startup rollover compares filesystem and JVM timestamps, which may have coarse precision on WSL.
+        Thread.sleep(1100);
         runProcess("second");
         var second = Files.readString(log);
         assertLog(second, "second");

@@ -8,42 +8,45 @@ import org.openhab.cli.runtime.Options;
 import org.openhab.cli.runtime.service.ApiClientBuilder;
 import org.openhab.cli.runtime.service.Console;
 import picocli.CommandLine;
-import picocli.CommandLine.Parameters;
 
+/** Get all available actions for provided thing UID */
 @Slf4j
-@CommandLine.Command(name = "availableActionsForThing")
+@CommandLine.Command(
+        name = "availableActionsForThing",
+        description = "Get all available actions for provided thing UID",
+        mixinStandardHelpOptions = true)
 public class AvailableActionsForThing implements Callable<Integer> {
     @CommandLine.Mixin
     private Options options;
 
-    @Parameters(index = "0")
+    @CommandLine.Parameters(index = "0", arity = "1", paramLabel = "<thingUID>", description = "thingUID (required)")
     private String thingUID;
 
-    @Parameters(index = "1", arity = "0..1")
+    @CommandLine.Parameters(
+            index = "1",
+            arity = "0..1",
+            paramLabel = "<acceptLanguage>",
+            description = "language (optional)")
     private String acceptLanguage;
 
     private final Console console;
     private final ApiClientBuilder apiClientBuilder;
 
+    /** Creates the command with injected output and REST client services. */
     @Inject
     AvailableActionsForThing(Console console, ApiClientBuilder apiClientBuilder) {
         this.console = console;
         this.apiClientBuilder = apiClientBuilder;
     }
 
+    /** Executes {@link Action#availableActionsForThing} and returns zero on success. */
     @Override
     public Integer call() {
-        log.debug(
-                "Command: {}, thingUID={}, acceptLanguage={}",
-                this.getClass().getSimpleName(),
-                thingUID,
-                acceptLanguage);
-
+        log.debug("Command: Action.availableActionsForThing");
         var apiClient = apiClientBuilder.build(options);
-        var action = new Action(apiClient);
-        var thingActions = action.availableActionsForThing(thingUID, acceptLanguage);
-        console.writeJson(thingActions, options.isPrettyPrint());
-
+        var endpoint = new Action(apiClient);
+        var result = endpoint.availableActionsForThing(thingUID, acceptLanguage);
+        console.writeJson(result, options.isPrettyPrint());
         return 0;
     }
 }
