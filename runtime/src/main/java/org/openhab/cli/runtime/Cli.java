@@ -4,6 +4,7 @@ import static java.lang.String.join;
 
 import java.util.concurrent.Callable;
 import lombok.extern.slf4j.Slf4j;
+import org.openhab.cli.engine.Version;
 import org.openhab.cli.runtime.action.ActionCommand;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -13,10 +14,24 @@ import picocli.CommandLine.Command;
             ActionCommand.class,
         },
         mixinStandardHelpOptions = true,
+        versionProvider = Cli.VersionProvider.class,
         exitCodeListHeading = "Exit Codes:%n",
-        exitCodeList = {" 0: Successful program execution", " 1: ", "99: ", "99: "})
+        exitCodeList = { //
+            " 0: Successful program execution", //
+            " 1: ", //
+            "98: ", //
+            "99: " //
+        })
 @Slf4j
 public class Cli implements Callable<Integer> {
+    /** Supplies the application version embedded by the engine build. */
+    public static class VersionProvider implements CommandLine.IVersionProvider {
+        @Override
+        public String[] getVersion() {
+            return new String[] {Version.VERSION};
+        }
+    }
+
     public static void main(String[] args) {
         if (log.isDebugEnabled()) {
             log.debug("oh {}", join(" ", args));
