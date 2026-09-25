@@ -1,8 +1,10 @@
 package org.openhab.cli.runtime.service;
 
 import javax.inject.Inject;
+import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.client.JSON;
 
+@Slf4j
 public class Console {
     @Inject
     public Console() {}
@@ -16,7 +18,8 @@ public class Console {
     }
 
     public void writeError(String msg) {
-        //        System.err.println("ERR: " + msg);
-        System.out.println("ERR: " + msg);
+        System.err.println("[ERROR] " + msg);
+        // creating new exception to get the stack trace
+        log.error(msg, new RuntimeException(msg));
     }
 }
