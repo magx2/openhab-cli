@@ -76,7 +76,6 @@ class PropertiesReaderTest {
     @Test
     void updatesDefaultFileInWorkingDirectory() throws IOException {
         var file = directory.resolve(PropertiesReader.PROPERTIES_FILE_NAME);
-        Files.writeString(file, "config.prettyPrint=true\n");
         var previousDirectory = System.getProperty("user.dir");
         try {
             System.setProperty("user.dir", directory.toString());
@@ -92,16 +91,17 @@ class PropertiesReaderTest {
     }
 
     @Test
-    void reportsMissingFileWithoutCreatingIt() {
+    void createsMissingFileWithRequestedProperty() throws IOException {
         var file = directory.resolve("missing.properties");
         var console = mock(Console.class);
+        var reader = new PropertiesReader(console);
 
-        assertEquals(
-                ExitCodeMapper.IO_EXCEPTION_EXIT_CODE,
-                new PropertiesReader(console).set(file.toString(), "key", "value"));
+        assertEquals(0, reader.set(file.toString(), "key", "value"));
 
-        assertFalse(Files.exists(file));
-        verify(console).writeError("Properties file `%s` does not exist", file);
+        assertTrue(Files.isRegularFile(file));
+        assertEquals("value", reader.get(file.toString(), "key"));
+        assertEquals(1, reader.readProperties(file.toString()).size());
+        verifyNoInteractions(console);
     }
 
     @Test

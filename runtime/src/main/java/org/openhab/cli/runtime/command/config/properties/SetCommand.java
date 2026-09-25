@@ -11,7 +11,8 @@ import picocli.CommandLine;
 @Slf4j
 @CommandLine.Command(
         name = "set",
-        description = "Add or replace a property in an existing configuration file. Other properties are preserved.",
+        description =
+                "Add or replace a property, creating the configuration file if needed. Other properties are preserved.",
         mixinStandardHelpOptions = true)
 public class SetCommand implements Callable<Integer> {
     @CommandLine.Mixin

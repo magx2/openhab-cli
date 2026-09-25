@@ -70,7 +70,7 @@ public class PropertiesReader {
     }
 
     /**
-     * Adds or replaces a property in an existing file, preserving all other property values.
+     * Adds or replaces a property, creating the file if needed and preserving all other property values.
      *
      * @param propertiesFile file to update, or null to use the default file in the working directory
      * @param key property name
@@ -79,14 +79,16 @@ public class PropertiesReader {
      */
     public int set(String propertiesFile, String key, String value) {
         var path = buildPath(propertiesFile);
-        if (Files.notExists(path)) {
+        if (value == null && Files.notExists(path)) {
             console.writeError("Properties file `%s` does not exist", path);
             return IO_EXCEPTION_EXIT_CODE;
         }
         var javaProps = new java.util.Properties();
         try {
-            try (var stream = Files.newInputStream(path)) {
-                javaProps.load(stream);
+            if (!Files.notExists(path)) {
+                try (var stream = Files.newInputStream(path)) {
+                    javaProps.load(stream);
+                }
             }
             if (value == null) {
                 javaProps.remove(key);
