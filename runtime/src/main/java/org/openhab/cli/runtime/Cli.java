@@ -9,6 +9,7 @@ import org.openhab.cli.runtime.command.addons.AddonsCommand;
 import org.openhab.cli.runtime.command.audio.AudioCommand;
 import org.openhab.cli.runtime.command.auth.AuthCommand;
 import org.openhab.cli.runtime.command.channeltypes.ChannelTypesCommand;
+import org.openhab.cli.runtime.command.config.ConfigCommand;
 import org.openhab.cli.runtime.command.configdescriptions.ConfigDescriptionsCommand;
 import org.openhab.cli.runtime.command.discovery.DiscoveryCommand;
 import org.openhab.cli.runtime.command.engineinternal.EngineInternalCommand;
@@ -41,6 +42,7 @@ import picocli.CommandLine.Command;
 
 @Command(
         subcommands = {
+            ConfigCommand.class,
             ActionCommand.class,
             AddonsCommand.class,
             AudioCommand.class,

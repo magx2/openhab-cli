@@ -4,6 +4,7 @@ import dagger.Binds;
 import dagger.Module;
 import dagger.multibindings.ClassKey;
 import dagger.multibindings.IntoMap;
+import java.util.concurrent.Callable;
 import org.openhab.cli.runtime.command.action.AvailableActionsForThing;
 import org.openhab.cli.runtime.command.action.ExecuteThingAction;
 import org.openhab.cli.runtime.command.addons.*;
@@ -15,6 +16,9 @@ import org.openhab.cli.runtime.command.auth.*;
 import org.openhab.cli.runtime.command.channeltypes.ChannelTypeByUID;
 import org.openhab.cli.runtime.command.channeltypes.ChannelTypes;
 import org.openhab.cli.runtime.command.channeltypes.LinkableItemTypesByChannelTypeUID;
+import org.openhab.cli.runtime.command.config.properties.ClearCommand;
+import org.openhab.cli.runtime.command.config.properties.GetCommand;
+import org.openhab.cli.runtime.command.config.properties.SetCommand;
 import org.openhab.cli.runtime.command.configdescriptions.ConfigDescriptionByURI;
 import org.openhab.cli.runtime.command.configdescriptions.ConfigDescriptions;
 import org.openhab.cli.runtime.command.discovery.BindingsWithDiscoverySupport;
@@ -52,8 +56,6 @@ import org.openhab.cli.runtime.command.transformations.*;
 import org.openhab.cli.runtime.command.ui.*;
 import org.openhab.cli.runtime.command.uuid.Uuid;
 import org.openhab.cli.runtime.command.voice.*;
-
-import java.util.concurrent.Callable;
 
 /** Registers each operation command with the Dagger-backed Picocli factory. */
 @Module
@@ -176,26 +178,22 @@ interface CommandModule {
     @Binds
     @IntoMap
     @ClassKey(LinkableItemTypesByChannelTypeUID.class)
-    Callable<Integer> channelTypesLinkableItemTypesByChannelTypeUID(
-            LinkableItemTypesByChannelTypeUID command);
+    Callable<Integer> channelTypesLinkableItemTypesByChannelTypeUID(LinkableItemTypesByChannelTypeUID command);
 
     @Binds
     @IntoMap
     @ClassKey(ConfigDescriptionByURI.class)
-    Callable<Integer> configDescriptionsConfigDescriptionByURI(
-            ConfigDescriptionByURI command);
+    Callable<Integer> configDescriptionsConfigDescriptionByURI(ConfigDescriptionByURI command);
 
     @Binds
     @IntoMap
     @ClassKey(ConfigDescriptions.class)
-    Callable<Integer> configDescriptionsConfigDescriptions(
-            ConfigDescriptions command);
+    Callable<Integer> configDescriptionsConfigDescriptions(ConfigDescriptions command);
 
     @Binds
     @IntoMap
     @ClassKey(BindingsWithDiscoverySupport.class)
-    Callable<Integer> discoveryBindingsWithDiscoverySupport(
-            BindingsWithDiscoverySupport command);
+    Callable<Integer> discoveryBindingsWithDiscoverySupport(BindingsWithDiscoverySupport command);
 
     @Binds
     @IntoMap
@@ -220,8 +218,7 @@ interface CommandModule {
     @Binds
     @IntoMap
     @ClassKey(UpdateItemListForStateUpdates.class)
-    Callable<Integer> eventsUpdateItemListForStateUpdates(
-            UpdateItemListForStateUpdates command);
+    Callable<Integer> eventsUpdateItemListForStateUpdates(UpdateItemListForStateUpdates command);
 
     @Binds
     @IntoMap
@@ -236,38 +233,32 @@ interface CommandModule {
     @Binds
     @IntoMap
     @ClassKey(CreateFileFormatForItems.class)
-    Callable<Integer> fileFormatCreateFileFormatForItems(
-            CreateFileFormatForItems command);
+    Callable<Integer> fileFormatCreateFileFormatForItems(CreateFileFormatForItems command);
 
     @Binds
     @IntoMap
     @ClassKey(CreateFileFormatForRuleTemplates.class)
-    Callable<Integer> fileFormatCreateFileFormatForRuleTemplates(
-            CreateFileFormatForRuleTemplates command);
+    Callable<Integer> fileFormatCreateFileFormatForRuleTemplates(CreateFileFormatForRuleTemplates command);
 
     @Binds
     @IntoMap
     @ClassKey(CreateFileFormatForRules.class)
-    Callable<Integer> fileFormatCreateFileFormatForRules(
-            CreateFileFormatForRules command);
+    Callable<Integer> fileFormatCreateFileFormatForRules(CreateFileFormatForRules command);
 
     @Binds
     @IntoMap
     @ClassKey(CreateFileFormatForSemanticTags.class)
-    Callable<Integer> fileFormatCreateFileFormatForSemanticTags(
-            CreateFileFormatForSemanticTags command);
+    Callable<Integer> fileFormatCreateFileFormatForSemanticTags(CreateFileFormatForSemanticTags command);
 
     @Binds
     @IntoMap
     @ClassKey(CreateFileFormatForSitemaps.class)
-    Callable<Integer> fileFormatCreateFileFormatForSitemaps(
-            CreateFileFormatForSitemaps command);
+    Callable<Integer> fileFormatCreateFileFormatForSitemaps(CreateFileFormatForSitemaps command);
 
     @Binds
     @IntoMap
     @ClassKey(CreateFileFormatForThings.class)
-    Callable<Integer> fileFormatCreateFileFormatForThings(
-            CreateFileFormatForThings command);
+    Callable<Integer> fileFormatCreateFileFormatForThings(CreateFileFormatForThings command);
 
     @Binds
     @IntoMap
@@ -297,8 +288,7 @@ interface CommandModule {
     @Binds
     @IntoMap
     @ClassKey(RemoveIgnoreFlagOnInboxItem.class)
-    Callable<Integer> inboxRemoveIgnoreFlagOnInboxItem(
-            RemoveIgnoreFlagOnInboxItem command);
+    Callable<Integer> inboxRemoveIgnoreFlagOnInboxItem(RemoveIgnoreFlagOnInboxItem command);
 
     @Binds
     @IntoMap
@@ -468,26 +458,22 @@ interface CommandModule {
     @Binds
     @IntoMap
     @ClassKey(DeleteItemFromPersistenceService.class)
-    Callable<Integer> persistenceDeleteItemFromPersistenceService(
-            DeleteItemFromPersistenceService command);
+    Callable<Integer> persistenceDeleteItemFromPersistenceService(DeleteItemFromPersistenceService command);
 
     @Binds
     @IntoMap
     @ClassKey(DeletePersistenceServiceConfiguration.class)
-    Callable<Integer> persistenceDeletePersistenceServiceConfiguration(
-            DeletePersistenceServiceConfiguration command);
+    Callable<Integer> persistenceDeletePersistenceServiceConfiguration(DeletePersistenceServiceConfiguration command);
 
     @Binds
     @IntoMap
     @ClassKey(ItemDataFromPersistenceService.class)
-    Callable<Integer> persistenceItemDataFromPersistenceService(
-            ItemDataFromPersistenceService command);
+    Callable<Integer> persistenceItemDataFromPersistenceService(ItemDataFromPersistenceService command);
 
     @Binds
     @IntoMap
     @ClassKey(ItemsForPersistenceService.class)
-    Callable<Integer> persistenceItemsForPersistenceService(
-            ItemsForPersistenceService command);
+    Callable<Integer> persistenceItemsForPersistenceService(ItemsForPersistenceService command);
 
     @Binds
     @IntoMap
@@ -497,14 +483,12 @@ interface CommandModule {
     @Binds
     @IntoMap
     @ClassKey(PersistenceServiceConfiguration.class)
-    Callable<Integer> persistencePersistenceServiceConfiguration(
-            PersistenceServiceConfiguration command);
+    Callable<Integer> persistencePersistenceServiceConfiguration(PersistenceServiceConfiguration command);
 
     @Binds
     @IntoMap
     @ClassKey(PersistenceServiceStrategySuggestions.class)
-    Callable<Integer> persistencePersistenceServiceStrategySuggestions(
-            PersistenceServiceStrategySuggestions command);
+    Callable<Integer> persistencePersistenceServiceStrategySuggestions(PersistenceServiceStrategySuggestions command);
 
     @Binds
     @IntoMap
@@ -514,14 +498,12 @@ interface CommandModule {
     @Binds
     @IntoMap
     @ClassKey(PutPersistenceServiceConfiguration.class)
-    Callable<Integer> persistencePutPersistenceServiceConfiguration(
-            PutPersistenceServiceConfiguration command);
+    Callable<Integer> persistencePutPersistenceServiceConfiguration(PutPersistenceServiceConfiguration command);
 
     @Binds
     @IntoMap
     @ClassKey(StoreItemDataInPersistenceService.class)
-    Callable<Integer> persistenceStoreItemDataInPersistenceService(
-            StoreItemDataInPersistenceService command);
+    Callable<Integer> persistenceStoreItemDataInPersistenceService(StoreItemDataInPersistenceService command);
 
     @Binds
     @IntoMap
@@ -611,8 +593,7 @@ interface CommandModule {
     @Binds
     @IntoMap
     @ClassKey(SetRuleModuleConfigParameter.class)
-    Callable<Integer> rulesSetRuleModuleConfigParameter(
-            SetRuleModuleConfigParameter command);
+    Callable<Integer> rulesSetRuleModuleConfigParameter(SetRuleModuleConfigParameter command);
 
     @Binds
     @IntoMap
@@ -657,14 +638,12 @@ interface CommandModule {
     @Binds
     @IntoMap
     @ClassKey(AddOrUpdateSitemapInRegistry.class)
-    Callable<Integer> sitemapsAddOrUpdateSitemapInRegistry(
-            AddOrUpdateSitemapInRegistry command);
+    Callable<Integer> sitemapsAddOrUpdateSitemapInRegistry(AddOrUpdateSitemapInRegistry command);
 
     @Binds
     @IntoMap
     @ClassKey(CreateSitemapEventSubscription.class)
-    Callable<Integer> sitemapsCreateSitemapEventSubscription(
-            CreateSitemapEventSubscription command);
+    Callable<Integer> sitemapsCreateSitemapEventSubscription(CreateSitemapEventSubscription command);
 
     @Binds
     @IntoMap
@@ -709,8 +688,7 @@ interface CommandModule {
     @Binds
     @IntoMap
     @ClassKey(RemoveSitemapFromRegistry.class)
-    Callable<Integer> sitemapsRemoveSitemapFromRegistry(
-            RemoveSitemapFromRegistry command);
+    Callable<Integer> sitemapsRemoveSitemapFromRegistry(RemoveSitemapFromRegistry command);
 
     @Binds
     @IntoMap
@@ -780,8 +758,7 @@ interface CommandModule {
     @Binds
     @IntoMap
     @ClassKey(AvailableFirmwaresForThing.class)
-    Callable<Integer> thingsAvailableFirmwaresForThing(
-            AvailableFirmwaresForThing command);
+    Callable<Integer> thingsAvailableFirmwaresForThing(AvailableFirmwaresForThing command);
 
     @Binds
     @IntoMap
@@ -831,8 +808,7 @@ interface CommandModule {
     @Binds
     @IntoMap
     @ClassKey(DeleteTransformation.class)
-    Callable<Integer> transformationsDeleteTransformation(
-            DeleteTransformation command);
+    Callable<Integer> transformationsDeleteTransformation(DeleteTransformation command);
 
     @Binds
     @IntoMap
@@ -842,8 +818,7 @@ interface CommandModule {
     @Binds
     @IntoMap
     @ClassKey(TransformationServices.class)
-    Callable<Integer> transformationsTransformationServices(
-            TransformationServices command);
+    Callable<Integer> transformationsTransformationServices(TransformationServices command);
 
     @Binds
     @IntoMap
@@ -853,8 +828,7 @@ interface CommandModule {
     @Binds
     @IntoMap
     @ClassKey(PutTransformation.class)
-    Callable<Integer> transformationsPutTransformation(
-            PutTransformation command);
+    Callable<Integer> transformationsPutTransformation(PutTransformation command);
 
     @Binds
     @IntoMap
@@ -864,8 +838,7 @@ interface CommandModule {
     @Binds
     @IntoMap
     @ClassKey(RegisteredUIComponentsInNamespace.class)
-    Callable<Integer> uiRegisteredUIComponentsInNamespace(
-            RegisteredUIComponentsInNamespace command);
+    Callable<Integer> uiRegisteredUIComponentsInNamespace(RegisteredUIComponentsInNamespace command);
 
     @Binds
     @IntoMap
@@ -880,8 +853,7 @@ interface CommandModule {
     @Binds
     @IntoMap
     @ClassKey(RemoveUIComponentFromNamespace.class)
-    Callable<Integer> uiRemoveUIComponentFromNamespace(
-            RemoveUIComponentFromNamespace command);
+    Callable<Integer> uiRemoveUIComponentFromNamespace(RemoveUIComponentFromNamespace command);
 
     @Binds
     @IntoMap
@@ -936,8 +908,7 @@ interface CommandModule {
     @Binds
     @IntoMap
     @ClassKey(InterpretTextByDefaultInterpreter.class)
-    Callable<Integer> voiceInterpretTextByDefaultInterpreter(
-            InterpretTextByDefaultInterpreter command);
+    Callable<Integer> voiceInterpretTextByDefaultInterpreter(InterpretTextByDefaultInterpreter command);
 
     @Binds
     @IntoMap
@@ -963,4 +934,19 @@ interface CommandModule {
     @IntoMap
     @ClassKey(TextToSpeech.class)
     Callable<Integer> voiceTextToSpeech(TextToSpeech command);
+
+    @Binds
+    @IntoMap
+    @ClassKey(SetCommand.class)
+    Callable<Integer> setProperty(SetCommand command);
+
+    @Binds
+    @IntoMap
+    @ClassKey(GetCommand.class)
+    Callable<Integer> getProperty(GetCommand command);
+
+    @Binds
+    @IntoMap
+    @ClassKey(ClearCommand.class)
+    Callable<Integer> clearProperty(ClearCommand command);
 }

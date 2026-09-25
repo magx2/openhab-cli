@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.openhab.cli.runtime.service.ApiClientBuilder;
+import org.openhab.cli.runtime.service.Console;
 import org.openhab.cli.runtime.service.PropertiesReader;
 import picocli.CommandLine;
 
@@ -43,7 +44,7 @@ class BaseUrlTest {
                 .parseArgs("--properties-file=" + directory.resolve("missing"), "--base-url=http://localhost:8080");
         assertEquals(
                 "http://localhost:8080/rest",
-                new ApiClientBuilder(new PropertiesReader())
+                new ApiClientBuilder(new PropertiesReader(new Console()))
                         .build(options)
                         .toNative()
                         .getBasePath());
@@ -64,7 +65,7 @@ class BaseUrlTest {
         args.addAll(java.util.List.of(flags));
         var options = new Options();
         new CommandLine(options).parseArgs(args.toArray(String[]::new));
-        return new ApiClientBuilder(new PropertiesReader())
+        return new ApiClientBuilder(new PropertiesReader(new Console()))
                 .build(options)
                 .toNative()
                 .getBasePath();

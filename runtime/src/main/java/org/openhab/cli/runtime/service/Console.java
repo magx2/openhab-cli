@@ -17,8 +17,8 @@ public class Console {
         System.out.println(json);
     }
 
-    public void writeError(String msg) {
-        System.err.println("[ERROR] " + msg);
+    public void writeError(String msg, Object... params) {
+        System.err.println("[ERROR] " + msg.formatted(params));
         // creating new exception to get the stack trace
         log.error(msg, new RuntimeException(msg));
     }

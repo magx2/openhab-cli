@@ -30,22 +30,25 @@ class EndpointCommandsTest {
     private record Operation(Class<?> endpoint, Class<?> command, Method method) {}
 
     private static Stream<Operation> operations() {
-        return Cli.commandLine().getSubcommands().values().stream().flatMap(group -> {
-            var groupType = group.getCommand().getClass();
-            try {
-                var endpoint = Class.forName("org.openhab.cli.engine.endpoint."
-                        + groupType.getSimpleName().replace("Command", ""));
-                return group.getSubcommands().entrySet().stream().map(entry -> {
-                    var method = Arrays.stream(endpoint.getDeclaredMethods())
-                            .filter(candidate -> candidate.getName().equals(entry.getKey()))
-                            .max(Comparator.comparingInt(Method::getParameterCount))
-                            .orElseThrow();
-                    return new Operation(endpoint, entry.getValue().getCommand().getClass(), method);
+        return Cli.commandLine().getSubcommands().values().stream()
+                .filter(group -> !(group.getCommand() instanceof org.openhab.cli.runtime.command.config.ConfigCommand))
+                .flatMap(group -> {
+                    var groupType = group.getCommand().getClass();
+                    try {
+                        var endpoint = Class.forName("org.openhab.cli.engine.endpoint."
+                                + groupType.getSimpleName().replace("Command", ""));
+                        return group.getSubcommands().entrySet().stream().map(entry -> {
+                            var method = Arrays.stream(endpoint.getDeclaredMethods())
+                                    .filter(candidate -> candidate.getName().equals(entry.getKey()))
+                                    .max(Comparator.comparingInt(Method::getParameterCount))
+                                    .orElseThrow();
+                            return new Operation(
+                                    endpoint, entry.getValue().getCommand().getClass(), method);
+                        });
+                    } catch (ClassNotFoundException e) {
+                        throw new AssertionError(e);
+                    }
                 });
-            } catch (ClassNotFoundException e) {
-                throw new AssertionError(e);
-            }
-        });
     }
 
     @Test
