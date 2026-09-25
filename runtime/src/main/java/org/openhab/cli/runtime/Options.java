@@ -34,7 +34,7 @@ public class Options {
     static class Connection {
         @Option(
                 names = "--base-url",
-                description = "openHAB server URL (required unless config.baseUrl is set in the properties file)")
+                description = "openHAB server URL (required unless config.rest.baseUrl is set in the properties file)")
         private String baseUrl;
 
         @Option(

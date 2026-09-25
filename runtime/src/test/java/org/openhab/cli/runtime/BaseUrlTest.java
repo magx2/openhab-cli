@@ -21,7 +21,7 @@ class BaseUrlTest {
 
     @Test
     void acceptsFileValueAndAppendsDefaultRestPath() throws IOException {
-        assertEquals("https://openhab.example/rest", build("config.baseUrl=https://openhab.example/\n"));
+        assertEquals("https://openhab.example/rest", build("config.rest.baseUrl=https://openhab.example/\n"));
     }
 
     @Test
@@ -29,7 +29,7 @@ class BaseUrlTest {
         assertEquals(
                 "http://localhost:8080/openhab/api",
                 build(
-                        "config.baseUrl=https://openhab.example\n",
+                        "config.rest.baseUrl=https://openhab.example\n",
                         "--base-url=http://localhost:8080/openhab/",
                         "--base-path=/api"));
     }

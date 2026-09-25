@@ -75,7 +75,7 @@ public record Properties(
     public String apiBaseUrl() {
         if (baseUrl == null || baseUrl.isBlank()) {
             throw new IllegalArgumentException(
-                    "baseUrl is required: set --base-url or config.baseUrl in the properties file");
+                    "baseUrl is required: set --base-url or config.rest.baseUrl in the properties file");
         }
         var uri = java.net.URI.create(baseUrl);
         if ((!"http".equalsIgnoreCase(uri.getScheme()) && !"https".equalsIgnoreCase(uri.getScheme()))

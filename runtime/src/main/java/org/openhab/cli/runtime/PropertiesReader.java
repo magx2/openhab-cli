@@ -32,25 +32,25 @@ public class PropertiesReader {
             var username = javaProps.getProperty("auth.username");
             var password = javaProps.getProperty("auth.password");
             var prettyPrint = Boolean.parseBoolean(javaProps.getProperty("config.prettyPrint", "true"));
-            var certPath = javaProps.getProperty("config.sslCaCertPath");
+            var certPath = javaProps.getProperty("config.ssl.sslCaCertPath");
             return new Properties(
-                    javaProps.getProperty("config.baseUrl"),
-                    javaProps.getProperty("config.basePath"),
+                    javaProps.getProperty("config.rest.baseUrl"),
+                    javaProps.getProperty("config.rest.basePath"),
                     oAuthToken,
                     username,
                     password,
                     prettyPrint,
-                    Boolean.parseBoolean(javaProps.getProperty("config.verifyingSsl", "true")),
-                    Boolean.parseBoolean(javaProps.getProperty("config.apiClientDebugging", "false")),
-                    javaProps.getProperty("config.sslCaCert"),
+                    Boolean.parseBoolean(javaProps.getProperty("config.ssl.verifyingSsl", "true")),
+                    Boolean.parseBoolean(javaProps.getProperty("config.rest.apiClientDebugging", "false")),
+                    javaProps.getProperty("config.ssl.sslCaCert"),
                     certPath == null ? null : Path.of(certPath),
-                    javaProps.getProperty("config.tlsServerName"),
+                    javaProps.getProperty("config.ssl.tlsServerName"),
                     Integer.parseInt(javaProps.getProperty(
-                            "config.connectTimeout", Integer.toString(Properties.DEFAULT_CONNECT_TIMEOUT))),
+                            "config.timeout.connectTimeout", Integer.toString(Properties.DEFAULT_CONNECT_TIMEOUT))),
                     Integer.parseInt(javaProps.getProperty(
-                            "config.readTimeout", Integer.toString(Properties.DEFAULT_READ_TIMEOUT))),
+                            "config.timeout.readTimeout", Integer.toString(Properties.DEFAULT_READ_TIMEOUT))),
                     Integer.parseInt(javaProps.getProperty(
-                            "config.writeTimeout", Integer.toString(Properties.DEFAULT_WRITE_TIMEOUT))));
+                            "config.timeout.writeTimeout", Integer.toString(Properties.DEFAULT_WRITE_TIMEOUT))));
         } catch (IOException e) {
             throw new UncheckedIOException("Cannot read properties from file %s.".formatted(path.toString()), e);
         }

@@ -25,8 +25,8 @@ Commands that call openHAB require a server URL. Supply `--base-url=http://local
 or set it in `oh-cli.properties` (or the file selected by `--properties-file`):
 
 ```properties
-config.baseUrl=http://localhost:8080
+config.rest.baseUrl=http://localhost:8080
 ```
 
 CLI options override file settings. The REST path defaults to `/rest` and is appended
-to the server URL; customize it with `--base-path` or `config.basePath`.
+to the server URL; customize it with `--base-path` or `config.rest.basePath`.
