@@ -30,6 +30,18 @@ class CommandFactoryTest {
     }
 
     @Test
+    void updateCommandIsInjectedAndParsesCaseInsensitiveActions() {
+        var parsed = Cli.commandLine()
+                .parseArgs("_config", "update", "RUN", "--release=v1.0.0")
+                .subcommand()
+                .subcommand();
+        assertInstanceOf(
+                org.openhab.cli.runtime.command.config.update.UpdateCommand.class,
+                parsed.commandSpec().userObject());
+        assertEquals("run", parsed.matchedPositionalValue(0, (Enum<?>) null).name());
+    }
+
+    @Test
     void injectedCommandAcceptsPicocliMixinAndPositionalArguments() {
         var command = Cli.commandLine();
 

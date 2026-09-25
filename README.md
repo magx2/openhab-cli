@@ -211,3 +211,50 @@ With GraalVM for Java 21 installed, `./gradlew :runtime:nativeCompile` creates
 must be built on their target operating system. The release workflow uses the
 [GraalVM setup action](https://github.com/graalvm/setup-graalvm) and
 [Native Build Tools](https://graalvm.github.io/native-build-tools/latest/gradle-plugin).
+
+## Updating the CLI
+
+Check for a newer stable GitHub release (the default action), or install it:
+
+```sh
+oh _config update check
+oh _config update run
+# For a runnable JAR:
+java -jar oh.jar _config update run
+```
+
+The updater follows the approach used by
+[bigboy's SelfUpdate](https://github.com/magx2/bigboy/blob/master/cli/src/main/java/pl/grzeslowski/commandcenter/cli/SelfUpdate.java).
+It contacts `magx2/openhab-cli` releases directly; `gh` is not required. It keeps
+whichever format you are running: a standalone JAR, Linux x86_64 native executable,
+or Windows x86_64 native executable. JAR updates work on Linux and Windows with
+Java 21 or newer. Development classpaths and other native architectures are not
+supported. No openHAB connection settings are needed.
+
+Use `--release=0.1.0` (or `--release=v0.1.0`) to select a published stable release.
+Add `--force` to reinstall it or downgrade. Version comparison uses the application
+version from Gradle, excluding the REST API prefix shown by `oh --version`.
+Checking never downloads an asset or changes the installation. A missing release,
+network failure or invalid download is reported as an error. The command returns
+0 on success, 98 for I/O failures, and 1 for other failures or interruption.
+Failure messages go to stderr, and exception details go to the configured logger.
+
+The download is checked against its release size and GitHub SHA-256 digest when
+provided, and its file format is checked before installation. The existing
+filename is retained, even when it contains the old version number; symlinks
+continue pointing to the same resolved installation path.
+
+On Linux, replacement is atomic and retains file permissions. For system-wide
+installations, `sudo` prompts for your password in the terminal if required;
+the CLI does not read or store it. Run updates from an interactive terminal when
+elevation is needed.
+
+On Windows, PowerShell stages the replacement and finishes after the CLI process
+exits, allowing both locked JARs and native executables to be replaced. Protected
+installation directories trigger the normal Windows UAC prompt. The command
+prints the path to a temporary `status.txt`: `READY` means replacement is pending,
+`DONE` means it succeeded, and `ERROR` includes a failure reason. Wait for `DONE`
+before running the updated CLI. Close other processes using the same installation;
+the helper retries locked files for up to two minutes. Failed replacement leaves
+the previous installation in place. The temporary status and helper log are kept
+for diagnosis and can be removed after checking the result.

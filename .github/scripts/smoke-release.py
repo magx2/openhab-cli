@@ -45,6 +45,7 @@ if __name__ == "__main__":
     spec = json.loads(Path("openapi/src/main/open-hab/spec.json").read_text(encoding="utf-8"))
     assert run("--version").strip() == f"{spec['info']['version']}.{version}"
     assert "availableActionsForThing" in run("action", "--help")
+    assert "--release" in run("_config", "update", "--help")
     server = ThreadingHTTPServer(("127.0.0.1", 0), OpenHabHandler)
     thread = Thread(target=server.serve_forever, daemon=True)
     thread.start()

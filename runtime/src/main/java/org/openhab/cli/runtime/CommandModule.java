@@ -22,6 +22,7 @@ import org.openhab.cli.runtime.command.config.properties.ListCommand;
 import org.openhab.cli.runtime.command.config.properties.SetCommand;
 import org.openhab.cli.runtime.command.config.shell.bash.BashCompletionCommand;
 import org.openhab.cli.runtime.command.config.shell.fish.FishCompletionCommand;
+import org.openhab.cli.runtime.command.config.update.UpdateCommand;
 import org.openhab.cli.runtime.command.configdescriptions.ConfigDescriptionByURI;
 import org.openhab.cli.runtime.command.configdescriptions.ConfigDescriptions;
 import org.openhab.cli.runtime.command.discovery.BindingsWithDiscoverySupport;
@@ -967,4 +968,9 @@ interface CommandModule {
     @IntoMap
     @ClassKey(BashCompletionCommand.class)
     Callable<Integer> bashCompletions(BashCompletionCommand command);
+
+    @Binds
+    @IntoMap
+    @ClassKey(UpdateCommand.class)
+    Callable<Integer> update(UpdateCommand command);
 }
