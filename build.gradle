@@ -22,7 +22,7 @@ subprojects {
     }
 }
 
-project(':engine') {
+configure([project(':engine'), project(':runtime')]) {
     plugins.withId('java') {
         def lombokDependency = 'org.projectlombok:lombok:1.18.48'
         dependencies {

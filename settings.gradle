@@ -9,3 +9,4 @@ rootProject.name = 'openhab-cli'
 
 include 'engine'
 include 'openapi'
+include 'runtime'
