@@ -38,7 +38,6 @@ public class AvailableActionsForThing implements Callable<Integer> {
                 this.getClass().getSimpleName(),
                 thingUID,
                 acceptLanguage);
-        console.writeError("ok " + options + " thingUID=" + thingUID + " acceptLanguage=" + acceptLanguage);
 
         var apiClient = apiClientBuilder.build(options);
         var action = new Action(apiClient);

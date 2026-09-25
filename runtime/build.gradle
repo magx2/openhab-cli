@@ -19,7 +19,10 @@ dependencies {
     implementation project(':openapi')
     implementation libs.gson
 
-    implementation 'org.slf4j:slf4j-api:2.0.17'
+    implementation libs.slf4j.api
+    implementation libs.slf4j.jul
+    runtimeOnly libs.log4j.core
+    runtimeOnly libs.log4j.slf4j
     implementation 'info.picocli:picocli:4.7.7'
     annotationProcessor 'info.picocli:picocli-codegen:4.7.7'
 
@@ -35,6 +38,8 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
+    systemProperty 'loggingTestClasspath', sourceSets.test.runtimeClasspath.asPath
+    systemProperty 'user.home', layout.buildDirectory.dir('test-home').get().asFile.absolutePath
 }
 
 compileJava {

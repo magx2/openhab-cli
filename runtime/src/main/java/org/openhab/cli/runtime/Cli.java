@@ -3,9 +3,9 @@ package org.openhab.cli.runtime;
 import static java.lang.String.join;
 
 import java.util.concurrent.Callable;
-import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.Version;
 import org.openhab.cli.runtime.action.ActionCommand;
+import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -22,7 +22,6 @@ import picocli.CommandLine.Command;
             "98: I/O operation failed (for example, reading the properties file)", //
             "99: openHAB API request failed" //
         })
-@Slf4j
 public class Cli implements Callable<Integer> {
     /** Supplies the application version embedded by the engine build. */
     public static class VersionProvider implements CommandLine.IVersionProvider {
@@ -33,10 +32,11 @@ public class Cli implements Callable<Integer> {
     }
 
     public static void main(String[] args) {
+        Logging.configure();
+        var log = LoggerFactory.getLogger(Cli.class);
         if (log.isDebugEnabled()) {
             log.debug("oh {}", join(" ", args));
         }
-        System.out.println("oh " + join(" ", args));
         int exitCode = commandLine().execute(args);
         System.exit(exitCode);
     }
