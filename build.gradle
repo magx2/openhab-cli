@@ -7,7 +7,26 @@
 
 plugins {
     id 'org.openapi.generator' version '7.25.0'
-    id 'com.diffplug.spotless' version '8.10.2' apply false
+    id 'com.diffplug.spotless' version '8.10.2'
+}
+
+// Let Git identify repository text files, including untracked files and dotfiles.
+// Ignored build output and files marked/detected as binary are not formatted.
+def repositoryTextFiles = providers.exec {
+    commandLine 'git', 'ls-files', '--cached', '--others', '--exclude-standard', '--eol', '-z'
+}.standardOutput.asText.map { listing ->
+    listing.split('\u0000').findAll { entry ->
+        def metadata = entry.substring(0, entry.indexOf('\t'))
+        !metadata.contains('w/-text') && !metadata.contains('attr/-text')
+    }.collect { entry -> entry.substring(entry.indexOf('\t') + 1) }.unique()
+}
+
+spotless {
+    lineEndings = com.diffplug.spotless.LineEnding.UNIX
+    format('text') {
+        // Java sources are handled by the subproject Palantir formatters.
+        target files(repositoryTextFiles.get().findAll { !it.endsWith('.java') })
+    }
 }
 
 subprojects {
@@ -19,6 +38,7 @@ subprojects {
         }
         apply plugin: 'com.diffplug.spotless'
         spotless {
+            lineEndings = com.diffplug.spotless.LineEnding.UNIX
             java {
                 target 'src/**/*.java'
                 palantirJavaFormat()
