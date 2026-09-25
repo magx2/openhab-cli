@@ -7,11 +7,11 @@ import org.openhab.cli.runtime.service.Console;
 import org.openhab.cli.runtime.service.PropertiesReader;
 import picocli.CommandLine;
 
-/** Prints stored Java properties as one key=value entry per line, ordered by key. */
+/** Prints a header followed by stored Java properties as key=value entries, ordered by key. */
 @Slf4j
 @CommandLine.Command(
         name = "list",
-        description = "List stored Java properties as key=value, one per line ordered by key, without CLI defaults.",
+        description = "Print a header and stored Java properties as key=value, ordered by key, without CLI defaults.",
         mixinStandardHelpOptions = true)
 public class ListCommand implements Runnable {
     @CommandLine.Mixin
@@ -28,7 +28,7 @@ public class ListCommand implements Runnable {
     }
 
     /**
-     * Reads the selected properties file and prints each stored entry as key=value on its own line.
+     * Reads the selected properties file and prints a header followed by each key=value entry on its own line.
      *
      * @throws java.io.UncheckedIOException if the existing properties file cannot be read
      */
@@ -36,6 +36,7 @@ public class ListCommand implements Runnable {
     public void run() {
         log.info("List properties");
         var properties = propertiesReader.readProperties(options.getPropertiesFile());
+        console.write("Properties:");
         properties.stringPropertyNames().stream()
                 .sorted()
                 .forEach(key -> console.write(key + "=" + properties.getProperty(key)));
