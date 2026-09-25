@@ -153,13 +153,16 @@ jobs:
       - name: Build and smoke-test the native executable
         env:
           VERSION: ${{ needs.prepare.outputs.version }}
-          PLATFORM: ${{ matrix.platform }}
+          # The Windows toolchain exports Platform; Bash variable names are case-sensitive.
+          RELEASE_PLATFORM: ${{ matrix.platform }}
           EXTENSION: ${{ matrix.extension }}
         run: |
+          set -u
           ./gradlew --no-daemon :runtime:nativeCompile
           mkdir -p dist
-          cp "runtime/build/native/nativeCompile/oh$EXTENSION" "dist/oh-$VERSION-$PLATFORM$EXTENSION"
-          python3 .github/scripts/smoke-release.py "dist/oh-$VERSION-$PLATFORM$EXTENSION"
+          release_asset="dist/oh-$VERSION-$RELEASE_PLATFORM$EXTENSION"
+          cp "runtime/build/native/nativeCompile/oh$EXTENSION" "$release_asset"
+          python3 .github/scripts/smoke-release.py "$release_asset"
       - uses: actions/upload-artifact@v4
         with:
           name: release-${{ matrix.platform }}
@@ -210,9 +213,13 @@ jobs:
           git fetch origin master
           test "$(git rev-parse FETCH_HEAD)" = "$GITHUB_SHA"
           test -z "$(git ls-remote origin "refs/tags/$TAG")"
-          test -f "dist/oh-$VERSION.jar"
-          test -f "dist/oh-$VERSION-linux-x86_64"
-          test -f "dist/oh-$VERSION-windows-x86_64.exe"
+          for asset in "dist/oh-$VERSION.jar" "dist/oh-$VERSION-linux-x86_64" "dist/oh-$VERSION-windows-x86_64.exe"; do
+            if [ ! -f "$asset" ]; then
+              echo "::error::Missing release asset: $asset"
+              ls -la dist
+              exit 1
+            fi
+          done
       # A draft keeps the new tag pending until the local commits and tag are pushed.
       - name: Create draft release and upload assets
         run: |
