@@ -12,6 +12,6 @@ class VersionTest {
         assertNotNull(expected);
         var expectedApiVersion = System.getProperty("expectedApiVersion");
         assertNotNull(expectedApiVersion);
-        assertEquals(expectedApiVersion + "." + expected, Version.VERSION);
+        assertEquals(expected + "+oh." + expectedApiVersion, Version.VERSION);
     }
 }
