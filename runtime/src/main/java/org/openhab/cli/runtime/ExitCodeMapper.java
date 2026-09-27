@@ -22,11 +22,7 @@ public class ExitCodeMapper implements CommandLine.IExitCodeExceptionMapper {
 
     @Override
     public int getExitCode(Throwable throwable) {
-        var message = throwable.getMessage();
-        if (message == null || message.isBlank()) {
-            message = throwable.getClass().getName();
-        }
-        console.writeError("%s", throwable, message);
+        writeError(throwable);
         return switch (throwable) {
             case EndpointException endpointException -> ENDPOINT_EXCEPTION_EXIT_CODE;
             case UncheckedIOException uncheckedIOException -> IO_EXCEPTION_EXIT_CODE;
@@ -34,5 +30,13 @@ public class ExitCodeMapper implements CommandLine.IExitCodeExceptionMapper {
             case IllegalArgumentException illegalArgumentException -> ILLEGAL_ARGUMENT_EXCEPTION_EXIT_CODE;
             default -> 1;
         };
+    }
+
+    private void writeError(Throwable throwable) {
+        var message = throwable.getMessage();
+        if (message == null || message.isBlank()) {
+            message = throwable.getClass().getName();
+        }
+        console.writeError("%s", throwable, message);
     }
 }
