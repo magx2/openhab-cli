@@ -12,6 +12,20 @@ import org.openhab.cli.runtime.service.Console;
 
 class ConsoleTest {
     @Test
+    void printsFormattedErrorMessagesLiterally() {
+        var original = System.err;
+        var bytes = new ByteArrayOutputStream();
+        try (var output = new PrintStream(bytes, true, StandardCharsets.UTF_8)) {
+            System.setErr(output);
+            var console = new Console();
+            console.writeError("%s", new AssertionError("invalid"), "100% invalid: %s");
+        } finally {
+            System.setErr(original);
+        }
+        assertEquals("[ERROR] 100% invalid: %s" + System.lineSeparator(), bytes.toString(StandardCharsets.UTF_8));
+    }
+
+    @Test
     void printsCompactJsonWithEscapedValues() {
         var output = capture(Map.of("message", "hello\n\"world\""), false);
         assertEquals("{\"message\":\"hello\\n\\\"world\\\"\"}" + System.lineSeparator(), output);

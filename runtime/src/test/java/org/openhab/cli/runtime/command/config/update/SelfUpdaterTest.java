@@ -141,7 +141,7 @@ class SelfUpdaterTest {
         var updater = mock(SelfUpdater.class);
         var command = new CommandLine(new UpdateCommand(updater, mock(Console.class)))
                 .setCaseInsensitiveEnumValuesAllowed(true)
-                .setExitCodeExceptionMapper(new ExitCodeMapper());
+                .setExitCodeExceptionMapper(new ExitCodeMapper(mock(Console.class)));
         assertEquals(0, command.execute());
         verify(updater).execute(true, null, false);
         assertEquals(0, command.execute("RUN", "--release=v1.0.0", "--force"));
