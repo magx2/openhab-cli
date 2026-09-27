@@ -8,18 +8,15 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import javax.inject.Inject;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
 import org.openhab.cli.engine.properties.Properties;
 
 @Slf4j
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 public class PropertiesReader {
     private final Console console;
-    /** Creates the service that loads CLI properties from disk. */
-    @Inject
-    public PropertiesReader(Console console) {
-        this.console = console;
-    }
 
     public static final String PROPERTIES_FILE_NAME = "oh-cli.properties";
 

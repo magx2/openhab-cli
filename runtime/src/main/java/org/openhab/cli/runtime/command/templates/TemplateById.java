@@ -1,6 +1,8 @@
 package org.openhab.cli.runtime.command.templates;
 
 import javax.inject.Inject;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Templates;
 import org.openhab.cli.runtime.Options;
@@ -14,6 +16,7 @@ import picocli.CommandLine;
         name = "templateById",
         description = "Gets a template corresponding to the given UID.",
         mixinStandardHelpOptions = true)
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE, onConstructor_ = @Inject)
 public class TemplateById implements Runnable {
     @CommandLine.Mixin
     private Options options;
@@ -34,13 +37,6 @@ public class TemplateById implements Runnable {
 
     private final Console console;
     private final ApiClientBuilder apiClientBuilder;
-
-    /** Creates the command with injected output and REST client services. */
-    @Inject
-    TemplateById(Console console, ApiClientBuilder apiClientBuilder) {
-        this.console = console;
-        this.apiClientBuilder = apiClientBuilder;
-    }
 
     /** Executes {@link Templates#templateById}. */
     @Override

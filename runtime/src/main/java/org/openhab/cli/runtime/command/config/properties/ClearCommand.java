@@ -2,6 +2,7 @@ package org.openhab.cli.runtime.command.config.properties;
 
 import java.util.concurrent.Callable;
 import javax.inject.Inject;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.runtime.Options;
 import org.openhab.cli.runtime.service.PropertiesReader;
@@ -13,6 +14,7 @@ import picocli.CommandLine;
         name = "clear",
         description = "Remove a property from an existing configuration file. Other properties are preserved.",
         mixinStandardHelpOptions = true)
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 public class ClearCommand implements Callable<Integer> {
     @CommandLine.Mixin
     private Options options;
@@ -21,12 +23,6 @@ public class ClearCommand implements Callable<Integer> {
     private String key;
 
     private final PropertiesReader propertiesReader;
-
-    /** Creates the command with the service used to update the properties file. */
-    @Inject
-    public ClearCommand(PropertiesReader propertiesReader) {
-        this.propertiesReader = propertiesReader;
-    }
 
     /** Clears the requested property and returns zero on success or the I/O error exit code. */
     @Override

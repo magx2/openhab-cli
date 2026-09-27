@@ -2,6 +2,8 @@ package org.openhab.cli.runtime.command.logging;
 
 import com.google.gson.reflect.TypeToken;
 import javax.inject.Inject;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.client.model.LoggerInfo;
 import org.openhab.cli.engine.endpoint.Logging;
@@ -14,6 +16,7 @@ import picocli.CommandLine;
 /** Modify or add logger */
 @Slf4j
 @CommandLine.Command(name = "putLogger", description = "Modify or add logger", mixinStandardHelpOptions = true)
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE, onConstructor_ = @Inject)
 public class PutLogger implements Runnable {
     @CommandLine.Mixin
     private Options options;
@@ -34,13 +37,6 @@ public class PutLogger implements Runnable {
 
     private final Console console;
     private final ApiClientBuilder apiClientBuilder;
-
-    /** Creates the command with injected output and REST client services. */
-    @Inject
-    PutLogger(Console console, ApiClientBuilder apiClientBuilder) {
-        this.console = console;
-        this.apiClientBuilder = apiClientBuilder;
-    }
 
     /** Executes {@link Logging#putLogger}. */
     @Override

@@ -1,6 +1,8 @@
 package org.openhab.cli.runtime.command.rules;
 
 import javax.inject.Inject;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Rules;
 import org.openhab.cli.runtime.Options;
@@ -14,6 +16,7 @@ import picocli.CommandLine;
         name = "ruleById",
         description = "Gets the rule corresponding to the given UID.",
         mixinStandardHelpOptions = true)
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE, onConstructor_ = @Inject)
 public class RuleById implements Runnable {
     @CommandLine.Mixin
     private Options options;
@@ -23,13 +26,6 @@ public class RuleById implements Runnable {
 
     private final Console console;
     private final ApiClientBuilder apiClientBuilder;
-
-    /** Creates the command with injected output and REST client services. */
-    @Inject
-    RuleById(Console console, ApiClientBuilder apiClientBuilder) {
-        this.console = console;
-        this.apiClientBuilder = apiClientBuilder;
-    }
 
     /** Executes {@link Rules#ruleById}. */
     @Override

@@ -1,13 +1,13 @@
 package org.openhab.cli.runtime.service;
 
 import javax.inject.Inject;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.client.JSON;
 
 @Slf4j
+@NoArgsConstructor(onConstructor_ = @Inject)
 public class Console {
-    @Inject
-    public Console() {}
 
     /** Prints JSON followed by a newline, using the API client's configured Gson adapters. */
     public void writeJson(Object object, boolean prettyPrint) {

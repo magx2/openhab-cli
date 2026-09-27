@@ -1,6 +1,8 @@
 package org.openhab.cli.runtime.command.links;
 
 import javax.inject.Inject;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Links;
 import org.openhab.cli.runtime.Options;
@@ -14,6 +16,7 @@ import picocli.CommandLine;
         name = "unlinkItemFromChannel",
         description = "Unlinks an item from a channel.",
         mixinStandardHelpOptions = true)
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE, onConstructor_ = @Inject)
 public class UnlinkItemFromChannel implements Runnable {
     @CommandLine.Mixin
     private Options options;
@@ -30,13 +33,6 @@ public class UnlinkItemFromChannel implements Runnable {
 
     private final Console console;
     private final ApiClientBuilder apiClientBuilder;
-
-    /** Creates the command with injected output and REST client services. */
-    @Inject
-    UnlinkItemFromChannel(Console console, ApiClientBuilder apiClientBuilder) {
-        this.console = console;
-        this.apiClientBuilder = apiClientBuilder;
-    }
 
     /** Executes {@link Links#unlinkItemFromChannel}. */
     @Override

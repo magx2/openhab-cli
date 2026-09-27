@@ -3,6 +3,8 @@ package org.openhab.cli.runtime.command.events;
 import com.google.gson.reflect.TypeToken;
 import java.util.Set;
 import javax.inject.Inject;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Events;
 import org.openhab.cli.runtime.JsonArguments;
@@ -17,6 +19,7 @@ import picocli.CommandLine;
         name = "updateItemListForStateUpdates",
         description = "Changes the list of items a SSE connection will receive state updates to.",
         mixinStandardHelpOptions = true)
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE, onConstructor_ = @Inject)
 public class UpdateItemListForStateUpdates implements Runnable {
     @CommandLine.Mixin
     private Options options;
@@ -33,13 +36,6 @@ public class UpdateItemListForStateUpdates implements Runnable {
 
     private final Console console;
     private final ApiClientBuilder apiClientBuilder;
-
-    /** Creates the command with injected output and REST client services. */
-    @Inject
-    UpdateItemListForStateUpdates(Console console, ApiClientBuilder apiClientBuilder) {
-        this.console = console;
-        this.apiClientBuilder = apiClientBuilder;
-    }
 
     /** Executes {@link Events#updateItemListForStateUpdates}. */
     @Override

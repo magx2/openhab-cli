@@ -1,6 +1,8 @@
 package org.openhab.cli.runtime.command.auth;
 
 import javax.inject.Inject;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Auth;
 import org.openhab.cli.runtime.Options;
@@ -14,6 +16,7 @@ import picocli.CommandLine;
         name = "oAuthToken",
         description = "Get access and refresh tokens.",
         mixinStandardHelpOptions = true)
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE, onConstructor_ = @Inject)
 public class OAuthToken implements Runnable {
     @CommandLine.Mixin
     private Options options;
@@ -54,13 +57,6 @@ public class OAuthToken implements Runnable {
 
     private final Console console;
     private final ApiClientBuilder apiClientBuilder;
-
-    /** Creates the command with injected output and REST client services. */
-    @Inject
-    OAuthToken(Console console, ApiClientBuilder apiClientBuilder) {
-        this.console = console;
-        this.apiClientBuilder = apiClientBuilder;
-    }
 
     /** Executes {@link Auth#oAuthToken}. */
     @Override

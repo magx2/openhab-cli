@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.concurrent.Callable;
 import javax.inject.Inject;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.runtime.service.Console;
 import picocli.CommandLine;
@@ -16,6 +17,7 @@ import picocli.CommandLine;
         name = "update",
         description = "Check for or install an openHAB CLI update from GitHub Releases.",
         mixinStandardHelpOptions = true)
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 public class UpdateCommand implements Callable<Integer> {
     @CommandLine.Parameters(
             index = "0",
@@ -39,13 +41,6 @@ public class UpdateCommand implements Callable<Integer> {
 
     private final SelfUpdater updater;
     private final Console console;
-
-    /** Creates the command with the release update service and console output. */
-    @Inject
-    public UpdateCommand(SelfUpdater updater, Console console) {
-        this.updater = updater;
-        this.console = console;
-    }
 
     /** Available update actions; checking never downloads or replaces the installation. */
     public enum Action {

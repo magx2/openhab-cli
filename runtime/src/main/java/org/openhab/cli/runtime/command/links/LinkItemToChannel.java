@@ -2,6 +2,8 @@ package org.openhab.cli.runtime.command.links;
 
 import com.google.gson.reflect.TypeToken;
 import javax.inject.Inject;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.client.model.ItemChannelLink;
 import org.openhab.cli.engine.endpoint.Links;
@@ -17,6 +19,7 @@ import picocli.CommandLine;
         name = "linkItemToChannel",
         description = "Links an item to a channel.",
         mixinStandardHelpOptions = true)
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE, onConstructor_ = @Inject)
 public class LinkItemToChannel implements Runnable {
     @CommandLine.Mixin
     private Options options;
@@ -40,13 +43,6 @@ public class LinkItemToChannel implements Runnable {
 
     private final Console console;
     private final ApiClientBuilder apiClientBuilder;
-
-    /** Creates the command with injected output and REST client services. */
-    @Inject
-    LinkItemToChannel(Console console, ApiClientBuilder apiClientBuilder) {
-        this.console = console;
-        this.apiClientBuilder = apiClientBuilder;
-    }
 
     /** Executes {@link Links#linkItemToChannel}. */
     @Override

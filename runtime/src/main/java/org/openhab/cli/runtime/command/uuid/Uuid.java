@@ -1,6 +1,8 @@
 package org.openhab.cli.runtime.command.uuid;
 
 import javax.inject.Inject;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.runtime.Options;
 import org.openhab.cli.runtime.service.ApiClientBuilder;
@@ -10,19 +12,13 @@ import picocli.CommandLine;
 /** A unified unique id. */
 @Slf4j
 @CommandLine.Command(name = "uuid", description = "A unified unique id.", mixinStandardHelpOptions = true)
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE, onConstructor_ = @Inject)
 public class Uuid implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
     private final Console console;
     private final ApiClientBuilder apiClientBuilder;
-
-    /** Creates the command with injected output and REST client services. */
-    @Inject
-    Uuid(Console console, ApiClientBuilder apiClientBuilder) {
-        this.console = console;
-        this.apiClientBuilder = apiClientBuilder;
-    }
 
     /** Executes {@link org.openhab.cli.engine.endpoint.Uuid#uuid}. */
     @Override

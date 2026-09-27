@@ -2,10 +2,12 @@ package org.openhab.cli.runtime;
 
 import java.io.UncheckedIOException;
 import javax.inject.Inject;
+import lombok.RequiredArgsConstructor;
 import org.openhab.cli.engine.endpoint.EndpointException;
 import org.openhab.cli.runtime.service.Console;
 import picocli.CommandLine;
 
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 public class ExitCodeMapper implements CommandLine.IExitCodeExceptionMapper {
     public static final int ENDPOINT_EXCEPTION_EXIT_CODE = 99;
     public static final int IO_EXCEPTION_EXIT_CODE = 98;
@@ -13,12 +15,6 @@ public class ExitCodeMapper implements CommandLine.IExitCodeExceptionMapper {
     public static final int ILLEGAL_ARGUMENT_EXCEPTION_EXIT_CODE = 96;
 
     private final Console console;
-
-    /** Creates the mapper used for command execution failures. */
-    @Inject
-    public ExitCodeMapper(Console console) {
-        this.console = console;
-    }
 
     @Override
     public int getExitCode(Throwable throwable) {

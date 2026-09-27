@@ -2,6 +2,8 @@ package org.openhab.cli.runtime.command.items;
 
 import com.google.gson.reflect.TypeToken;
 import javax.inject.Inject;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.client.model.Metadata;
 import org.openhab.cli.engine.endpoint.Items;
@@ -17,6 +19,7 @@ import picocli.CommandLine;
         name = "addMetadataToItem",
         description = "Adds metadata to an item.",
         mixinStandardHelpOptions = true)
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE, onConstructor_ = @Inject)
 public class AddMetadataToItem implements Runnable {
     @CommandLine.Mixin
     private Options options;
@@ -36,13 +39,6 @@ public class AddMetadataToItem implements Runnable {
 
     private final Console console;
     private final ApiClientBuilder apiClientBuilder;
-
-    /** Creates the command with injected output and REST client services. */
-    @Inject
-    AddMetadataToItem(Console console, ApiClientBuilder apiClientBuilder) {
-        this.console = console;
-        this.apiClientBuilder = apiClientBuilder;
-    }
 
     /** Executes {@link Items#addMetadataToItem}. */
     @Override

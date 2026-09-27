@@ -1,6 +1,8 @@
 package org.openhab.cli.runtime.command.persistence;
 
 import javax.inject.Inject;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Persistence;
 import org.openhab.cli.runtime.Options;
@@ -15,6 +17,7 @@ import picocli.CommandLine;
         description =
                 "Gets a list of stored Items available via a specific persistence service with their stored name.",
         mixinStandardHelpOptions = true)
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE, onConstructor_ = @Inject)
 public class ItemsForPersistenceService implements Runnable {
     @CommandLine.Mixin
     private Options options;
@@ -35,13 +38,6 @@ public class ItemsForPersistenceService implements Runnable {
 
     private final Console console;
     private final ApiClientBuilder apiClientBuilder;
-
-    /** Creates the command with injected output and REST client services. */
-    @Inject
-    ItemsForPersistenceService(Console console, ApiClientBuilder apiClientBuilder) {
-        this.console = console;
-        this.apiClientBuilder = apiClientBuilder;
-    }
 
     /** Executes {@link Persistence#itemsForPersistenceService}. */
     @Override

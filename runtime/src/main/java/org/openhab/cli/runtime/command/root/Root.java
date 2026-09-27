@@ -1,6 +1,8 @@
 package org.openhab.cli.runtime.command.root;
 
 import javax.inject.Inject;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.runtime.Options;
 import org.openhab.cli.runtime.service.ApiClientBuilder;
@@ -13,19 +15,13 @@ import picocli.CommandLine;
         name = "root",
         description = "Gets information about the runtime, the API version and links to resources.",
         mixinStandardHelpOptions = true)
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE, onConstructor_ = @Inject)
 public class Root implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
     private final Console console;
     private final ApiClientBuilder apiClientBuilder;
-
-    /** Creates the command with injected output and REST client services. */
-    @Inject
-    Root(Console console, ApiClientBuilder apiClientBuilder) {
-        this.console = console;
-        this.apiClientBuilder = apiClientBuilder;
-    }
 
     /** Executes {@link org.openhab.cli.engine.endpoint.Root#root}. */
     @Override

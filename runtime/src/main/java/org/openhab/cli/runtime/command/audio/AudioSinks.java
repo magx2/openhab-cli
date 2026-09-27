@@ -1,6 +1,8 @@
 package org.openhab.cli.runtime.command.audio;
 
 import javax.inject.Inject;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Audio;
 import org.openhab.cli.runtime.Options;
@@ -11,6 +13,7 @@ import picocli.CommandLine;
 /** Get the list of all sinks. */
 @Slf4j
 @CommandLine.Command(name = "audioSinks", description = "Get the list of all sinks.", mixinStandardHelpOptions = true)
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE, onConstructor_ = @Inject)
 public class AudioSinks implements Runnable {
     @CommandLine.Mixin
     private Options options;
@@ -24,13 +27,6 @@ public class AudioSinks implements Runnable {
 
     private final Console console;
     private final ApiClientBuilder apiClientBuilder;
-
-    /** Creates the command with injected output and REST client services. */
-    @Inject
-    AudioSinks(Console console, ApiClientBuilder apiClientBuilder) {
-        this.console = console;
-        this.apiClientBuilder = apiClientBuilder;
-    }
 
     /** Executes {@link Audio#audioSinks}. */
     @Override

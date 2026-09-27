@@ -2,6 +2,8 @@ package org.openhab.cli.runtime.command.things;
 
 import com.google.gson.reflect.TypeToken;
 import javax.inject.Inject;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.client.model.Thing;
 import org.openhab.cli.engine.endpoint.Things;
@@ -14,6 +16,7 @@ import picocli.CommandLine;
 /** Updates a thing. */
 @Slf4j
 @CommandLine.Command(name = "updateThing", description = "Updates a thing.", mixinStandardHelpOptions = true)
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE, onConstructor_ = @Inject)
 public class UpdateThing implements Runnable {
     @CommandLine.Mixin
     private Options options;
@@ -37,13 +40,6 @@ public class UpdateThing implements Runnable {
 
     private final Console console;
     private final ApiClientBuilder apiClientBuilder;
-
-    /** Creates the command with injected output and REST client services. */
-    @Inject
-    UpdateThing(Console console, ApiClientBuilder apiClientBuilder) {
-        this.console = console;
-        this.apiClientBuilder = apiClientBuilder;
-    }
 
     /** Executes {@link Things#updateThing}. */
     @Override

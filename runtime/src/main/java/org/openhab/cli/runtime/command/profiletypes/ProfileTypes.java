@@ -1,6 +1,8 @@
 package org.openhab.cli.runtime.command.profiletypes;
 
 import javax.inject.Inject;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.runtime.Options;
 import org.openhab.cli.runtime.service.ApiClientBuilder;
@@ -13,6 +15,7 @@ import picocli.CommandLine;
         name = "profileTypes",
         description = "Gets all available profile types.",
         mixinStandardHelpOptions = true)
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE, onConstructor_ = @Inject)
 public class ProfileTypes implements Runnable {
     @CommandLine.Mixin
     private Options options;
@@ -40,13 +43,6 @@ public class ProfileTypes implements Runnable {
 
     private final Console console;
     private final ApiClientBuilder apiClientBuilder;
-
-    /** Creates the command with injected output and REST client services. */
-    @Inject
-    ProfileTypes(Console console, ApiClientBuilder apiClientBuilder) {
-        this.console = console;
-        this.apiClientBuilder = apiClientBuilder;
-    }
 
     /** Executes {@link org.openhab.cli.engine.endpoint.ProfileTypes#profileTypes}. */
     @Override

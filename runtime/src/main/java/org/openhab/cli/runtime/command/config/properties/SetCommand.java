@@ -2,6 +2,7 @@ package org.openhab.cli.runtime.command.config.properties;
 
 import java.util.concurrent.Callable;
 import javax.inject.Inject;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.runtime.Options;
 import org.openhab.cli.runtime.service.PropertiesReader;
@@ -14,6 +15,7 @@ import picocli.CommandLine;
         description =
                 "Add or replace a property, creating the configuration file if needed. Other properties are preserved.",
         mixinStandardHelpOptions = true)
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 public class SetCommand implements Callable<Integer> {
     @CommandLine.Mixin
     private Options options;
@@ -25,12 +27,6 @@ public class SetCommand implements Callable<Integer> {
     private String value;
 
     private final PropertiesReader propertiesReader;
-
-    /** Creates the command with the service used to update the properties file. */
-    @Inject
-    public SetCommand(PropertiesReader propertiesReader) {
-        this.propertiesReader = propertiesReader;
-    }
 
     /** Stores the requested property and returns zero on success or the I/O error exit code. */
     @Override

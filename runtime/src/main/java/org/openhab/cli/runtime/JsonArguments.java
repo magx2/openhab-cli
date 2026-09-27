@@ -1,10 +1,13 @@
 package org.openhab.cli.runtime;
 
 import java.lang.reflect.Type;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.openhab.cli.client.JSON;
 import org.openhab.cli.client.model.CanSerializeRulesRequest;
 
 /** Decodes structured command arguments using the API client's JSON adapters. */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class JsonArguments {
     static {
         // Keep the correction in the shared serializer so request bodies use the same representation.
@@ -13,8 +16,6 @@ public final class JsonArguments {
                 .registerTypeAdapter(CanSerializeRulesRequest.class, new RuleSerializationRequestAdapter())
                 .create());
     }
-
-    private JsonArguments() {}
 
     /** Returns null for an omitted argument, otherwise decodes its JSON value. */
     public static <T> T parse(String value, Type type, String name) {

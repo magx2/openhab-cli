@@ -1,6 +1,8 @@
 package org.openhab.cli.runtime.command.logging;
 
 import javax.inject.Inject;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Logging;
 import org.openhab.cli.runtime.Options;
@@ -11,6 +13,7 @@ import picocli.CommandLine;
 /** Get a single logger. */
 @Slf4j
 @CommandLine.Command(name = "logger", description = "Get a single logger.", mixinStandardHelpOptions = true)
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE, onConstructor_ = @Inject)
 public class Logger implements Runnable {
     @CommandLine.Mixin
     private Options options;
@@ -24,13 +27,6 @@ public class Logger implements Runnable {
 
     private final Console console;
     private final ApiClientBuilder apiClientBuilder;
-
-    /** Creates the command with injected output and REST client services. */
-    @Inject
-    Logger(Console console, ApiClientBuilder apiClientBuilder) {
-        this.console = console;
-        this.apiClientBuilder = apiClientBuilder;
-    }
 
     /** Executes {@link Logging#logger}. */
     @Override

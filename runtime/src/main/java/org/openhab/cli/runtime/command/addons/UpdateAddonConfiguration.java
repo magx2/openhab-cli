@@ -3,6 +3,8 @@ package org.openhab.cli.runtime.command.addons;
 import com.google.gson.reflect.TypeToken;
 import java.util.Map;
 import javax.inject.Inject;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Addons;
 import org.openhab.cli.runtime.JsonArguments;
@@ -17,6 +19,7 @@ import picocli.CommandLine;
         name = "updateAddonConfiguration",
         description = "Updates an add-on configuration for given ID and returns the old configuration.",
         mixinStandardHelpOptions = true)
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE, onConstructor_ = @Inject)
 public class UpdateAddonConfiguration implements Runnable {
     @CommandLine.Mixin
     private Options options;
@@ -40,13 +43,6 @@ public class UpdateAddonConfiguration implements Runnable {
 
     private final Console console;
     private final ApiClientBuilder apiClientBuilder;
-
-    /** Creates the command with injected output and REST client services. */
-    @Inject
-    UpdateAddonConfiguration(Console console, ApiClientBuilder apiClientBuilder) {
-        this.console = console;
-        this.apiClientBuilder = apiClientBuilder;
-    }
 
     /** Executes {@link Addons#updateAddonConfiguration}. */
     @Override

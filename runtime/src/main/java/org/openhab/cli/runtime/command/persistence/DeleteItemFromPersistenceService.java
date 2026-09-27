@@ -1,6 +1,8 @@
 package org.openhab.cli.runtime.command.persistence;
 
 import javax.inject.Inject;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Persistence;
 import org.openhab.cli.runtime.Options;
@@ -14,6 +16,7 @@ import picocli.CommandLine;
         name = "deleteItemFromPersistenceService",
         description = "Deletes Item persistence data from a specific persistence service in a given time range.",
         mixinStandardHelpOptions = true)
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE, onConstructor_ = @Inject)
 public class DeleteItemFromPersistenceService implements Runnable {
     @CommandLine.Mixin
     private Options options;
@@ -48,13 +51,6 @@ public class DeleteItemFromPersistenceService implements Runnable {
 
     private final Console console;
     private final ApiClientBuilder apiClientBuilder;
-
-    /** Creates the command with injected output and REST client services. */
-    @Inject
-    DeleteItemFromPersistenceService(Console console, ApiClientBuilder apiClientBuilder) {
-        this.console = console;
-        this.apiClientBuilder = apiClientBuilder;
-    }
 
     /** Executes {@link Persistence#deleteItemFromPersistenceService}. */
     @Override

@@ -1,6 +1,8 @@
 package org.openhab.cli.runtime.command.thingtypes;
 
 import javax.inject.Inject;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.ThingTypes;
 import org.openhab.cli.runtime.Options;
@@ -11,6 +13,7 @@ import picocli.CommandLine;
 /** Gets thing type by UID. */
 @Slf4j
 @CommandLine.Command(name = "thingTypeById", description = "Gets thing type by UID.", mixinStandardHelpOptions = true)
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE, onConstructor_ = @Inject)
 public class ThingTypeById implements Runnable {
     @CommandLine.Mixin
     private Options options;
@@ -31,13 +34,6 @@ public class ThingTypeById implements Runnable {
 
     private final Console console;
     private final ApiClientBuilder apiClientBuilder;
-
-    /** Creates the command with injected output and REST client services. */
-    @Inject
-    ThingTypeById(Console console, ApiClientBuilder apiClientBuilder) {
-        this.console = console;
-        this.apiClientBuilder = apiClientBuilder;
-    }
 
     /** Executes {@link ThingTypes#thingTypeById}. */
     @Override

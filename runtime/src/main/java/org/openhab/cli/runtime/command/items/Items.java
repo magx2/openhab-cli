@@ -1,6 +1,8 @@
 package org.openhab.cli.runtime.command.items;
 
 import javax.inject.Inject;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.runtime.Options;
 import org.openhab.cli.runtime.service.ApiClientBuilder;
@@ -10,6 +12,7 @@ import picocli.CommandLine;
 /** Get all available items. */
 @Slf4j
 @CommandLine.Command(name = "items", description = "Get all available items.", mixinStandardHelpOptions = true)
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE, onConstructor_ = @Inject)
 public class Items implements Runnable {
     @CommandLine.Mixin
     private Options options;
@@ -74,13 +77,6 @@ public class Items implements Runnable {
 
     private final Console console;
     private final ApiClientBuilder apiClientBuilder;
-
-    /** Creates the command with injected output and REST client services. */
-    @Inject
-    Items(Console console, ApiClientBuilder apiClientBuilder) {
-        this.console = console;
-        this.apiClientBuilder = apiClientBuilder;
-    }
 
     /** Executes {@link org.openhab.cli.engine.endpoint.Items#items}. */
     @Override

@@ -1,6 +1,8 @@
 package org.openhab.cli.runtime.command.channeltypes;
 
 import javax.inject.Inject;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.ChannelTypes;
 import org.openhab.cli.runtime.Options;
@@ -14,6 +16,7 @@ import picocli.CommandLine;
         name = "linkableItemTypesByChannelTypeUID",
         description = "Gets the item types the given trigger channel type UID can be linked to.",
         mixinStandardHelpOptions = true)
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE, onConstructor_ = @Inject)
 public class LinkableItemTypesByChannelTypeUID implements Runnable {
     @CommandLine.Mixin
     private Options options;
@@ -27,13 +30,6 @@ public class LinkableItemTypesByChannelTypeUID implements Runnable {
 
     private final Console console;
     private final ApiClientBuilder apiClientBuilder;
-
-    /** Creates the command with injected output and REST client services. */
-    @Inject
-    LinkableItemTypesByChannelTypeUID(Console console, ApiClientBuilder apiClientBuilder) {
-        this.console = console;
-        this.apiClientBuilder = apiClientBuilder;
-    }
 
     /** Executes {@link ChannelTypes#linkableItemTypesByChannelTypeUID}. */
     @Override

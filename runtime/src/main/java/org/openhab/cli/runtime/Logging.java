@@ -10,8 +10,6 @@ import org.slf4j.bridge.SLF4JBridgeHandler;
 final class Logging {
     private static boolean configured;
 
-    private Logging() {}
-
     /** Selects the user configuration before logging starts, then installs the root JUL bridge. */
     static synchronized void configure() {
         if (configured) {

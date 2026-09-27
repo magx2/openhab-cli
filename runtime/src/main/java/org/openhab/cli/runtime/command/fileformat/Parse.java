@@ -1,6 +1,8 @@
 package org.openhab.cli.runtime.command.fileformat;
 
 import javax.inject.Inject;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.FileFormat;
 import org.openhab.cli.runtime.Options;
@@ -11,6 +13,7 @@ import picocli.CommandLine;
 /** Parse file format. */
 @Slf4j
 @CommandLine.Command(name = "parse", description = "Parse file format.", mixinStandardHelpOptions = true)
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE, onConstructor_ = @Inject)
 public class Parse implements Runnable {
     @CommandLine.Mixin
     private Options options;
@@ -24,13 +27,6 @@ public class Parse implements Runnable {
 
     private final Console console;
     private final ApiClientBuilder apiClientBuilder;
-
-    /** Creates the command with injected output and REST client services. */
-    @Inject
-    Parse(Console console, ApiClientBuilder apiClientBuilder) {
-        this.console = console;
-        this.apiClientBuilder = apiClientBuilder;
-    }
 
     /** Executes {@link FileFormat#parse}. */
     @Override

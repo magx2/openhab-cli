@@ -3,6 +3,8 @@ package org.openhab.cli.runtime.command.rules;
 import com.google.gson.reflect.TypeToken;
 import java.util.Map;
 import javax.inject.Inject;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Rules;
 import org.openhab.cli.runtime.JsonArguments;
@@ -17,6 +19,7 @@ import picocli.CommandLine;
         name = "runRuleNow1",
         description = "Executes actions of the rule.",
         mixinStandardHelpOptions = true)
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE, onConstructor_ = @Inject)
 public class RunRuleNow1 implements Runnable {
     @CommandLine.Mixin
     private Options options;
@@ -33,13 +36,6 @@ public class RunRuleNow1 implements Runnable {
 
     private final Console console;
     private final ApiClientBuilder apiClientBuilder;
-
-    /** Creates the command with injected output and REST client services. */
-    @Inject
-    RunRuleNow1(Console console, ApiClientBuilder apiClientBuilder) {
-        this.console = console;
-        this.apiClientBuilder = apiClientBuilder;
-    }
 
     /** Executes {@link Rules#runRuleNow1}. */
     @Override

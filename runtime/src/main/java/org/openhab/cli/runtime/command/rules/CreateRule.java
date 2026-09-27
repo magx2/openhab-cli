@@ -2,6 +2,8 @@ package org.openhab.cli.runtime.command.rules;
 
 import com.google.gson.reflect.TypeToken;
 import javax.inject.Inject;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.client.model.Rule;
 import org.openhab.cli.engine.endpoint.Rules;
@@ -14,6 +16,7 @@ import picocli.CommandLine;
 /** Creates a rule. */
 @Slf4j
 @CommandLine.Command(name = "createRule", description = "Creates a rule.", mixinStandardHelpOptions = true)
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE, onConstructor_ = @Inject)
 public class CreateRule implements Runnable {
     @CommandLine.Mixin
     private Options options;
@@ -27,13 +30,6 @@ public class CreateRule implements Runnable {
 
     private final Console console;
     private final ApiClientBuilder apiClientBuilder;
-
-    /** Creates the command with injected output and REST client services. */
-    @Inject
-    CreateRule(Console console, ApiClientBuilder apiClientBuilder) {
-        this.console = console;
-        this.apiClientBuilder = apiClientBuilder;
-    }
 
     /** Executes {@link Rules#createRule}. */
     @Override

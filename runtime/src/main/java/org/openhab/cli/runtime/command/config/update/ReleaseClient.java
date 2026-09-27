@@ -15,8 +15,11 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HexFormat;
 import javax.inject.Inject;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 
 /** Reads public release metadata and downloads assets without requiring the GitHub CLI. */
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class ReleaseClient {
     private final URI releases;
 
@@ -24,10 +27,6 @@ public class ReleaseClient {
     @Inject
     public ReleaseClient() {
         this(URI.create("https://api.github.com/repos/magx2/openhab-cli/releases/"));
-    }
-
-    ReleaseClient(URI releases) {
-        this.releases = releases;
     }
 
     /** Loads the latest stable release, or an explicitly selected vMAJOR.MINOR.PATCH tag. */

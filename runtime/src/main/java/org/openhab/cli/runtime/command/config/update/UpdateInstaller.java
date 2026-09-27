@@ -12,28 +12,24 @@ import java.util.Base64;
 import java.util.Locale;
 import java.util.Set;
 import javax.inject.Inject;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 /** Detects the running installation and replaces it without overwriting a running executable in place. */
+@NoArgsConstructor(onConstructor_ = @Inject)
 public class UpdateInstaller {
     /** Release asset formats produced by the release workflow. */
+    @RequiredArgsConstructor
     enum Kind {
         jar(".jar"),
         linux("-linux-x86_64"),
         windows("-windows-x86_64.exe");
 
         final String suffix;
-
-        Kind(String suffix) {
-            this.suffix = suffix;
-        }
     }
 
     /** Resolved installation path, asset format and host platform. */
     record Target(Path path, Kind kind, boolean windows) {}
-
-    /** Creates an installer for the current process. */
-    @Inject
-    public UpdateInstaller() {}
 
     /** Locates a released standalone JAR or GraalVM executable, resolving installation symlinks. */
     Target detectTarget() throws IOException {

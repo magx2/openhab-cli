@@ -1,6 +1,8 @@
 package org.openhab.cli.runtime.command.links;
 
 import javax.inject.Inject;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Links;
 import org.openhab.cli.runtime.Options;
@@ -11,6 +13,7 @@ import picocli.CommandLine;
 /** Retrieves an individual link. */
 @Slf4j
 @CommandLine.Command(name = "itemLink", description = "Retrieves an individual link.", mixinStandardHelpOptions = true)
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE, onConstructor_ = @Inject)
 public class ItemLink implements Runnable {
     @CommandLine.Mixin
     private Options options;
@@ -27,13 +30,6 @@ public class ItemLink implements Runnable {
 
     private final Console console;
     private final ApiClientBuilder apiClientBuilder;
-
-    /** Creates the command with injected output and REST client services. */
-    @Inject
-    ItemLink(Console console, ApiClientBuilder apiClientBuilder) {
-        this.console = console;
-        this.apiClientBuilder = apiClientBuilder;
-    }
 
     /** Executes {@link Links#itemLink}. */
     @Override

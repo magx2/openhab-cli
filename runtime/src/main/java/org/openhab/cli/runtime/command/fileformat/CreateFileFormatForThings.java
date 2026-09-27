@@ -3,6 +3,8 @@ package org.openhab.cli.runtime.command.fileformat;
 import com.google.gson.reflect.TypeToken;
 import java.util.List;
 import javax.inject.Inject;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.FileFormat;
 import org.openhab.cli.runtime.JsonArguments;
@@ -17,6 +19,7 @@ import picocli.CommandLine;
         name = "createFileFormatForThings",
         description = "Create file format for a list of things in things or discovery registry.",
         mixinStandardHelpOptions = true)
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE, onConstructor_ = @Inject)
 public class CreateFileFormatForThings implements Runnable {
     @CommandLine.Mixin
     private Options options;
@@ -39,13 +42,6 @@ public class CreateFileFormatForThings implements Runnable {
 
     private final Console console;
     private final ApiClientBuilder apiClientBuilder;
-
-    /** Creates the command with injected output and REST client services. */
-    @Inject
-    CreateFileFormatForThings(Console console, ApiClientBuilder apiClientBuilder) {
-        this.console = console;
-        this.apiClientBuilder = apiClientBuilder;
-    }
 
     /** Executes {@link FileFormat#createFileFormatForThings}. */
     @Override

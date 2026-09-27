@@ -2,6 +2,8 @@ package org.openhab.cli.runtime.command.fileformat;
 
 import com.google.gson.reflect.TypeToken;
 import javax.inject.Inject;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.client.model.CanSerializeRulesRequest;
 import org.openhab.cli.engine.endpoint.FileFormat;
@@ -17,6 +19,7 @@ import picocli.CommandLine;
         name = "canSerializeRules",
         description = "Checks if the specified rule(s) can be serialized to the target format.",
         mixinStandardHelpOptions = true)
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE, onConstructor_ = @Inject)
 public class CanSerializeRules implements Runnable {
     @CommandLine.Mixin
     private Options options;
@@ -37,13 +40,6 @@ public class CanSerializeRules implements Runnable {
 
     private final Console console;
     private final ApiClientBuilder apiClientBuilder;
-
-    /** Creates the command with injected output and REST client services. */
-    @Inject
-    CanSerializeRules(Console console, ApiClientBuilder apiClientBuilder) {
-        this.console = console;
-        this.apiClientBuilder = apiClientBuilder;
-    }
 
     /** Executes {@link FileFormat#canSerializeRules}. */
     @Override

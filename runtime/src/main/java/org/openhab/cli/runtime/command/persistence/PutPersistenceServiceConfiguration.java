@@ -2,6 +2,8 @@ package org.openhab.cli.runtime.command.persistence;
 
 import com.google.gson.reflect.TypeToken;
 import javax.inject.Inject;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.client.model.PersistenceServiceConfiguration;
 import org.openhab.cli.engine.endpoint.Persistence;
@@ -17,6 +19,7 @@ import picocli.CommandLine;
         name = "putPersistenceServiceConfiguration",
         description = "Sets a persistence service configuration.",
         mixinStandardHelpOptions = true)
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE, onConstructor_ = @Inject)
 public class PutPersistenceServiceConfiguration implements Runnable {
     @CommandLine.Mixin
     private Options options;
@@ -37,13 +40,6 @@ public class PutPersistenceServiceConfiguration implements Runnable {
 
     private final Console console;
     private final ApiClientBuilder apiClientBuilder;
-
-    /** Creates the command with injected output and REST client services. */
-    @Inject
-    PutPersistenceServiceConfiguration(Console console, ApiClientBuilder apiClientBuilder) {
-        this.console = console;
-        this.apiClientBuilder = apiClientBuilder;
-    }
 
     /** Executes {@link Persistence#putPersistenceServiceConfiguration}. */
     @Override

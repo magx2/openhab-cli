@@ -1,6 +1,8 @@
 package org.openhab.cli.runtime.command.inbox;
 
 import javax.inject.Inject;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Inbox;
 import org.openhab.cli.runtime.Options;
@@ -14,6 +16,7 @@ import picocli.CommandLine;
         name = "removeIgnoreFlagOnInboxItem",
         description = "Removes ignore flag from a discovery result.",
         mixinStandardHelpOptions = true)
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE, onConstructor_ = @Inject)
 public class RemoveIgnoreFlagOnInboxItem implements Runnable {
     @CommandLine.Mixin
     private Options options;
@@ -23,13 +26,6 @@ public class RemoveIgnoreFlagOnInboxItem implements Runnable {
 
     private final Console console;
     private final ApiClientBuilder apiClientBuilder;
-
-    /** Creates the command with injected output and REST client services. */
-    @Inject
-    RemoveIgnoreFlagOnInboxItem(Console console, ApiClientBuilder apiClientBuilder) {
-        this.console = console;
-        this.apiClientBuilder = apiClientBuilder;
-    }
 
     /** Executes {@link Inbox#removeIgnoreFlagOnInboxItem}. */
     @Override

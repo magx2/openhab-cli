@@ -1,6 +1,8 @@
 package org.openhab.cli.runtime.command.moduletypes;
 
 import javax.inject.Inject;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.runtime.Options;
 import org.openhab.cli.runtime.service.ApiClientBuilder;
@@ -13,6 +15,7 @@ import picocli.CommandLine;
         name = "moduleTypes",
         description = "Get all available module types.",
         mixinStandardHelpOptions = true)
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE, onConstructor_ = @Inject)
 public class ModuleTypes implements Runnable {
     @CommandLine.Mixin
     private Options options;
@@ -48,13 +51,6 @@ public class ModuleTypes implements Runnable {
 
     private final Console console;
     private final ApiClientBuilder apiClientBuilder;
-
-    /** Creates the command with injected output and REST client services. */
-    @Inject
-    ModuleTypes(Console console, ApiClientBuilder apiClientBuilder) {
-        this.console = console;
-        this.apiClientBuilder = apiClientBuilder;
-    }
 
     /** Executes {@link org.openhab.cli.engine.endpoint.ModuleTypes#moduleTypes}. */
     @Override

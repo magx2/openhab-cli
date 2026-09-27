@@ -12,7 +12,6 @@ import picocli.CommandLine.Model.OptionSpec;
 
 /** Generates Fish completions from the same command model used to parse CLI arguments. */
 final class FishCompletions {
-    private FishCompletions() {}
 
     static String generate(CommandSpec root) {
         var commands = new LinkedHashMap<String, CommandSpec>();

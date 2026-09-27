@@ -3,6 +3,8 @@ package org.openhab.cli.runtime.command.voice;
 import com.google.gson.reflect.TypeToken;
 import java.util.List;
 import javax.inject.Inject;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Voice;
 import org.openhab.cli.runtime.JsonArguments;
@@ -17,6 +19,7 @@ import picocli.CommandLine;
         name = "listenAndAnswer",
         description = "Executes a simple dialog sequence without keyword spotting for a given audio source.",
         mixinStandardHelpOptions = true)
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE, onConstructor_ = @Inject)
 public class ListenAndAnswer implements Runnable {
     @CommandLine.Mixin
     private Options options;
@@ -79,13 +82,6 @@ public class ListenAndAnswer implements Runnable {
 
     private final Console console;
     private final ApiClientBuilder apiClientBuilder;
-
-    /** Creates the command with injected output and REST client services. */
-    @Inject
-    ListenAndAnswer(Console console, ApiClientBuilder apiClientBuilder) {
-        this.console = console;
-        this.apiClientBuilder = apiClientBuilder;
-    }
 
     /** Executes {@link Voice#listenAndAnswer}. */
     @Override

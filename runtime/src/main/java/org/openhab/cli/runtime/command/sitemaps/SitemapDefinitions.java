@@ -1,6 +1,8 @@
 package org.openhab.cli.runtime.command.sitemaps;
 
 import javax.inject.Inject;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Sitemaps;
 import org.openhab.cli.runtime.Options;
@@ -14,19 +16,13 @@ import picocli.CommandLine;
         name = "sitemapDefinitions",
         description = "Get all available sitemap definitions.",
         mixinStandardHelpOptions = true)
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE, onConstructor_ = @Inject)
 public class SitemapDefinitions implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
     private final Console console;
     private final ApiClientBuilder apiClientBuilder;
-
-    /** Creates the command with injected output and REST client services. */
-    @Inject
-    SitemapDefinitions(Console console, ApiClientBuilder apiClientBuilder) {
-        this.console = console;
-        this.apiClientBuilder = apiClientBuilder;
-    }
 
     /** Executes {@link Sitemaps#sitemapDefinitions}. */
     @Override

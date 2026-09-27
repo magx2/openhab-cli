@@ -1,6 +1,8 @@
 package org.openhab.cli.runtime.command.events;
 
 import javax.inject.Inject;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Events;
 import org.openhab.cli.runtime.Options;
@@ -14,19 +16,13 @@ import picocli.CommandLine;
         name = "initNewStateTacker",
         description = "Initiates a new item state tracker connection",
         mixinStandardHelpOptions = true)
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE, onConstructor_ = @Inject)
 public class InitNewStateTacker implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
     private final Console console;
     private final ApiClientBuilder apiClientBuilder;
-
-    /** Creates the command with injected output and REST client services. */
-    @Inject
-    InitNewStateTacker(Console console, ApiClientBuilder apiClientBuilder) {
-        this.console = console;
-        this.apiClientBuilder = apiClientBuilder;
-    }
 
     /** Executes {@link Events#initNewStateTacker}. */
     @Override

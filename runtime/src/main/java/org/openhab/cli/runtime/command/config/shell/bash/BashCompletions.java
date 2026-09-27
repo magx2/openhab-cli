@@ -11,7 +11,6 @@ import picocli.CommandLine.Model.PositionalParamSpec;
 
 /** Adapts CLI metadata for Picocli's Bash generator without changing the running parser. */
 final class BashCompletions {
-    private BashCompletions() {}
 
     static String generate(CommandSpec root) {
         return AutoComplete.bash("oh", new CommandLine(copy(root))).replace("\r\n", "\n");

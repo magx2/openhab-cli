@@ -2,6 +2,8 @@ package org.openhab.cli.runtime.command.items;
 
 import com.google.gson.reflect.TypeToken;
 import javax.inject.Inject;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.client.model.GroupItem;
 import org.openhab.cli.engine.endpoint.Items;
@@ -17,6 +19,7 @@ import picocli.CommandLine;
         name = "addOrUpdateItemInRegistry",
         description = "Adds a new item to the registry or updates the existing item.",
         mixinStandardHelpOptions = true)
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE, onConstructor_ = @Inject)
 public class AddOrUpdateItemInRegistry implements Runnable {
     @CommandLine.Mixin
     private Options options;
@@ -40,13 +43,6 @@ public class AddOrUpdateItemInRegistry implements Runnable {
 
     private final Console console;
     private final ApiClientBuilder apiClientBuilder;
-
-    /** Creates the command with injected output and REST client services. */
-    @Inject
-    AddOrUpdateItemInRegistry(Console console, ApiClientBuilder apiClientBuilder) {
-        this.console = console;
-        this.apiClientBuilder = apiClientBuilder;
-    }
 
     /** Executes {@link Items#addOrUpdateItemInRegistry}. */
     @Override

@@ -1,6 +1,7 @@
 package org.openhab.cli.runtime.command.config.properties;
 
 import javax.inject.Inject;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.runtime.Options;
 import org.openhab.cli.runtime.service.Console;
@@ -13,6 +14,7 @@ import picocli.CommandLine;
         name = "get",
         description = "Print a property from the CLI configuration file as key=value.",
         mixinStandardHelpOptions = true)
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 public class GetCommand implements Runnable {
     @CommandLine.Mixin
     private Options options;
@@ -22,13 +24,6 @@ public class GetCommand implements Runnable {
 
     private final PropertiesReader propertiesReader;
     private final Console console;
-
-    /** Creates the command with services for reading and printing a property. */
-    @Inject
-    public GetCommand(PropertiesReader propertiesReader, Console console) {
-        this.propertiesReader = propertiesReader;
-        this.console = console;
-    }
 
     /** Prints the requested key and its stored value, using null when the property is absent. */
     @Override

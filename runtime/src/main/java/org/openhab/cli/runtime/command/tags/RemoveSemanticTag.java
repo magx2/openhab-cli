@@ -1,6 +1,8 @@
 package org.openhab.cli.runtime.command.tags;
 
 import javax.inject.Inject;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.engine.endpoint.Tags;
 import org.openhab.cli.runtime.Options;
@@ -14,6 +16,7 @@ import picocli.CommandLine;
         name = "removeSemanticTag",
         description = "Removes a semantic tag and its sub tags from the registry.",
         mixinStandardHelpOptions = true)
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE, onConstructor_ = @Inject)
 public class RemoveSemanticTag implements Runnable {
     @CommandLine.Mixin
     private Options options;
@@ -30,13 +33,6 @@ public class RemoveSemanticTag implements Runnable {
 
     private final Console console;
     private final ApiClientBuilder apiClientBuilder;
-
-    /** Creates the command with injected output and REST client services. */
-    @Inject
-    RemoveSemanticTag(Console console, ApiClientBuilder apiClientBuilder) {
-        this.console = console;
-        this.apiClientBuilder = apiClientBuilder;
-    }
 
     /** Executes {@link Tags#removeSemanticTag}. */
     @Override

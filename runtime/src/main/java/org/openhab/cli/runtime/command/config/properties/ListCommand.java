@@ -1,6 +1,7 @@
 package org.openhab.cli.runtime.command.config.properties;
 
 import javax.inject.Inject;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.runtime.Options;
 import org.openhab.cli.runtime.service.Console;
@@ -13,19 +14,13 @@ import picocli.CommandLine;
         name = "list",
         description = "Print a header and stored Java properties as key=value, ordered by key, without CLI defaults.",
         mixinStandardHelpOptions = true)
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 public class ListCommand implements Runnable {
     @CommandLine.Mixin
     private Options options;
 
     private final PropertiesReader propertiesReader;
     private final Console console;
-
-    /** Creates the command with services for reading stored properties and printing text. */
-    @Inject
-    public ListCommand(PropertiesReader propertiesReader, Console console) {
-        this.propertiesReader = propertiesReader;
-        this.console = console;
-    }
 
     /**
      * Reads the selected properties file and prints a header followed by each key=value entry on its own line.

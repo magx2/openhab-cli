@@ -6,22 +6,16 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.jar.JarFile;
 import javax.inject.Inject;
+import lombok.RequiredArgsConstructor;
 import org.openhab.cli.engine.Version;
 import org.openhab.cli.runtime.service.Console;
 
 /** Selects and validates a release before replacing the installed JAR or native executable. */
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 public class SelfUpdater {
     private final Console console;
     private final ReleaseClient releases;
     private final UpdateInstaller installer;
-
-    /** Creates an updater with the output, GitHub and platform installation services. */
-    @Inject
-    public SelfUpdater(Console console, ReleaseClient releases, UpdateInstaller installer) {
-        this.console = console;
-        this.releases = releases;
-        this.installer = installer;
-    }
 
     /** Checks or installs a release; force permits reinstalling or downgrading the selected version. */
     public void execute(boolean checkOnly, String requested, boolean force) throws IOException, InterruptedException {

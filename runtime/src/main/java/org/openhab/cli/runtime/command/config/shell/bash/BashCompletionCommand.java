@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.Callable;
 import javax.inject.Inject;
+import lombok.RequiredArgsConstructor;
 import org.openhab.cli.runtime.service.Console;
 import picocli.CommandLine;
 
@@ -16,6 +17,7 @@ import picocli.CommandLine;
         name = "completion",
         description = "Print Bash completions or install them in the user's Bash completion directory.",
         mixinStandardHelpOptions = true)
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 public class BashCompletionCommand implements Callable<Integer> {
     @CommandLine.Parameters(
             index = "0",
@@ -30,12 +32,6 @@ public class BashCompletionCommand implements Callable<Integer> {
 
     @CommandLine.Spec
     private CommandLine.Model.CommandSpec spec;
-
-    /** Creates the command with its output service. */
-    @Inject
-    public BashCompletionCommand(Console console) {
-        this.console = console;
-    }
 
     /** Prints or installs completions, returning the I/O exit code if installation fails. */
     @Override
