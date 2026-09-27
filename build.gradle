@@ -29,10 +29,21 @@ spotless {
     }
 }
 
+def testLoggingConfiguration = layout.projectDirectory.file('config/log4j2-test.xml')
+
 subprojects {
     version = rootProject.version
 
     plugins.withId('java') {
+        dependencies {
+            testRuntimeOnly rootProject.libs.log4j.core
+            testRuntimeOnly rootProject.libs.log4j.slf4j
+        }
+        tasks.withType(Test).configureEach {
+            inputs.file(testLoggingConfiguration)
+            systemProperty 'log4j.configurationFile', testLoggingConfiguration.asFile.toURI().toString()
+            testLogging.showStandardStreams = true
+        }
         tasks.named('jar') {
             manifest.attributes('Implementation-Version': project.version.toString())
         }

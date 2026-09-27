@@ -37,6 +37,9 @@ to `~/oh/oh.log`. Each JVM startup archives the previous log as
 JDK `java.util.logging` messages are forwarded to the same backend at CLI startup.
 All projects share the SLF4J version in `gradle/libs.versions.toml`.
 
+Gradle tests use the shared `config/log4j2-test.xml` configuration to send DEBUG
+and higher SLF4J messages to stdout. Test output is shown in the Gradle console.
+
 To override the bundled logging configuration, create `~/oh/log4j2.xml`. The CLI
 loads this file at startup when present; otherwise it uses the bundled defaults.
 
