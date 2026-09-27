@@ -25,7 +25,7 @@ public class Version {
             if (apiVersion == null || apiVersion.isBlank() || apiVersion.equals("${apiVersion}")) {
                 throw new IllegalStateException("REST API version was not populated by the build");
             }
-            return "%s.%s".formatted(apiVersion, version);
+            return "%s+oh.%s".formatted(version, apiVersion);
         } catch (IOException e) {
             throw new IllegalStateException("Cannot read application version", e);
         }
