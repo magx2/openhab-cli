@@ -81,6 +81,8 @@ import picocli.CommandLine.Command;
         exitCodeList = { //
             " 0: Successful program execution", //
             " 1: Command execution failed", //
+            "96: Invalid argument value", //
+            "97: Invalid application state", //
             "98: I/O operation failed (for example, reading the properties file)", //
             "99: openHAB API request failed" //
         })

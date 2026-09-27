@@ -106,6 +106,8 @@ class CommandFactoryTest {
                 mapper.getExitCode(
                         new EndpointException(Action.class, "test", Map.of(), new ApiException(503, "unavailable"))));
         assertEquals(98, mapper.getExitCode(new UncheckedIOException(new IOException("unreadable"))));
-        assertEquals(1, mapper.getExitCode(new IllegalStateException("unexpected")));
+        assertEquals(97, mapper.getExitCode(new IllegalStateException("invalid state")));
+        assertEquals(96, mapper.getExitCode(new IllegalArgumentException("invalid argument")));
+        assertEquals(1, mapper.getExitCode(new RuntimeException("unexpected")));
     }
 }
