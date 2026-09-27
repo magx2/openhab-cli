@@ -132,6 +132,16 @@ public class Options {
         return authentication.oAuthToken;
     }
 
+    /** Returns the explicitly supplied basic authentication username, if any. */
+    public String getUsername() {
+        return authentication.username;
+    }
+
+    /** Returns the explicitly supplied basic authentication password, if any. */
+    public String getPassword() {
+        return authentication.password;
+    }
+
     /** Returns the output flag, falling back to the application default. */
     public boolean isPrettyPrint() {
         return value(output.prettyPrint, Properties.DEFAULT.prettyPrint());

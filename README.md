@@ -31,6 +31,26 @@ config.rest.baseUrl=http://localhost:8080
 CLI options override file settings. The REST path defaults to `/rest` and is appended
 to the server URL; customize it with `--base-path` or `config.rest.basePath`.
 
+Manage saved credentials with `_config account`:
+
+```sh
+oh _config account status
+oh _config account login --oauth-token=your-token
+oh _config account login --username=your-user --password
+oh _config account logout oauth
+oh _config account logout username/password
+oh _config account logout
+```
+
+`--password` or `--oauth-token` without a value prompts for the secret. Login stores
+credentials in `oh-cli.properties` in the working directory, creating it if needed.
+Pass `-p /path/to/client.properties` to any account subcommand to select another file.
+Credentials are stored as plain Java properties. Login replaces the other authentication
+method and preserves unrelated settings. Status reports only the saved method, not
+secrets, and does not verify credentials with the server. Logout removes the selected
+method (`basic` and `username/pass` also select username/password), or all credentials
+when no method is supplied. It does not revoke tokens on the server.
+
 Runtime logging uses SLF4J with Log4j 2 and writes INFO-and-higher messages only
 to `~/oh/oh.log`. Each JVM startup archives the previous log as
 `~/oh/oh-<timestamp>-<index>.log`. Logs include date and time, without thread names.

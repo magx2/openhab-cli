@@ -16,6 +16,9 @@ import org.openhab.cli.runtime.command.auth.*;
 import org.openhab.cli.runtime.command.channeltypes.ChannelTypeByUID;
 import org.openhab.cli.runtime.command.channeltypes.ChannelTypes;
 import org.openhab.cli.runtime.command.channeltypes.LinkableItemTypesByChannelTypeUID;
+import org.openhab.cli.runtime.command.config.account.LoginCommand;
+import org.openhab.cli.runtime.command.config.account.LogoutCommand;
+import org.openhab.cli.runtime.command.config.account.StatusCommand;
 import org.openhab.cli.runtime.command.config.properties.ClearCommand;
 import org.openhab.cli.runtime.command.config.properties.GetCommand;
 import org.openhab.cli.runtime.command.config.properties.ListCommand;
@@ -64,6 +67,21 @@ import org.openhab.cli.runtime.command.voice.*;
 /** Registers each operation command with the Dagger-backed Picocli factory. */
 @Module
 interface CommandModule {
+    @Binds
+    @IntoMap
+    @ClassKey(LoginCommand.class)
+    Callable<Integer> accountLogin(LoginCommand command);
+
+    @Binds
+    @IntoMap
+    @ClassKey(LogoutCommand.class)
+    Callable<Integer> accountLogout(LogoutCommand command);
+
+    @Binds
+    @IntoMap
+    @ClassKey(StatusCommand.class)
+    Runnable accountStatus(StatusCommand command);
+
     @Binds
     @IntoMap
     @ClassKey(ExecuteThingAction.class)

@@ -80,6 +80,22 @@ public class PropertiesReader {
             console.writeError("Properties file `%s` does not exist", path);
             return IO_EXCEPTION_EXIT_CODE;
         }
+        return update(propertiesFile, java.util.Collections.singletonMap(key, value));
+    }
+
+    /**
+     * Updates several properties in one write, preserving unrelated settings. Null values remove keys.
+     * A missing file is created only when at least one value is being stored.
+     *
+     * @param propertiesFile file to update, or null to use the default file in the working directory
+     * @param changes property names and replacement values (null to remove)
+     * @return zero on success, or the I/O exit code if the file cannot be read or written
+     */
+    public int update(String propertiesFile, java.util.Map<String, String> changes) {
+        var path = buildPath(propertiesFile);
+        if (Files.notExists(path) && changes.values().stream().allMatch(java.util.Objects::isNull)) {
+            return 0;
+        }
         var javaProps = new java.util.Properties();
         try {
             if (!Files.notExists(path)) {
@@ -87,11 +103,13 @@ public class PropertiesReader {
                     javaProps.load(stream);
                 }
             }
-            if (value == null) {
-                javaProps.remove(key);
-            } else {
-                javaProps.setProperty(key, value);
-            }
+            changes.forEach((key, value) -> {
+                if (value == null) {
+                    javaProps.remove(key);
+                } else {
+                    javaProps.setProperty(key, value);
+                }
+            });
             try (var stream = Files.newOutputStream(path)) {
                 javaProps.store(stream, null);
             }

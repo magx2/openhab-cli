@@ -1,7 +1,5 @@
 package org.openhab.cli.runtime;
 
-import static java.lang.String.join;
-
 import java.util.concurrent.Callable;
 import org.openhab.cli.engine.Version;
 import org.openhab.cli.runtime.command.action.ActionCommand;
@@ -99,7 +97,7 @@ public class Cli implements Callable<Integer> {
         Logging.configure();
         var log = LoggerFactory.getLogger(Cli.class);
         if (log.isDebugEnabled()) {
-            log.debug("oh {}", join(" ", args));
+            log.debug("oh invoked with {} arguments", args.length);
         }
         int exitCode = commandLine().execute(args);
         System.exit(exitCode);
