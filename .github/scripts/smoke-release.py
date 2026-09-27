@@ -43,7 +43,7 @@ if __name__ == "__main__":
         sys.exit("Usage: smoke-release.py <executable> [launcher arguments...]")
     version = re.search(r"^version=(.+)$", Path("gradle.properties").read_text(encoding="utf-8"), re.MULTILINE).group(1)
     spec = json.loads(Path("openapi/src/main/open-hab/spec.json").read_text(encoding="utf-8"))
-    assert run("--version").strip() == f"{spec['info']['version']}.{version}"
+    assert run("--version").strip() == f"{version}+oh.{spec['info']['version']}"
     assert "availableActionsForThing" in run("action", "--help")
     assert "--release" in run("_config", "update", "--help")
     server = ThreadingHTTPServer(("127.0.0.1", 0), OpenHabHandler)

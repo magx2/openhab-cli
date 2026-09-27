@@ -29,13 +29,24 @@ class SelfUpdaterTest {
     Path directory;
 
     @Test
-    void comparesReleaseNumbersAndSnapshotsWithoutTheRestApiPrefix() {
+    void comparesReleaseNumbersAndSnapshots() {
         assertTrue(SelfUpdater.compareVersions("0.9.0", "0.10.0") < 0);
         assertTrue(SelfUpdater.compareVersions("0.1.0-SNAPSHOT", "0.1.0") < 0);
         assertTrue(SelfUpdater.compareVersions("0.2.0-SNAPSHOT", "0.1.0") > 0);
         assertEquals(0, SelfUpdater.compareVersions("1.0.0", "1.0.0"));
         assertEquals("0.1.0", SelfUpdater.normalizeVersion("v0.1.0"));
         assertThrows(IllegalArgumentException.class, () -> SelfUpdater.normalizeVersion("../../latest"));
+    }
+
+    @Test
+    void ignoresInstalledRestApiMetadataWhenComparingReleases() {
+        assertTrue(SelfUpdater.compareVersions("0.3.0-SNAPSHOT+oh.8", "0.3.0") < 0);
+        assertTrue(SelfUpdater.compareVersions("0.3.0-SNAPSHOT+oh.8", "0.2.0") > 0);
+        assertTrue(SelfUpdater.compareVersions("0.9.0+oh.99", "0.10.0") < 0);
+        assertEquals(0, SelfUpdater.compareVersions("1.2.3+oh.8", "1.2.3"));
+        assertEquals(0, SelfUpdater.compareVersions("1.2.3+oh.9", "v1.2.3"));
+        assertThrows(IllegalArgumentException.class, () -> SelfUpdater.normalizeVersion("1.2.3+oh.8"));
+        assertThrows(IllegalArgumentException.class, () -> SelfUpdater.normalizeVersion("1.2.3-SNAPSHOT"));
     }
 
     @Test

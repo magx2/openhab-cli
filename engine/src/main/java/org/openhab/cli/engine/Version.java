@@ -7,7 +7,7 @@ import lombok.experimental.UtilityClass;
 /** Provides the application and supported REST API versions embedded by Gradle during the build. */
 @UtilityClass
 public class Version {
-    /** Supported openHAB REST API version followed by the application version. */
+    /** Application version with the supported openHAB REST API version as build metadata. */
     public static final String VERSION = loadVersion();
 
     private static String loadVersion() {

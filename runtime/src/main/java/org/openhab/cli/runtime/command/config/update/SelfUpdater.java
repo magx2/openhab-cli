@@ -21,8 +21,7 @@ public class SelfUpdater {
     public void execute(boolean checkOnly, String requested, boolean force) throws IOException, InterruptedException {
         var release = releases.release(requested);
         var version = normalizeVersion(release.get("tag_name").getAsString());
-        // VERSION begins with the openHAB REST API version, which is not part of release tags.
-        var current = Version.VERSION.substring(Version.VERSION.indexOf('.') + 1);
+        var current = Version.VERSION;
         if (!force && compareVersions(current, version) >= 0) {
             console.write("CLI " + current + " is already current (selected release: " + version + ").");
             return;
@@ -75,10 +74,15 @@ public class SelfUpdater {
         return normalized;
     }
 
-    /** Compares release versions numerically, placing a snapshot before its matching stable release. */
+    /**
+     * Compares release numbers, ignoring installed build metadata such as {@code +oh.8} and placing
+     * a snapshot before its matching stable release. Target versions must still be stable release tags.
+     */
     static int compareVersions(String current, String target) {
-        var snapshot = current.endsWith("-SNAPSHOT");
-        var left = normalizeVersion(current.replaceFirst("-SNAPSHOT$", "")).split("\\.");
+        var installedVersion = current.split("\\+", 2)[0];
+        var snapshot = installedVersion.endsWith("-SNAPSHOT");
+        var left = normalizeVersion(installedVersion.replaceFirst("-SNAPSHOT$", ""))
+                .split("\\.");
         var right = normalizeVersion(target).split("\\.");
         for (int i = 0; i < left.length; i++) {
             int comparison = new BigInteger(left[i]).compareTo(new BigInteger(right[i]));
