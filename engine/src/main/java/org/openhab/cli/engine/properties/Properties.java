@@ -87,6 +87,21 @@ public record Properties(
         return baseUrl.replaceAll("/+$", "") + "/" + basePath.replaceAll("^/+", "");
     }
 
+    /**
+     * Returns safe diagnostics without credentials or free-form settings that may contain secrets.
+     * Values remain available through their accessors for authentication and configuration.
+     */
+    @Override
+    public String toString() {
+        return "Properties[oAuthToken=[REDACTED], username=[REDACTED], password=[REDACTED], "
+                + "prettyPrint=" + prettyPrint
+                + ", verifyingSsl=" + verifyingSsl
+                + ", apiClientDebugging=" + apiClientDebugging
+                + ", connectTimeout=" + connectTimeout
+                + ", readTimeout=" + readTimeout
+                + ", writeTimeout=" + writeTimeout + "]";
+    }
+
     public boolean hasOAuthToken() {
         return oAuthToken != null && !oAuthToken.isEmpty();
     }

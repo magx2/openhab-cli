@@ -31,7 +31,6 @@ public class ApiClient {
 
         // COMMON
         apiClient.setUserAgent("OpenHAB-CLI." + VERSION);
-        apiClient.setDebugging(properties.apiClientDebugging());
         apiClient.setBasePath(properties.apiBaseUrl());
 
         // TIMEOUTS
@@ -56,14 +55,24 @@ public class ApiClient {
             try (var cert = properties.getSslCaCertInputStream()) {
                 apiClient.setSslCaCert(cert);
             } catch (IOException e) {
-                log.error(
-                        "Error while closing input stream for SSL CA cert! sslCaCert={}, sslCaCertPath={}",
-                        properties.sslCaCert(),
-                        properties.sslCaCertPath(),
-                        e);
+                log.error("Error while closing input stream for SSL CA certificate", e);
             }
         }
 
+        if (properties.apiClientDebugging()) {
+            // The generated BODY logger exposes Authorization, cookies and OAuth response bodies.
+            apiClient.setHttpClient(apiClient
+                    .getHttpClient()
+                    .newBuilder()
+                    .addInterceptor(chain -> {
+                        var request = chain.request();
+                        log.debug("HTTP request: {}", request.method());
+                        var response = chain.proceed(request);
+                        log.debug("HTTP response: {} {}", request.method(), response.code());
+                        return response;
+                    })
+                    .build());
+        }
         return apiClient;
     }
 }

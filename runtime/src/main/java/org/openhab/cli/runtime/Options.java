@@ -44,7 +44,8 @@ public class Options {
 
         @Option(
                 names = {"--api-client-debugging"},
-                description = "Enable HTTP client debugging (default: false)",
+                description =
+                        "Log HTTP methods and status codes at DEBUG level, without URLs, headers or bodies (default: false)",
                 negatable = true,
                 fallbackValue = "true")
         private Boolean apiClientDebugging;

@@ -31,7 +31,7 @@ public class SetCommand implements Callable<Integer> {
     /** Stores the requested property and returns zero on success or the I/O error exit code. */
     @Override
     public Integer call() throws Exception {
-        log.info("Settting property value {}={}", key, value);
+        log.info("Setting property {}", key);
         return propertiesReader.set(options.getPropertiesFile(), key, value);
     }
 }

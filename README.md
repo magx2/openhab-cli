@@ -281,3 +281,9 @@ before running the updated CLI. Close other processes using the same installatio
 the helper retries locked files for up to two minutes. Failed replacement leaves
 the previous installation in place. The temporary status and helper log are kept
 for diagnosis and can be removed after checking the result.
+
+Diagnostic output redacts authentication credentials: `Properties.toString()` omits
+free-form settings, and generated OAuth token/session models mask their secrets in
+`toString()`. Their getters and JSON serialization retain the real values.
+`--api-client-debugging` logs only HTTP methods and response status codes at DEBUG
+level; URLs, headers and bodies are omitted because they can contain credentials.
