@@ -27,18 +27,12 @@ public class ExitCodeMapper implements CommandLine.IExitCodeExceptionMapper {
             message = throwable.getClass().getName();
         }
         console.writeError("%s", throwable, message);
-        if (throwable instanceof EndpointException) {
-            return ENDPOINT_EXCEPTION_EXIT_CODE;
-        }
-        if (throwable instanceof UncheckedIOException) {
-            return IO_EXCEPTION_EXIT_CODE;
-        }
-        if (throwable instanceof IllegalStateException) {
-            return ILLEGAL_STATE_EXCEPTION_EXIT_CODE;
-        }
-        if (throwable instanceof IllegalArgumentException) {
-            return ILLEGAL_ARGUMENT_EXCEPTION_EXIT_CODE;
-        }
-        return 1;
+        return switch (throwable) {
+            case EndpointException endpointException -> ENDPOINT_EXCEPTION_EXIT_CODE;
+            case UncheckedIOException uncheckedIOException -> IO_EXCEPTION_EXIT_CODE;
+            case IllegalStateException illegalStateException -> ILLEGAL_STATE_EXCEPTION_EXIT_CODE;
+            case IllegalArgumentException illegalArgumentException -> ILLEGAL_ARGUMENT_EXCEPTION_EXIT_CODE;
+            default -> 1;
+        };
     }
 }
