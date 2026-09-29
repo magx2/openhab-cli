@@ -10,6 +10,8 @@ public class EndpointException extends RuntimeException {
     @Serial
     private static final long serialVersionUID = 1L;
 
+    private final String responseBody;
+
     /**
      * Wraps a failure from a generated API operation.
      *
@@ -20,13 +22,19 @@ public class EndpointException extends RuntimeException {
      */
     public EndpointException(Class<?> endpointClass, String name, Map<String, ?> params, ApiException apiEx) {
         super(buildMessage(endpointClass, name, params, apiEx), apiEx);
+        responseBody = apiEx.getResponseBody();
+    }
+
+    /** Returns the response body supplied by openHAB, or {@code null} when none was received. */
+    public String responseBody() {
+        return responseBody;
     }
 
     private static String buildMessage(Class<?> endpointClass, String name, Map<String, ?> params, ApiException apiEx) {
         var paramsString = params.entrySet().stream()
                 .map(e -> "%s=%s".formatted(e.getKey(), e.getValue()))
                 .collect(Collectors.joining(", "));
-        return "Failed: %s.%s(%s) with code %s:%s"
-                .formatted(endpointClass.getSimpleName(), name, paramsString, apiEx.getCode(), apiEx.getMessage());
+        return "Failed: %s.%s(%s) with HTTP status %s"
+                .formatted(endpointClass.getSimpleName(), name, paramsString, apiEx.getCode());
     }
 }

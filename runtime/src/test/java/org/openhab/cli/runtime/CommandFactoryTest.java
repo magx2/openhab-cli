@@ -95,7 +95,7 @@ class CommandFactoryTest {
                 "action", "availableActionsForThing", "--properties-file=" + directory, "--", "thing:test");
 
         assertEquals(98, exitCode);
-        assertTrue(errors.toString().contains("Cannot read properties"));
+        assertEquals("", errors.toString());
     }
 
     @Test

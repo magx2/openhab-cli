@@ -108,9 +108,24 @@ public class Cli implements Runnable {
     /** Creates a parser with Dagger-backed commands and application exit-code handling. */
     static CommandLine commandLine() {
         var component = DaggerRuntimeComponent.create();
+        var exitCodeMapper = component.exitCodeMapper();
         return new CommandLine(new Cli(), component.commandFactory())
                 .setCaseInsensitiveEnumValuesAllowed(true)
-                .setExitCodeExceptionMapper(component.exitCodeMapper());
+                .setExitCodeExceptionMapper(exitCodeMapper)
+                .setExecutionExceptionHandler(executionExceptionHandler(exitCodeMapper));
+    }
+
+    /** Routes command failures to the mapper without Picocli printing an additional stack trace. */
+    static CommandLine.IExecutionExceptionHandler executionExceptionHandler(ExitCodeMapper exitCodeMapper) {
+        return (exception, commandLine, parseResult) -> exitCodeMapper.getExitCode(exception, prettyPrint(parseResult));
+    }
+
+    private static boolean prettyPrint(CommandLine.ParseResult parseResult) {
+        var commandParseResult = parseResult;
+        while (commandParseResult.subcommand() != null) {
+            commandParseResult = commandParseResult.subcommand();
+        }
+        return commandParseResult.matchedOptionValue("--pretty-print", true);
     }
 
     /** Prints usage when the CLI is invoked without a subcommand. */

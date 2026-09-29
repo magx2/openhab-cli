@@ -103,6 +103,61 @@ class EndpointCommandsTest {
                         () -> verifyDelegation(operation, true)));
     }
 
+    @Test
+    void endpointFailuresReachTheMapperAndPrintOnlyTheJsonResponse() throws Exception {
+        var console = mock(Console.class);
+        var builder = mock(ApiClientBuilder.class);
+        when(builder.build(any())).thenReturn(mock(ApiClient.class));
+        var commandType = org.openhab.cli.runtime.command.items.ItemByName.class;
+        var constructor = commandType.getDeclaredConstructor(Console.class, ApiClientBuilder.class);
+        constructor.setAccessible(true);
+        var command = constructor.newInstance(console, builder);
+        var apiException = new org.openhab.cli.client.ApiException(
+                "generated client message",
+                404,
+                Map.of("authorization", List.of("secret")),
+                "{\"error\":{\"message\":\"Item x does not exist!\",\"http-code\":404}}");
+        var endpointException = new org.openhab.cli.engine.endpoint.EndpointException(
+                org.openhab.cli.engine.endpoint.Items.class,
+                "getItemByNameWithHttpInfo",
+                Map.of("itemName", "x"),
+                apiException);
+
+        try (var ignored = mockConstruction(
+                org.openhab.cli.engine.endpoint.Items.class, withSettings().defaultAnswer(invocation -> {
+                    throw endpointException;
+                }))) {
+            var errors = new java.io.StringWriter();
+            var exitCodeMapper = new ExitCodeMapper(console);
+            var commandLine = new CommandLine(CommandLine.Model.CommandSpec.create())
+                    .addSubcommand("itemByName", command)
+                    .setErr(new java.io.PrintWriter(errors))
+                    .setExitCodeExceptionMapper(exitCodeMapper)
+                    .setExecutionExceptionHandler(Cli.executionExceptionHandler(exitCodeMapper));
+
+            assertEquals(ExitCodeMapper.ENDPOINT_EXCEPTION_EXIT_CODE, commandLine.execute("itemByName", "x"));
+            assertEquals("", errors.toString());
+            verify(console).writeError("Error occured when querying the server:%n%s", endpointException, """
+                            {
+                              "error": {
+                                "message": "Item x does not exist!",
+                                "http-code": 404
+                              }
+                            }""");
+            verify(console, never()).writeJson(any(), anyBoolean());
+
+            clearInvocations(console);
+            assertEquals(
+                    ExitCodeMapper.ENDPOINT_EXCEPTION_EXIT_CODE,
+                    commandLine.execute("itemByName", "--no-pretty-print", "x"));
+            verify(console)
+                    .writeError(
+                            "Error occured when querying the server:%n%s",
+                            endpointException,
+                            "{\"error\":{\"message\":\"Item x does not exist!\",\"http-code\":404}}");
+        }
+    }
+
     private void verifyDelegation(Operation operation, boolean omitOptional) throws Exception {
         var console = mock(Console.class);
         var builder = mock(ApiClientBuilder.class);

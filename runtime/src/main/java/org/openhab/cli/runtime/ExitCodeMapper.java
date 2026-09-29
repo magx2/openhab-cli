@@ -5,6 +5,7 @@ import javax.inject.Inject;
 import lombok.RequiredArgsConstructor;
 import org.openhab.cli.engine.endpoint.EndpointException;
 import org.openhab.cli.runtime.service.Console;
+import org.openhab.cli.runtime.service.EndpointErrorMessage;
 import picocli.CommandLine;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
@@ -18,9 +19,19 @@ public class ExitCodeMapper implements CommandLine.IExitCodeExceptionMapper {
 
     @Override
     public int getExitCode(Throwable throwable) {
+        return getExitCode(throwable, true);
+    }
+
+    /** Maps an execution failure while applying the command's JSON formatting preference. */
+    int getExitCode(Throwable throwable, boolean prettyPrint) {
+        if (throwable instanceof EndpointException endpointException) {
+            console.writeError(
+                    "Error occured when querying the server:%n%s",
+                    endpointException, EndpointErrorMessage.from(endpointException, prettyPrint));
+            return ENDPOINT_EXCEPTION_EXIT_CODE;
+        }
         writeError(throwable);
         return switch (throwable) {
-            case EndpointException endpointException -> ENDPOINT_EXCEPTION_EXIT_CODE;
             case UncheckedIOException uncheckedIOException -> IO_EXCEPTION_EXIT_CODE;
             case IllegalStateException illegalStateException -> ILLEGAL_STATE_EXCEPTION_EXIT_CODE;
             case IllegalArgumentException illegalArgumentException -> ILLEGAL_ARGUMENT_EXCEPTION_EXIT_CODE;
