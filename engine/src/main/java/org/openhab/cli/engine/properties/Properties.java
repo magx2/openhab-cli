@@ -73,6 +73,17 @@ public record Properties(
      * @throws IllegalArgumentException if the required base URL is missing or is not an HTTP(S) server URL
      */
     public String apiBaseUrl() {
+        validateBaseUrl(baseUrl);
+        return baseUrl.replaceAll("/+$", "") + "/" + basePath.replaceAll("^/+", "");
+    }
+
+    /**
+     * Validates a server URL without requiring connection settings or stored credentials.
+     *
+     * @param baseUrl absolute HTTP(S) server URL
+     * @throws IllegalArgumentException if the URL is missing, malformed, or contains a query or fragment
+     */
+    public static void validateBaseUrl(String baseUrl) {
         if (baseUrl == null || baseUrl.isBlank()) {
             throw new IllegalArgumentException(
                     "baseUrl is required: set --base-url or config.rest.baseUrl in the properties file");
@@ -84,7 +95,6 @@ public record Properties(
                 || uri.getRawFragment() != null) {
             throw new IllegalArgumentException("baseUrl must be an absolute HTTP(S) URL without a query or fragment");
         }
-        return baseUrl.replaceAll("/+$", "") + "/" + basePath.replaceAll("^/+", "");
     }
 
     /**

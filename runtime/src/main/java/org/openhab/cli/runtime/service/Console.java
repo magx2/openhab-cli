@@ -33,7 +33,7 @@ public class Console {
 
     public void writeDebug(String msg, Object... params) {
         var fullMsg = msg.formatted(params);
-        System.err.println("[DEBUG] " + fullMsg);
+        System.out.println("[DEBUG] " + fullMsg);
         log.debug(fullMsg);
     }
 

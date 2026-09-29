@@ -5,7 +5,7 @@ import java.io.InputStreamReader;
 import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.RequiredArgsConstructor;
-import org.openhab.cli.runtime.Options;
+import org.openhab.cli.runtime.PropertiesFileOptions;
 import org.openhab.cli.runtime.service.Console;
 import org.openhab.cli.runtime.service.PropertiesReader;
 import picocli.CommandLine;
@@ -18,7 +18,7 @@ import picocli.CommandLine;
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class SetServerCommand implements Callable<Integer> {
     @CommandLine.Mixin
-    private Options options;
+    private PropertiesFileOptions options;
 
     @CommandLine.Parameters(
             index = "0",
@@ -26,6 +26,11 @@ public class SetServerCommand implements Callable<Integer> {
             paramLabel = "<baseUrl>",
             description = "openHAB server URL (HTTP or HTTPS); prompts if neither this nor --base-url is supplied.")
     private String positionalBaseUrl;
+
+    @CommandLine.Option(
+            names = "--base-url",
+            description = "openHAB server URL, as an alternative to the positional URL.")
+    private String optionBaseUrl;
 
     @CommandLine.Spec
     private CommandLine.Model.CommandSpec spec;
@@ -36,11 +41,11 @@ public class SetServerCommand implements Callable<Integer> {
     /** Validates the entered HTTP(S) URL and saves it while preserving other properties. */
     @Override
     public Integer call() throws Exception {
-        if (positionalBaseUrl != null && options.getBaseUrl() != null) {
+        if (positionalBaseUrl != null && optionBaseUrl != null) {
             throw new IllegalArgumentException(
                     "Supply the server URL either positionally or with --base-url, not both.");
         }
-        var baseUrl = positionalBaseUrl != null ? positionalBaseUrl : options.getBaseUrl();
+        var baseUrl = positionalBaseUrl != null ? positionalBaseUrl : optionBaseUrl;
         if (baseUrl == null) {
             var terminal = System.console();
             if (terminal != null) {
@@ -54,11 +59,7 @@ public class SetServerCommand implements Callable<Integer> {
         if (baseUrl == null || baseUrl.isBlank()) {
             throw new IllegalArgumentException("Server base URL is required.");
         }
-        var validationOptions = new Options();
-        new CommandLine(validationOptions).parseArgs("--base-url=" + baseUrl);
-        validationOptions
-                .overrideProps(org.openhab.cli.engine.properties.Properties.DEFAULT)
-                .apiBaseUrl();
+        org.openhab.cli.engine.properties.Properties.validateBaseUrl(baseUrl);
         var path = PropertiesReader.resolvePath(options.getPropertiesFile());
         var result = propertiesReader.set(path.toString(), "config.rest.baseUrl", baseUrl);
         if (result == 0) {
