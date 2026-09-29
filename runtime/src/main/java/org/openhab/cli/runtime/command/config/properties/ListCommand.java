@@ -17,7 +17,7 @@ import picocli.CommandLine;
 @CommandLine.Command(
         name = "list",
         description =
-                "Show all supported and stored custom properties with values and descriptions in a Markdown table. Unset values are null.",
+                "Show all supported and stored custom properties with values and descriptions in a Markdown table. Unset values are null; authentication credentials are redacted.",
         mixinStandardHelpOptions = true)
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class ListCommand implements Runnable {
@@ -63,7 +63,8 @@ public class ListCommand implements Runnable {
         } else if (properties.isEmpty()) {
             console.write("No properties are stored in this file.");
         }
-        console.write("Values are read from the file; null means not set. Defaults are described below.");
+        console.write(
+                "Values are read from the file; null means not set. Credentials are redacted. Defaults are described below.");
         console.write("");
         var keys = new TreeSet<>(DESCRIPTIONS.keySet());
         keys.addAll(properties.stringPropertyNames());
@@ -73,7 +74,7 @@ public class ListCommand implements Runnable {
             var value = properties.getProperty(key);
             rows.add(new String[] {
                 cell(key),
-                cell(value == null ? "null" : value.isEmpty() ? "\"\"" : value),
+                displayValue(key, value),
                 cell(DESCRIPTIONS.getOrDefault(key, "Custom property; no built-in description."))
             });
         }
@@ -86,6 +87,15 @@ public class ListCommand implements Runnable {
         console.write(
                 "| " + "-".repeat(widths[0]) + " | " + "-".repeat(widths[1]) + " | " + "-".repeat(widths[2]) + " |");
         rows.stream().skip(1).forEach(row -> console.write(format.formatted((Object[]) row)));
+    }
+
+    private static String displayValue(String key, String value) {
+        if (value == null) return "null";
+        if (value.isEmpty()) return "\"\"";
+        return switch (key) {
+            case "auth.oAuthToken", "auth.username", "auth.password" -> "[REDACTED]";
+            default -> cell(value);
+        };
     }
 
     private static String cell(String value) {

@@ -5,6 +5,7 @@ import javax.inject.Inject;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openhab.cli.runtime.PropertiesFileOptions;
+import org.openhab.cli.runtime.service.Console;
 import org.openhab.cli.runtime.service.PropertiesReader;
 import picocli.CommandLine;
 
@@ -12,7 +13,8 @@ import picocli.CommandLine;
 @Slf4j
 @CommandLine.Command(
         name = "clear",
-        description = "Remove a property from an existing configuration file. Other properties are preserved.",
+        description =
+                "Remove a property from an existing configuration file and confirm its key and file path. Other properties are preserved.",
         mixinStandardHelpOptions = true)
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class ClearCommand implements Callable<Integer> {
@@ -23,11 +25,18 @@ public class ClearCommand implements Callable<Integer> {
     private String key;
 
     private final PropertiesReader propertiesReader;
+    private final Console console;
 
-    /** Clears the requested property and returns zero on success or the I/O error exit code. */
+    /** Clears the requested property, reports success with its file path, and returns the exit code. */
     @Override
     public Integer call() throws Exception {
         log.info("Clearing property {}", key);
-        return propertiesReader.clear(options.getPropertiesFile(), key);
+        var path = PropertiesReader.resolvePath(options.getPropertiesFile());
+        var exitCode = propertiesReader.clear(path.toString(), key);
+        if (exitCode == 0) {
+            console.write("Properties file: " + path);
+            console.write("Cleared property '" + key + "' (not set in this file).");
+        }
+        return exitCode;
     }
 }

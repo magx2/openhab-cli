@@ -28,6 +28,21 @@ class ListCommandTest {
     }
 
     @Test
+    void redactsStoredCredentialsBeforeSendingOutputToConsole() throws Exception {
+        var file = directory.resolve("client.properties");
+        var contents =
+                "auth.oAuthToken=secret-token\nauth.username=secret-user\nauth.password=secret-password\nconfig.rest.baseUrl=http://localhost\n";
+        Files.writeString(file, contents);
+        var text = list(file);
+        for (var key : new String[] {"auth.oAuthToken", "auth.username", "auth.password"}) {
+            assertTrue(text.lines().anyMatch(line -> line.contains(key) && line.contains("[REDACTED]")), text);
+        }
+        assertFalse(text.contains("secret-"), text);
+        assertTrue(text.contains("http://localhost"));
+        assertEquals(contents, Files.readString(file));
+    }
+
+    @Test
     void missingAndEmptyFilesStillListSupportedKeysAndDescriptions() throws Exception {
         var file = directory.resolve("client.properties");
         for (boolean exists : new boolean[] {false, true}) {
