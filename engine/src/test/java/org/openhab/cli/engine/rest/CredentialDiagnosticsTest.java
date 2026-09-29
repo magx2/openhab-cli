@@ -12,6 +12,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockMakers;
 import org.openhab.cli.client.model.TokenResponse;
 import org.openhab.cli.client.model.User;
 import org.openhab.cli.client.model.UserSession;
@@ -78,7 +79,8 @@ class CredentialDiagnosticsTest {
                 .header("AUTHORIZATION", "private-response-auth")
                 .header("Set-Cookie", "private-response-cookie")
                 .build();
-        var chain = mock(Interceptor.Chain.class);
+        // Match the subclass mock maker used by endpoint tests in this JVM.
+        var chain = mock(Interceptor.Chain.class, withSettings().mockMaker(MockMakers.SUBCLASS));
         when(chain.request()).thenReturn(request);
         when(chain.proceed(request)).thenReturn(response);
         assertSame(response, interceptors.getFirst().intercept(chain));

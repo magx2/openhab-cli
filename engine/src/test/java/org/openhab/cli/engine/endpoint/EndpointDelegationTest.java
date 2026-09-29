@@ -221,7 +221,9 @@ class EndpointDelegationTest {
                                 10000,
                                 10000,
                                 10000),
-                        mock(okhttp3.logging.HttpLoggingInterceptor.Logger.class)) {
+                        mock(
+                                okhttp3.logging.HttpLoggingInterceptor.Logger.class,
+                                withSettings().mockMaker(MockMakers.SUBCLASS))) {
                     @Override
                     public org.openhab.cli.client.ApiClient toNative() {
                         return nativeClient;
