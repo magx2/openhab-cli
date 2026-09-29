@@ -5,6 +5,7 @@ import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.RequiredArgsConstructor;
 import org.openhab.cli.runtime.PropertiesFileOptions;
+import org.openhab.cli.runtime.service.Console;
 import org.openhab.cli.runtime.service.PropertiesReader;
 import picocli.CommandLine;
 
@@ -44,8 +45,9 @@ public class LoginCommand implements Callable<Integer> {
     private CommandLine.Model.CommandSpec spec;
 
     private final PropertiesReader propertiesReader;
+    private final Console console;
 
-    /** Validates explicit credentials and stores them together, preserving unrelated properties. */
+    /** Validates and stores credentials, then confirms the saved method without revealing secrets. */
     @Override
     public Integer call() {
         if (token != null) {
@@ -61,6 +63,12 @@ public class LoginCommand implements Callable<Integer> {
         changes.put("auth.oAuthToken", token);
         changes.put("auth.username", username);
         changes.put("auth.password", password);
-        return propertiesReader.update(options.getPropertiesFile(), changes);
+        var result = propertiesReader.update(options.getPropertiesFile(), changes);
+        if (result == 0) {
+            var method = token != null ? "OAuth token" : "username/password (basic authentication)";
+            console.write("Properties file: " + PropertiesReader.resolvePath(options.getPropertiesFile()));
+            console.write("Saved login: " + method + ". Credentials have not been verified with the server.");
+        }
+        return result;
     }
 }
