@@ -10,6 +10,10 @@ plugins {
     id 'com.diffplug.spotless' version '8.10.2'
 }
 
+repositories {
+    mavenCentral()
+}
+
 // Let Git identify repository text files, including untracked files and dotfiles.
 // Ignored build output and files marked/detected as binary are not formatted.
 def repositoryTextFiles = providers.exec {
@@ -21,11 +25,41 @@ def repositoryTextFiles = providers.exec {
     }.collect { entry -> entry.substring(entry.indexOf('\t') + 1) }.unique()
 }
 
+// Use Git's text-file list so ignored output and binaries never enter a formatter.
+def textFiles = repositoryTextFiles.get()
+def filesWithExtensions = { extensions ->
+    files(textFiles.findAll { path -> extensions.any { path.endsWith(it) } })
+}
+def structuredExtensions = ['.java', '.yml', '.yaml', '.md', '.json', '.properties', '.gradle', '.xml']
+
 spotless {
     lineEndings = com.diffplug.spotless.LineEnding.UNIX
+    format('prettier') {
+        target filesWithExtensions(['.yml', '.yaml', '.md', '.properties'])
+        prettier(['prettier': '3.9.9', 'prettier-plugin-properties': '0.3.1'])
+            .config(['plugins': ['prettier-plugin-properties'], 'tabWidth': 2,
+                     'proseWrap': 'preserve', 'keySeparator': '='])
+    }
+    json {
+        target filesWithExtensions(['.json'])
+        gson().indentWithSpaces(2)
+        endWithNewline()
+    }
+    groovyGradle {
+        target filesWithExtensions(['.gradle'])
+        greclipse()
+        endWithNewline()
+    }
+    format('xml') {
+        target filesWithExtensions(['.xml'])
+        eclipseWtp('xml')
+        endWithNewline()
+    }
     format('text') {
-        // Java sources are handled by the subproject Palantir formatters.
-        target files(repositoryTextFiles.get().findAll { !it.endsWith('.java') })
+        // Basic whitespace hygiene for TOML, scripts, dotfiles and other text.
+        target files(textFiles.findAll { path -> !structuredExtensions.any { path.endsWith(it) } })
+        trimTrailingWhitespace()
+        endWithNewline()
     }
 }
 

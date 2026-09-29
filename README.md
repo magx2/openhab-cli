@@ -12,14 +12,21 @@ Generated sources are written to `build/generated/openapi/src/main/java`.
 The `openapi` subproject compiles the generated client. The `engine` subproject
 depends on it, and compilation runs generation automatically.
 
-Format Java sources with Spotless and Palantir Java Format:
+Format repository sources and configuration with Spotless:
 
 ```sh
 ./gradlew spotlessApply
 ```
 
 `./gradlew spotlessCheck` checks formatting and also runs as part of `build`.
-Generated OpenAPI sources are excluded.
+Java uses Palantir Java Format; YAML and Markdown use Prettier; JSON uses Gson;
+properties use Prettier's properties plugin; Gradle uses Groovy Eclipse; XML uses
+Eclipse WTP. Other text files (including TOML, scripts and dotfiles) receive
+trailing-whitespace cleanup and a final newline. All formats use Unix line endings.
+Generated output and binary files are excluded.
+
+Node.js and npm must be available on PATH for Prettier. Spotless installs its pinned
+formatter packages automatically; no manual npm install is required.
 
 Commands that call openHAB require a server URL. Supply `--base-url=http://localhost:8080`
 or set it in `~/.oh/oh-cli.properties` (or the file selected by `--properties-file`):
