@@ -2,6 +2,7 @@ package org.openhab.cli.engine.endpoint;
 
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -416,7 +417,7 @@ public final class Items {
      * @return the response data, or {@code null} when the response has no body
      * @throws EndpointException if the request fails, including parameter validation or response decoding
      */
-    public List<String> items(
+    public List<Map<String, Object>> items(
             String acceptLanguage,
             String type,
             String tags,
@@ -484,7 +485,7 @@ public final class Items {
      * @return the response data, or {@code null} when the response has no body
      * @throws EndpointException if the request fails, including parameter validation or response decoding
      */
-    public List<String> items(
+    public List<Map<String, Object>> items(
             String type,
             String tags,
             String metadata,
@@ -503,7 +504,7 @@ public final class Items {
      * @return the response data, or {@code null} when the response has no body
      * @throws EndpointException if the request fails, including parameter validation or response decoding
      */
-    public List<String> items() {
+    public List<Map<String, Object>> items() {
         return items(null, null, null, null, null, null, null, null);
     }
 
