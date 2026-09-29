@@ -26,7 +26,7 @@ public class CreateFileFormatForRules implements Runnable {
 
     @CommandLine.Parameters(
             index = "0",
-            arity = "1",
+            arity = "0..1",
             paramLabel = "<serializationOption>",
             description = "Decides what to include in serialized rules (optional, default to Normal)")
     private String serializationOption;

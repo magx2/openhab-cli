@@ -40,7 +40,7 @@ public class Items implements Runnable {
 
     @CommandLine.Parameters(
             index = "0",
-            arity = "1",
+            arity = "0..1",
             paramLabel = "<metadata>",
             description =
                     "metadata selector - a comma separated list or a regular expression (returns all if no value given) (optional, default to .*)")
@@ -48,14 +48,14 @@ public class Items implements Runnable {
 
     @CommandLine.Parameters(
             index = "1",
-            arity = "1",
+            arity = "0..1",
             paramLabel = "<recursive>",
             description = "get member items recursively (optional, default to false)")
     private Boolean recursive;
 
     @CommandLine.Parameters(
             index = "2",
-            arity = "1",
+            arity = "0..1",
             paramLabel = "<parents>",
             description = "get parent group items recursively (optional, default to false)")
     private Boolean parents;
@@ -69,7 +69,7 @@ public class Items implements Runnable {
 
     @CommandLine.Parameters(
             index = "3",
-            arity = "1",
+            arity = "0..1",
             paramLabel = "<staticDataOnly>",
             description =
                     "provides a cacheable list of values not expected to change regularly and checks the If-Modified-Since header, all other parameters are ignored except \\\"metadata\\\" (optional, default to false)")

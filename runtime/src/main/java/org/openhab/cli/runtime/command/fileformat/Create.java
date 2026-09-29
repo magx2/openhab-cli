@@ -29,7 +29,7 @@ public class Create implements Runnable {
 
     @CommandLine.Parameters(
             index = "1",
-            arity = "1",
+            arity = "0..1",
             paramLabel = "<hideDefaultParameters>",
             description =
                     "if true, exclude the configuration parameters having the default value from the result. (optional, default to false)")
@@ -37,7 +37,7 @@ public class Create implements Runnable {
 
     @CommandLine.Parameters(
             index = "2",
-            arity = "1",
+            arity = "0..1",
             paramLabel = "<hideDefaultChannels>",
             description =
                     "if true, exclude the non extensible channels having a default configuration from the result. (optional, default to false)")
@@ -45,7 +45,7 @@ public class Create implements Runnable {
 
     @CommandLine.Parameters(
             index = "3",
-            arity = "1",
+            arity = "0..1",
             paramLabel = "<hideChannelLinksAndMetadata>",
             description =
                     "if true, exclude the channel links and metadata for items from the result. (optional, default to false)")
@@ -53,7 +53,7 @@ public class Create implements Runnable {
 
     @CommandLine.Parameters(
             index = "4",
-            arity = "1",
+            arity = "0..1",
             paramLabel = "<ruleSerializationOption>",
             description =
                     "Decides what to include in serialized rules and rule templates (optional, default to Normal)")

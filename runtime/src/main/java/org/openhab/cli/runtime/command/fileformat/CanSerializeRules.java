@@ -26,7 +26,7 @@ public class CanSerializeRules implements Runnable {
 
     @CommandLine.Parameters(
             index = "0",
-            arity = "1",
+            arity = "0..1",
             paramLabel = "<targetFormat>",
             description = "Target format (optional, default to application/yaml)")
     private String targetFormat;

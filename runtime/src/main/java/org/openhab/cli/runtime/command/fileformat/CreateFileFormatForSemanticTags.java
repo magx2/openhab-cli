@@ -26,7 +26,7 @@ public class CreateFileFormatForSemanticTags implements Runnable {
 
     @CommandLine.Parameters(
             index = "0",
-            arity = "1",
+            arity = "0..1",
             paramLabel = "<hideNonEditableTags>",
             description =
                     "if true, exclude the non editable semantic tags from the result. (optional, default to false)")
@@ -34,7 +34,7 @@ public class CreateFileFormatForSemanticTags implements Runnable {
 
     @CommandLine.Parameters(
             index = "1",
-            arity = "1",
+            arity = "0..1",
             paramLabel = "<hideDefaultTags>",
             description = "if true, exclude the default semantic tags from the result. (optional, default to false)")
     private Boolean hideDefaultTags;

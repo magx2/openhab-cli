@@ -34,7 +34,7 @@ public class RemoveThingById implements Runnable {
 
     @CommandLine.Parameters(
             index = "1",
-            arity = "1",
+            arity = "0..1",
             paramLabel = "<force>",
             description = "force (optional, default to false)")
     private Boolean force;

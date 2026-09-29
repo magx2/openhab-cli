@@ -23,7 +23,7 @@ public class DiscoveredInboxItems implements Runnable {
 
     @CommandLine.Parameters(
             index = "0",
-            arity = "1",
+            arity = "0..1",
             paramLabel = "<includeIgnored>",
             description = "If true, include ignored inbox entries. Defaults to true (optional, default to true)")
     private Boolean includeIgnored;

@@ -30,7 +30,7 @@ public class ItemByName implements Runnable {
 
     @CommandLine.Parameters(
             index = "1",
-            arity = "1",
+            arity = "0..1",
             paramLabel = "<metadata>",
             description =
                     "metadata selector - a comma separated list or a regular expression (returns all if no value given) (optional, default to .*)")
@@ -38,14 +38,14 @@ public class ItemByName implements Runnable {
 
     @CommandLine.Parameters(
             index = "2",
-            arity = "1",
+            arity = "0..1",
             paramLabel = "<recursive>",
             description = "get member items if the item is a group item (optional, default to true)")
     private Boolean recursive;
 
     @CommandLine.Parameters(
             index = "3",
-            arity = "1",
+            arity = "0..1",
             paramLabel = "<parents>",
             description = "get parent group items recursively (optional, default to false)")
     private Boolean parents;

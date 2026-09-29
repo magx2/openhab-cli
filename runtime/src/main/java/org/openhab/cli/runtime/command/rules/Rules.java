@@ -43,7 +43,7 @@ public class Rules implements Runnable {
 
     @CommandLine.Parameters(
             index = "0",
-            arity = "1",
+            arity = "0..1",
             paramLabel = "<staticDataOnly>",
             description =
                     "provides a cacheable list of values not expected to change regularly and honors the If-Modified-Since header, all other parameters are ignored (optional, default to false)")

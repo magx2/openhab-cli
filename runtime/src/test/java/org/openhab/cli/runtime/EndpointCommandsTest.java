@@ -70,6 +70,21 @@ class EndpointCommandsTest {
         }
     }
 
+    @Test
+    void documentedOptionalPositionalsAreNotRequired() {
+        for (var operation : operations().toList()) {
+            for (var field : operation.command().getDeclaredFields()) {
+                var parameter = field.getAnnotation(CommandLine.Parameters.class);
+                if (parameter != null
+                        && String.join(" ", parameter.description()).contains("(optional")) {
+                    assertEquals(
+                            "0..1", parameter.arity(), operation.command().getSimpleName() + "." + field.getName());
+                }
+            }
+        }
+        assertDoesNotThrow(() -> Cli.commandLine().parseArgs("items", "items"));
+    }
+
     @TestFactory
     Stream<DynamicTest> delegatesEveryOperationWithAllArguments() {
         return operations()

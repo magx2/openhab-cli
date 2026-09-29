@@ -34,7 +34,7 @@ public class Things implements Runnable {
 
     @CommandLine.Parameters(
             index = "0",
-            arity = "1",
+            arity = "0..1",
             paramLabel = "<staticDataOnly>",
             description =
                     "provides a cacheable list of values not expected to change regularly and checks the If-Modified-Since header (optional, default to false)")

@@ -26,7 +26,7 @@ public class CreateFileFormatForThings implements Runnable {
 
     @CommandLine.Parameters(
             index = "0",
-            arity = "1",
+            arity = "0..1",
             paramLabel = "<hideDefaultParameters>",
             description =
                     "if true, exclude the configuration parameters having the default value from the result. (optional, default to true)")
