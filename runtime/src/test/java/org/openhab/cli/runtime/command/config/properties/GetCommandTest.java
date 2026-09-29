@@ -24,7 +24,8 @@ class GetCommandTest {
         }
         verify(console).write("custom.key=a=b c");
         verify(console).write("empty=");
-        verify(console).write("missing=null");
+        verify(console, times(3)).write("Properties file: " + file);
+        verify(console).write("Property 'missing' is not set in this file.");
         verifyNoMoreInteractions(console);
     }
 }
