@@ -12,6 +12,7 @@ dependencies {
     implementation project(':openapi')
     implementation libs.slf4j.api
     implementation libs.okhttp
+    implementation libs.okhttp.logging
 
     testImplementation platform('org.junit:junit-bom:5.11.4')
     testImplementation 'org.junit.jupiter:junit-jupiter'

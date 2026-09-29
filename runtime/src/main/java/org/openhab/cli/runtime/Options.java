@@ -45,7 +45,7 @@ public class Options {
         @Option(
                 names = {"--api-client-debugging"},
                 description =
-                        "Log HTTP methods and status codes at DEBUG level, without URLs, headers or bodies (default: false)",
+                        "Print HTTP requests and responses, including bodies, with authorization and cookie headers hidden (default: false)",
                 negatable = true,
                 fallbackValue = "true")
         private Boolean apiClientDebugging;

@@ -72,6 +72,7 @@ dependencies {
     implementation project(':openapi')
     implementation libs.gson
 
+    implementation libs.okhttp.logging
     implementation libs.slf4j.api
     implementation libs.slf4j.jul
     runtimeOnly libs.log4j.core

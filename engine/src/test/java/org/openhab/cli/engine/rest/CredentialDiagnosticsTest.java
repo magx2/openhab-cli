@@ -3,13 +3,14 @@ package org.openhab.cli.engine.rest;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import okhttp3.Interceptor;
+import okhttp3.MediaType;
 import okhttp3.Protocol;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 import org.junit.jupiter.api.Test;
 import org.openhab.cli.client.model.TokenResponse;
 import org.openhab.cli.client.model.User;
@@ -39,7 +40,7 @@ class CredentialDiagnosticsTest {
     }
 
     @Test
-    void httpDebuggingLogsMetadataWithoutCredentialsOrChangingRequests() throws Exception {
+    void httpDebuggingLogsBodiesButRedactsCredentialHeadersWithoutChangingRequests() throws Exception {
         var props = new Properties(
                 "http://localhost",
                 null,
@@ -55,36 +56,42 @@ class CredentialDiagnosticsTest {
                 10000,
                 10000,
                 10000);
-        var client = new ApiClient(props).toNative();
+        var lines = new ArrayList<String>();
+        var client = new ApiClient(props, lines::add).toNative();
         var interceptors = client.getHttpClient().interceptors();
         assertEquals(1, interceptors.size());
         var request = new Request.Builder()
-                .url("http://localhost/private-path?token=private-query")
-                .header("Authorization", "Bearer private-token")
+                .url("http://localhost/rest/test")
+                .post(RequestBody.create("request 100% payload", MediaType.get("text/plain")))
+                .header("Content-Type", "text/plain")
+                .header("X-Trace", "visible-trace")
+                .header("aUtHoRiZaTiOn", "Bearer private-token")
+                .header("Proxy-Authorization", "Basic private-proxy")
                 .header("Cookie", "private-cookie")
                 .build();
         var response = new Response.Builder()
                 .request(request)
                 .protocol(Protocol.HTTP_1_1)
                 .code(200)
-                .message("private-status-message")
+                .message("OK")
+                .body(ResponseBody.create("response payload", MediaType.get("text/plain")))
+                .header("AUTHORIZATION", "private-response-auth")
                 .header("Set-Cookie", "private-response-cookie")
                 .build();
         var chain = mock(Interceptor.Chain.class);
         when(chain.request()).thenReturn(request);
         when(chain.proceed(request)).thenReturn(response);
-        var original = System.out;
-        var bytes = new ByteArrayOutputStream();
-        try (var output = new PrintStream(bytes, true, StandardCharsets.UTF_8)) {
-            System.setOut(output);
-            assertSame(response, interceptors.getFirst().intercept(chain));
-        } finally {
-            System.setOut(original);
-        }
+        assertSame(response, interceptors.getFirst().intercept(chain));
         verify(chain).proceed(request);
-        var diagnostic = bytes.toString(StandardCharsets.UTF_8);
-        assertTrue(diagnostic.contains("HTTP request: GET"), diagnostic);
-        assertTrue(diagnostic.contains("HTTP response: GET 200"), diagnostic);
+        var diagnostic = String.join("\n", lines);
+        assertTrue(diagnostic.contains("--> POST http://localhost/rest/test"), diagnostic);
+        assertTrue(diagnostic.contains("<-- 200 OK"), diagnostic);
+        assertTrue(diagnostic.contains("visible-trace"), diagnostic);
+        assertTrue(diagnostic.contains("request 100% payload"), diagnostic);
+        assertTrue(diagnostic.contains("response payload"), diagnostic);
+        assertTrue(diagnostic.contains("Authorization"), diagnostic);
         assertFalse(diagnostic.contains("private-"), diagnostic);
+        assertEquals("Bearer private-token", request.header("Authorization"));
+        assertEquals("response payload", response.body().string());
     }
 }

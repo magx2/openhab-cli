@@ -31,7 +31,14 @@ public class Console {
         writeError(msg, null, params);
     }
 
+    public void writeDebug(String msg, Object... params) {
+        var fullMsg = msg.formatted(params);
+        System.err.println("[DEBUG] " + fullMsg);
+        log.debug(fullMsg);
+    }
+
     public void write(String msg) {
         System.out.println(msg);
+        log.info(msg);
     }
 }

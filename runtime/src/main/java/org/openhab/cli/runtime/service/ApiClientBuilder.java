@@ -8,10 +8,11 @@ import org.openhab.cli.runtime.Options;
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class ApiClientBuilder {
     private final PropertiesReader propertiesReader;
+    private final Console console;
 
     public ApiClient build(Options options) {
         var properties = propertiesReader.read(options.getPropertiesFile());
         properties = options.overrideProps(properties);
-        return new org.openhab.cli.engine.rest.ApiClient(properties);
+        return new ApiClient(properties, message -> console.writeDebug("%s", message));
     }
 }

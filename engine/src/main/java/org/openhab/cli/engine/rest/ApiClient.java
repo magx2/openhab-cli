@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import lombok.extern.slf4j.Slf4j;
+import okhttp3.logging.HttpLoggingInterceptor;
 import org.openhab.cli.engine.properties.Properties;
 
 /**
@@ -14,11 +15,13 @@ import org.openhab.cli.engine.properties.Properties;
 @Slf4j
 public class ApiClient {
     private final Properties properties;
+    private final HttpLoggingInterceptor.Logger debugLogger;
 
-    /** Creates a client from merged settings, requiring an explicit server URL. */
-    public ApiClient(Properties properties) {
+    /** Creates a client from merged settings and the supplied HTTP debug logger. */
+    public ApiClient(Properties properties, HttpLoggingInterceptor.Logger debugLogger) {
         properties.apiBaseUrl();
         this.properties = properties;
+        this.debugLogger = java.util.Objects.requireNonNull(debugLogger);
     }
 
     /**
@@ -60,17 +63,16 @@ public class ApiClient {
         }
 
         if (properties.apiClientDebugging()) {
-            // The generated BODY logger exposes Authorization, cookies and OAuth response bodies.
+            var interceptor = new HttpLoggingInterceptor(debugLogger);
+            interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+            interceptor.redactHeader("Authorization");
+            interceptor.redactHeader("Proxy-Authorization");
+            interceptor.redactHeader("Cookie");
+            interceptor.redactHeader("Set-Cookie");
             apiClient.setHttpClient(apiClient
                     .getHttpClient()
                     .newBuilder()
-                    .addInterceptor(chain -> {
-                        var request = chain.request();
-                        log.debug("HTTP request: {}", request.method());
-                        var response = chain.proceed(request);
-                        log.debug("HTTP response: {} {}", request.method(), response.code());
-                        return response;
-                    })
+                    .addInterceptor(interceptor)
                     .build());
         }
         return apiClient;

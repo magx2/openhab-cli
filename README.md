@@ -285,5 +285,7 @@ for diagnosis and can be removed after checking the result.
 Diagnostic output redacts authentication credentials: `Properties.toString()` omits
 free-form settings, and generated OAuth token/session models mask their secrets in
 `toString()`. Their getters and JSON serialization retain the real values.
-`--api-client-debugging` logs only HTTP methods and response status codes at DEBUG
-level; URLs, headers and bodies are omitted because they can contain credentials.
+`--api-client-debugging` uses OkHttp BODY logging through `Console.writeDebug`,
+which writes to stderr and the DEBUG logger. Authorization, Proxy-Authorization,
+Cookie and Set-Cookie header values are hidden. URLs and request/response bodies
+are included, so credentials in query parameters or bodies are not redacted.
