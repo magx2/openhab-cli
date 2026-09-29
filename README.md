@@ -34,6 +34,7 @@ to the server URL; customize it with `--base-path` or `config.rest.basePath`.
 Manage the saved server URL with `_config server`:
 
 ```sh
+oh _config server set http://localhost:8080
 oh _config server set --base-url=http://localhost:8080
 oh _config server set  # prompts for the URL
 oh _config server clear

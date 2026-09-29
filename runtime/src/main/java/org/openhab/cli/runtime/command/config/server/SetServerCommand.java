@@ -13,12 +13,19 @@ import picocli.CommandLine;
 /** Stores a server URL supplied on the command line or entered at a prompt. */
 @CommandLine.Command(
         name = "set",
-        description = "Save the openHAB server URL. Supply --base-url or enter it at the prompt.",
+        description = "Save the openHAB server URL. Supply a URL, use --base-url, or enter it at the prompt.",
         mixinStandardHelpOptions = true)
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class SetServerCommand implements Callable<Integer> {
     @CommandLine.Mixin
     private Options options;
+
+    @CommandLine.Parameters(
+            index = "0",
+            arity = "0..1",
+            paramLabel = "<baseUrl>",
+            description = "openHAB server URL (HTTP or HTTPS); prompts if neither this nor --base-url is supplied.")
+    private String positionalBaseUrl;
 
     @CommandLine.Spec
     private CommandLine.Model.CommandSpec spec;
@@ -29,7 +36,11 @@ public class SetServerCommand implements Callable<Integer> {
     /** Validates the entered HTTP(S) URL and saves it while preserving other properties. */
     @Override
     public Integer call() throws Exception {
-        var baseUrl = options.getBaseUrl();
+        if (positionalBaseUrl != null && options.getBaseUrl() != null) {
+            throw new IllegalArgumentException(
+                    "Supply the server URL either positionally or with --base-url, not both.");
+        }
+        var baseUrl = positionalBaseUrl != null ? positionalBaseUrl : options.getBaseUrl();
         if (baseUrl == null) {
             var terminal = System.console();
             if (terminal != null) {

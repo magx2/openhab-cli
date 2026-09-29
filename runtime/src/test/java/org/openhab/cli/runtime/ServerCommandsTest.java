@@ -16,6 +16,23 @@ class ServerCommandsTest {
     Path directory;
 
     @Test
+    void acceptsPositionalUrlAndRejectsAmbiguousInput() throws Exception {
+        var file = directory.resolve("server.properties");
+        var url = "https://oh.pixel.grzeslowski.pl";
+        assertEquals(0, Cli.commandLine().execute("_config", "server", "set", url, "-p", file.toString()));
+        assertEquals(url, new PropertiesReader(new Console()).get(file.toString(), "config.rest.baseUrl"));
+        var contents = Files.readString(file);
+        assertEquals(
+                96,
+                Cli.commandLine()
+                        .execute(
+                                "_config", "server", "set", url, "--base-url=http://localhost", "-p", file.toString()));
+        assertEquals(contents, Files.readString(file));
+        assertEquals(96, Cli.commandLine().execute("_config", "server", "set", "relative", "-p", file.toString()));
+        assertEquals(contents, Files.readString(file));
+    }
+
+    @Test
     void savesAndClearsUrlWhilePreservingOtherProperties() throws Exception {
         var file = directory.resolve("custom.properties");
         Files.writeString(file, "auth.oAuthToken=keep-token\ncustom=keep-value\n");
