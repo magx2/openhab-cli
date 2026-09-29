@@ -42,7 +42,9 @@ oh _config account logout username/password
 oh _config account logout
 ```
 
-`--password` or `--oauth-token` without a value prompts for the secret. Login stores
+`--username`, `--password`, or `--oauth-token` without a value prompts for input.
+All three also accept inline values, for example `--username=your-user`. To prompt
+for both basic credentials, use `oh _config account login --username --password`. Login stores
 credentials in `oh-cli.properties` in the working directory, creating it if needed.
 Pass `-p /path/to/client.properties` to any account subcommand to select another file.
 Credentials are stored as plain Java properties. Login replaces the other authentication

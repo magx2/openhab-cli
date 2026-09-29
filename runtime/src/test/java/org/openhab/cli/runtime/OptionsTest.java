@@ -15,6 +15,40 @@ class OptionsTest {
     }
 
     @Test
+    void authenticationOptionsPromptWhenSuppliedWithoutValues() {
+        var originalInput = System.in;
+        var originalOutput = System.out;
+        try (var output = new java.io.PrintStream(new java.io.ByteArrayOutputStream())) {
+            System.setOut(output);
+            for (var flag : new String[] {"--username", "--password", "--oauth-token", "-t"}) {
+                System.setIn(new java.io.ByteArrayInputStream(
+                        "interactive-value\n".getBytes(java.nio.charset.StandardCharsets.UTF_8)));
+                var options = parse(flag);
+                var actual =
+                        switch (flag) {
+                            case "--username" -> options.getUsername();
+                            case "--password" -> options.getPassword();
+                            default -> options.getOAuthToken();
+                        };
+                assertEquals("interactive-value", actual, flag);
+            }
+        } finally {
+            System.setIn(originalInput);
+            System.setOut(originalOutput);
+        }
+    }
+
+    @Test
+    void authenticationOptionsAcceptInlineValuesWithoutReadingInput() {
+        var options = new Options();
+        new CommandLine(options).parseArgs("--username=cli-user", "--password=cli-password");
+        assertEquals("cli-user", options.getUsername());
+        assertEquals("cli-password", options.getPassword());
+        assertEquals("cli-token", parse("--oauth-token=cli-token").getOAuthToken());
+        assertEquals("cli-token", parse("-t=cli-token").getOAuthToken());
+    }
+
+    @Test
     void omittedFlagsPreserveAllConfiguredValues() {
         var configured = new Properties(
                 null,

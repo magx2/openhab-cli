@@ -55,19 +55,21 @@ public class Options {
     static class Authentication {
         @Option(
                 names = {"-t", "--oauth-token"},
-                description = "OAuth token (overrides properties)",
+                description = "OAuth token (overrides properties; prompts if no value is supplied)",
                 arity = "0..1",
                 interactive = true)
         private String oAuthToken;
 
         @Option(
                 names = {"--username"},
-                description = "Basic authentication username")
+                description = "Basic authentication username (prompts if no value is supplied)",
+                arity = "0..1",
+                interactive = true)
         private String username;
 
         @Option(
                 names = {"--password"},
-                description = "Basic authentication password",
+                description = "Basic authentication password (prompts if no value is supplied)",
                 arity = "0..1",
                 interactive = true)
         private String password;
