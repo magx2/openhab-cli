@@ -15,7 +15,7 @@ final class Logging {
         if (configured) {
             return;
         }
-        var configuration = Path.of(System.getProperty("user.home"), "oh", "log4j2.xml");
+        var configuration = Path.of(System.getProperty("user.home"), ".oh", "log4j2.xml");
         if (Files.isRegularFile(configuration)) {
             System.setProperty("log4j.configurationFile", configuration.toUri().toString());
         }

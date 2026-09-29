@@ -90,18 +90,18 @@ class AccountCommandsTest {
 
     @Test
     void usesDefaultFileForLoginStatusAndLogout() throws Exception {
-        var previous = System.getProperty("user.dir");
-        System.setProperty("user.dir", directory.toString());
+        var previous = System.getProperty("user.home");
+        System.setProperty("user.home", directory.toString());
         try {
             assertEquals(0, execute(null, "login", "-t=secret"));
-            var file = directory.resolve(PropertiesReader.PROPERTIES_FILE_NAME);
+            var file = directory.resolve(".oh").resolve(PropertiesReader.PROPERTIES_FILE_NAME);
             assertTrue(Files.exists(file));
             assertEquals("secret", reader.get(null, "auth.oAuthToken"));
             assertEquals(0, execute(null, "status"));
             assertEquals(0, execute(null, "logout"));
             assertTrue(reader.readProperties(null).isEmpty());
         } finally {
-            System.setProperty("user.dir", previous);
+            System.setProperty("user.home", previous);
         }
     }
 

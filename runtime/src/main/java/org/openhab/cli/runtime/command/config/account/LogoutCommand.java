@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.RequiredArgsConstructor;
-import org.openhab.cli.runtime.Options;
+import org.openhab.cli.runtime.PropertiesFileOptions;
 import org.openhab.cli.runtime.service.PropertiesReader;
 import picocli.CommandLine;
 
@@ -16,7 +16,7 @@ import picocli.CommandLine;
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class LogoutCommand implements Callable<Integer> {
     @CommandLine.Mixin
-    private Options options;
+    private PropertiesFileOptions options;
 
     @CommandLine.Parameters(
             index = "0",

@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.RequiredArgsConstructor;
-import org.openhab.cli.runtime.Options;
+import org.openhab.cli.runtime.PropertiesFileOptions;
 import org.openhab.cli.runtime.service.PropertiesReader;
 import picocli.CommandLine;
 
@@ -17,7 +17,28 @@ import picocli.CommandLine;
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class LoginCommand implements Callable<Integer> {
     @CommandLine.Mixin
-    private Options options;
+    private PropertiesFileOptions options;
+
+    @CommandLine.Option(
+            names = {"-t", "--oauth-token"},
+            description = "OAuth token to save (prompts if no value is supplied)",
+            arity = "0..1",
+            interactive = true)
+    private String token;
+
+    @CommandLine.Option(
+            names = "--username",
+            description = "Basic authentication username to save (prompts if no value is supplied)",
+            arity = "0..1",
+            interactive = true)
+    private String username;
+
+    @CommandLine.Option(
+            names = "--password",
+            description = "Basic authentication password to save (prompts if no value is supplied)",
+            arity = "0..1",
+            interactive = true)
+    private String password;
 
     @CommandLine.Spec
     private CommandLine.Model.CommandSpec spec;
@@ -27,9 +48,6 @@ public class LoginCommand implements Callable<Integer> {
     /** Validates explicit credentials and stores them together, preserving unrelated properties. */
     @Override
     public Integer call() {
-        var token = options.getOAuthToken();
-        var username = options.getUsername();
-        var password = options.getPassword();
         if (token != null) {
             if (token.isBlank() || username != null || password != null) {
                 throw new CommandLine.ParameterException(

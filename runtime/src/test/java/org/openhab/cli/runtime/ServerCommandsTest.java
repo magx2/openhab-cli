@@ -56,15 +56,15 @@ class ServerCommandsTest {
 
     @Test
     void promptsForUrlAndCreatesDefaultFile() throws Exception {
-        var previousDirectory = System.getProperty("user.dir");
+        var previousDirectory = System.getProperty("user.home");
         var previousInput = System.in;
         try {
-            System.setProperty("user.dir", directory.toString());
+            System.setProperty("user.home", directory.toString());
             System.setIn(new ByteArrayInputStream("http://localhost:8080\n".getBytes(StandardCharsets.UTF_8)));
             assertEquals(0, Cli.commandLine().execute("_config", "server", "set"));
             assertEquals("http://localhost:8080", new PropertiesReader(new Console()).get(null, "config.rest.baseUrl"));
         } finally {
-            System.setProperty("user.dir", previousDirectory);
+            System.setProperty("user.home", previousDirectory);
             System.setIn(previousInput);
         }
     }

@@ -8,6 +8,6 @@ public class PropertiesFileOptions {
     @Getter
     @Option(
             names = {"-p", "--properties-file"},
-            description = "Properties file (default: oh-cli.properties)")
+            description = "Properties file (default: ~/.oh/oh-cli.properties)")
     private String propertiesFile;
 }

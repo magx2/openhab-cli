@@ -2,7 +2,7 @@ package org.openhab.cli.runtime.command.config.account;
 
 import javax.inject.Inject;
 import lombok.RequiredArgsConstructor;
-import org.openhab.cli.runtime.Options;
+import org.openhab.cli.runtime.PropertiesFileOptions;
 import org.openhab.cli.runtime.service.Console;
 import org.openhab.cli.runtime.service.PropertiesReader;
 import picocli.CommandLine;
@@ -15,7 +15,7 @@ import picocli.CommandLine;
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class StatusCommand implements Runnable {
     @CommandLine.Mixin
-    private Options options;
+    private PropertiesFileOptions options;
 
     private final PropertiesReader propertiesReader;
     private final Console console;

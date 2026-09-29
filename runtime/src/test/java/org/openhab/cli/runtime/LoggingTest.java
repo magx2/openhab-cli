@@ -17,7 +17,7 @@ class LoggingTest {
     @Test
     void writesInfoLogsToFileAndRollsOnEachStartupWithoutConsoleOutput() throws Exception {
         runProcess("first");
-        var log = home.resolve("oh/oh.log");
+        var log = home.resolve(".oh/oh.log");
         var first = Files.readString(log);
         assertLog(first, "first");
 
@@ -36,11 +36,11 @@ class LoggingTest {
 
     @Test
     void userConfigurationOverridesBundledConfiguration() throws Exception {
-        var directory = Files.createDirectories(home.resolve("oh"));
+        var directory = Files.createDirectories(home.resolve(".oh"));
         Files.writeString(directory.resolve("log4j2.xml"), """
                 <Configuration>
                     <Appenders>
-                        <File name="Custom" fileName="${sys:user.home}/oh/custom.log">
+                        <File name="Custom" fileName="${sys:user.home}/.oh/custom.log">
                             <PatternLayout pattern="CUSTOM %msg%n"/>
                         </File>
                     </Appenders>

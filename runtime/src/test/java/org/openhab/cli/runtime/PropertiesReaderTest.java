@@ -74,19 +74,20 @@ class PropertiesReaderTest {
     }
 
     @Test
-    void updatesDefaultFileInWorkingDirectory() throws IOException {
-        var file = directory.resolve(PropertiesReader.PROPERTIES_FILE_NAME);
-        var previousDirectory = System.getProperty("user.dir");
+    void updatesDefaultFileInHomeDirectory() throws IOException {
+        var file = directory.resolve(".oh").resolve(PropertiesReader.PROPERTIES_FILE_NAME);
+        var previousDirectory = System.getProperty("user.home");
         try {
-            System.setProperty("user.dir", directory.toString());
+            System.setProperty("user.home", directory.toString());
             var reader = new PropertiesReader(new Console());
             assertEquals(0, reader.set(null, "config.prettyPrint", "false"));
+            assertTrue(Files.isRegularFile(file));
             assertFalse(reader.read(null).prettyPrint());
             assertEquals("false", reader.get(null, "config.prettyPrint"));
             assertEquals(0, reader.clear(null, "config.prettyPrint"));
             assertNull(reader.get(null, "config.prettyPrint"));
         } finally {
-            System.setProperty("user.dir", previousDirectory);
+            System.setProperty("user.home", previousDirectory);
         }
     }
 

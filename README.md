@@ -22,7 +22,7 @@ Format Java sources with Spotless and Palantir Java Format:
 Generated OpenAPI sources are excluded.
 
 Commands that call openHAB require a server URL. Supply `--base-url=http://localhost:8080`
-or set it in `oh-cli.properties` (or the file selected by `--properties-file`):
+or set it in `~/.oh/oh-cli.properties` (or the file selected by `--properties-file`):
 
 ```properties
 config.rest.baseUrl=http://localhost:8080
@@ -42,7 +42,7 @@ oh _config server clear
 
 These commands store or remove `config.rest.baseUrl`, preserving other properties.
 Use `-p /path/to/client.properties` to select a file; otherwise they use
-`oh-cli.properties` in the working directory. Setting creates the file if needed.
+`~/.oh/oh-cli.properties`. Setting creates the default directory and file if needed.
 
 Manage saved credentials with `_config account`:
 
@@ -58,7 +58,7 @@ oh _config account logout
 `--username`, `--password`, or `--oauth-token` without a value prompts for input.
 All three also accept inline values, for example `--username=your-user`. To prompt
 for both basic credentials, use `oh _config account login --username --password`. Login stores
-credentials in `oh-cli.properties` in the working directory, creating it if needed.
+credentials in `~/.oh/oh-cli.properties`, creating it if needed.
 Pass `-p /path/to/client.properties` to any account subcommand to select another file.
 Credentials are stored as plain Java properties. Login replaces the other authentication
 method and preserves unrelated settings. Status reports only the saved method, not
@@ -67,24 +67,28 @@ method (`basic` and `username/pass` also select username/password), or all crede
 when no method is supplied. It does not revoke tokens on the server.
 
 Runtime logging uses SLF4J with Log4j 2 and writes INFO-and-higher messages only
-to `~/oh/oh.log`. Each JVM startup archives the previous log as
-`~/oh/oh-<timestamp>-<index>.log`. Logs include date and time, without thread names.
+to `~/.oh/oh.log`. Each JVM startup archives the previous log as
+`~/.oh/oh-<timestamp>-<index>.log`. Logs include date and time, without thread names.
 JDK `java.util.logging` messages are forwarded to the same backend at CLI startup.
 All projects share the SLF4J version in `gradle/libs.versions.toml`.
 
 Gradle tests use the shared `config/log4j2-test.xml` configuration to send DEBUG
 and higher SLF4J messages to stdout. Test output is shown in the Gradle console.
 
-To override the bundled logging configuration, create `~/oh/log4j2.xml`. The CLI
+Existing properties files in the working directory are not moved automatically; move yours
+to `~/.oh/oh-cli.properties` or select it with `--properties-file`. Likewise, move any
+custom logging configuration from `~/oh/log4j2.xml` to `~/.oh/log4j2.xml`.
+
+To override the bundled logging configuration, create `~/.oh/log4j2.xml`. The CLI
 loads this file at startup when present; otherwise it uses the bundled defaults.
 
 The location uses the home directory of the Java process:
 
-- Windows Java: typically `C:\Users\<username>\oh\log4j2.xml`.
-- Ubuntu/WSL Java: typically `/home/<username>/oh/log4j2.xml`.
+- Windows Java: typically `C:\Users\<username>\.oh\log4j2.xml`.
+- Ubuntu/WSL Java: typically `/home/<username>/.oh/log4j2.xml`.
 
 These are separate locations even when Windows and WSL share the same checkout.
-Create the `oh` directory and save the following as `log4j2.xml`. This example
+Create the `.oh` directory and save the following as `log4j2.xml`. This example
 keeps file-only logging and startup rollover, while enabling DEBUG messages for
 the CLI and retaining INFO for other libraries:
 
@@ -92,8 +96,8 @@ the CLI and retaining INFO for other libraries:
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration>
     <Appenders>
-        <RollingFile name="File" fileName="${sys:user.home}/oh/oh.log"
-                     filePattern="${sys:user.home}/oh/oh-%d{yyyy-MM-dd_HH-mm-ss-SSS}-%i.log">
+        <RollingFile name="File" fileName="${sys:user.home}/.oh/oh.log"
+                     filePattern="${sys:user.home}/.oh/oh-%d{yyyy-MM-dd_HH-mm-ss-SSS}-%i.log">
             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level %logger - %msg%n"/>
             <OnStartupTriggeringPolicy minSize="0"/>
             <DefaultRolloverStrategy fileIndex="nomax"/>

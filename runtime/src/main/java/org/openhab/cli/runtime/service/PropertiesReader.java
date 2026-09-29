@@ -23,7 +23,7 @@ public class PropertiesReader {
     /**
      * Reads stored properties and converts them to CLI settings with defaults for unspecified values.
      *
-     * @param stringPath file to read, or null to use the default file in the working directory
+     * @param stringPath file to read, or null to use the default file in ~/.oh/
      * @return CLI settings, using defaults when the file does not exist
      * @throws UncheckedIOException if the existing file cannot be read
      */
@@ -54,13 +54,12 @@ public class PropertiesReader {
                         "config.timeout.writeTimeout", Integer.toString(Properties.DEFAULT_WRITE_TIMEOUT))));
     }
 
-    /** Resolves the selected properties file, or the working-directory default, to an absolute path. */
+    /** Resolves the selected properties file, or the ~/.oh/ default, to an absolute path. */
     public static @NonNull Path resolvePath(String stringPath) {
         Path path;
         if (stringPath == null) {
-            var userDir = System.getProperty("user.dir");
-            log.debug("Using user.dir=`{}` to read props", userDir);
-            path = Paths.get(userDir).resolve(PROPERTIES_FILE_NAME);
+            var userHome = System.getProperty("user.home");
+            path = Paths.get(userHome, ".oh", PROPERTIES_FILE_NAME);
         } else {
             path = Paths.get(stringPath);
         }
@@ -70,7 +69,7 @@ public class PropertiesReader {
     /**
      * Adds or replaces a property, creating the file if needed and preserving all other property values.
      *
-     * @param propertiesFile file to update, or null to use the default file in the working directory
+     * @param propertiesFile file to update, or null to use the default file in ~/.oh/
      * @param key property name
      * @param value property value, or null to remove the property
      * @return zero on success, or the I/O exit code if the file cannot be read or written
@@ -88,7 +87,7 @@ public class PropertiesReader {
      * Updates several properties in one write, preserving unrelated settings. Null values remove keys.
      * A missing file is created only when at least one value is being stored.
      *
-     * @param propertiesFile file to update, or null to use the default file in the working directory
+     * @param propertiesFile file to update, or null to use the default file in ~/.oh/
      * @param changes property names and replacement values (null to remove)
      * @return zero on success, or the I/O exit code if the file cannot be read or written
      */
@@ -111,6 +110,9 @@ public class PropertiesReader {
                     javaProps.setProperty(key, value);
                 }
             });
+            if (path.equals(resolvePath(null))) {
+                Files.createDirectories(path.getParent());
+            }
             try (var stream = Files.newOutputStream(path)) {
                 javaProps.store(stream, null);
             }
@@ -124,7 +126,7 @@ public class PropertiesReader {
     /**
      * Clears a property while preserving all other property values.
      *
-     * @param propertiesFile file to update, or null to use the default file in the working directory
+     * @param propertiesFile file to update, or null to use the default file in ~/.oh/
      * @param key property name
      * @return zero on success, or the I/O exit code if the file cannot be read or written
      */
@@ -135,7 +137,7 @@ public class PropertiesReader {
     /**
      * Reads a single stored property without applying connection-setting defaults.
      *
-     * @param propertiesFile file to read, or null to use the default file in the working directory
+     * @param propertiesFile file to read, or null to use the default file in ~/.oh/
      * @param key property name
      * @return the stored value, or null if the file or property does not exist
      * @throws UncheckedIOException if the existing file cannot be read
@@ -147,7 +149,7 @@ public class PropertiesReader {
     /**
      * Loads stored Java properties without applying CLI defaults or converting values.
      *
-     * @param propertiesFile file to read, or null to use the default file in the working directory
+     * @param propertiesFile file to read, or null to use the default file in ~/.oh/
      * @return stored properties, or an empty set if the file does not exist
      * @throws UncheckedIOException if the existing file cannot be read
      */
