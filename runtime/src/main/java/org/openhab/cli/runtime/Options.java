@@ -130,6 +130,11 @@ public class Options {
         private Path sslCaCertPath;
     }
 
+    /** Returns the explicitly supplied server URL, if any. */
+    public String getBaseUrl() {
+        return connection.baseUrl;
+    }
+
     /** Returns the explicitly supplied OAuth token, if any. */
     public String getOAuthToken() {
         return authentication.oAuthToken;

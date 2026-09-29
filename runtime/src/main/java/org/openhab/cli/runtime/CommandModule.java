@@ -23,6 +23,8 @@ import org.openhab.cli.runtime.command.config.properties.ClearCommand;
 import org.openhab.cli.runtime.command.config.properties.GetCommand;
 import org.openhab.cli.runtime.command.config.properties.ListCommand;
 import org.openhab.cli.runtime.command.config.properties.SetCommand;
+import org.openhab.cli.runtime.command.config.server.ClearServerCommand;
+import org.openhab.cli.runtime.command.config.server.SetServerCommand;
 import org.openhab.cli.runtime.command.config.shell.bash.BashCompletionCommand;
 import org.openhab.cli.runtime.command.config.shell.fish.FishCompletionCommand;
 import org.openhab.cli.runtime.command.config.update.UpdateCommand;
@@ -67,6 +69,16 @@ import org.openhab.cli.runtime.command.voice.*;
 /** Registers each operation command with the Dagger-backed Picocli factory. */
 @Module
 interface CommandModule {
+    @Binds
+    @IntoMap
+    @ClassKey(SetServerCommand.class)
+    Callable<Integer> serverSet(SetServerCommand command);
+
+    @Binds
+    @IntoMap
+    @ClassKey(ClearServerCommand.class)
+    Callable<Integer> serverClear(ClearServerCommand command);
+
     @Binds
     @IntoMap
     @ClassKey(LoginCommand.class)

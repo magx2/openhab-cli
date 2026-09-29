@@ -31,6 +31,18 @@ config.rest.baseUrl=http://localhost:8080
 CLI options override file settings. The REST path defaults to `/rest` and is appended
 to the server URL; customize it with `--base-path` or `config.rest.basePath`.
 
+Manage the saved server URL with `_config server`:
+
+```sh
+oh _config server set --base-url=http://localhost:8080
+oh _config server set  # prompts for the URL
+oh _config server clear
+```
+
+These commands store or remove `config.rest.baseUrl`, preserving other properties.
+Use `-p /path/to/client.properties` to select a file; otherwise they use
+`oh-cli.properties` in the working directory. Setting creates the file if needed.
+
 Manage saved credentials with `_config account`:
 
 ```sh
