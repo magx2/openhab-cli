@@ -54,7 +54,8 @@ public class PropertiesReader {
                         "config.timeout.writeTimeout", Integer.toString(Properties.DEFAULT_WRITE_TIMEOUT))));
     }
 
-    private static @NonNull Path buildPath(String stringPath) {
+    /** Resolves the selected properties file, or the working-directory default, to an absolute path. */
+    public static @NonNull Path resolvePath(String stringPath) {
         Path path;
         if (stringPath == null) {
             var userDir = System.getProperty("user.dir");
@@ -63,7 +64,7 @@ public class PropertiesReader {
         } else {
             path = Paths.get(stringPath);
         }
-        return path;
+        return path.toAbsolutePath().normalize();
     }
 
     /**
@@ -75,7 +76,7 @@ public class PropertiesReader {
      * @return zero on success, or the I/O exit code if the file cannot be read or written
      */
     public int set(String propertiesFile, String key, String value) {
-        var path = buildPath(propertiesFile);
+        var path = resolvePath(propertiesFile);
         if (value == null && Files.notExists(path)) {
             console.writeError("Properties file `%s` does not exist", path);
             return IO_EXCEPTION_EXIT_CODE;
@@ -92,7 +93,7 @@ public class PropertiesReader {
      * @return zero on success, or the I/O exit code if the file cannot be read or written
      */
     public int update(String propertiesFile, java.util.Map<String, String> changes) {
-        var path = buildPath(propertiesFile);
+        var path = resolvePath(propertiesFile);
         if (Files.notExists(path) && changes.values().stream().allMatch(java.util.Objects::isNull)) {
             return 0;
         }
@@ -151,7 +152,7 @@ public class PropertiesReader {
      * @throws UncheckedIOException if the existing file cannot be read
      */
     public java.util.Properties readProperties(String propertiesFile) {
-        var path = buildPath(propertiesFile);
+        var path = resolvePath(propertiesFile);
         var javaProps = new java.util.Properties();
         if (Files.notExists(path)) {
             log.warn("Path `{}` does not exist", path);
