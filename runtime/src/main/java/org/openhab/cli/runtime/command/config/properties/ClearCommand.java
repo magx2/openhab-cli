@@ -4,7 +4,7 @@ import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.openhab.cli.runtime.Options;
+import org.openhab.cli.runtime.PropertiesFileOptions;
 import org.openhab.cli.runtime.service.PropertiesReader;
 import picocli.CommandLine;
 
@@ -17,7 +17,7 @@ import picocli.CommandLine;
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class ClearCommand implements Callable<Integer> {
     @CommandLine.Mixin
-    private Options options;
+    private PropertiesFileOptions options;
 
     @CommandLine.Parameters(index = "0", arity = "1", paramLabel = "<key>", description = "property key (required)")
     private String key;

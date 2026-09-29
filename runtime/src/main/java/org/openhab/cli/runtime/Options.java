@@ -1,20 +1,13 @@
 package org.openhab.cli.runtime;
 
 import java.nio.file.Path;
-import lombok.Getter;
 import org.openhab.cli.engine.properties.Properties;
 import picocli.CommandLine.ArgGroup;
 import picocli.CommandLine.Option;
 
 /** Shared CLI options. Explicit flags override file settings; omitted flags preserve them. */
 @SuppressWarnings("FieldMayBeFinal")
-public class Options {
-    @Getter
-    @Option(
-            names = {"-p", "--properties-file"},
-            description = "Properties file (default: oh-cli.properties)")
-    private String propertiesFile;
-
+public class Options extends PropertiesFileOptions {
     @ArgGroup(exclusive = false, heading = "Connection options:%n")
     private Connection connection = new Connection();
 
