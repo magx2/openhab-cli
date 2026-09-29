@@ -35,6 +35,36 @@ class LoggingTest {
     }
 
     @Test
+    void retainsOnlyFiveNewestArchivesAndPreservesOtherFiles() throws Exception {
+        runProcess("first");
+        var directory = home.resolve(".oh");
+        var oldTime = java.time.Instant.now().minusSeconds(3600);
+        for (int i = 0; i < 7; i++) {
+            var archive = directory.resolve("oh-2020-01-01_00-00-00-000-" + i + ".log");
+            Files.writeString(archive, "archive-" + i);
+            Files.setLastModifiedTime(archive, java.nio.file.attribute.FileTime.from(oldTime.plusSeconds(i)));
+        }
+        var properties = directory.resolve("oh-cli.properties");
+        Files.writeString(properties, "custom=keep");
+        var unrelated = directory.resolve("other.log");
+        Files.writeString(unrelated, "keep");
+        Thread.sleep(1100);
+        runProcess("second");
+        try (var files = Files.list(directory)) {
+            var archives = files.filter(path -> path.getFileName().toString().startsWith("oh-"))
+                    .filter(path -> path.toString().endsWith(".log"))
+                    .toList();
+            assertEquals(5, archives.size());
+        }
+        for (int i = 0; i < 7; i++) {
+            assertEquals(i >= 3, Files.exists(directory.resolve("oh-2020-01-01_00-00-00-000-" + i + ".log")));
+        }
+        assertLog(Files.readString(directory.resolve("oh.log")), "second");
+        assertEquals("custom=keep", Files.readString(properties));
+        assertEquals("keep", Files.readString(unrelated));
+    }
+
+    @Test
     void userConfigurationOverridesBundledConfiguration() throws Exception {
         var directory = Files.createDirectories(home.resolve(".oh"));
         Files.writeString(directory.resolve("log4j2.xml"), """

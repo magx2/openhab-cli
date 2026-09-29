@@ -68,7 +68,8 @@ when no method is supplied. It does not revoke tokens on the server.
 
 Runtime logging uses SLF4J with Log4j 2 and writes INFO-and-higher messages only
 to `~/.oh/oh.log`. Each JVM startup archives the previous log as
-`~/.oh/oh-<timestamp>-<index>.log`. Logs include date and time, without thread names.
+`~/.oh/oh-<timestamp>-<index>.log`. Only the five newest archived logs are retained, in addition to the active log.
+Logs include date and time, without thread names.
 JDK `java.util.logging` messages are forwarded to the same backend at CLI startup.
 All projects share the SLF4J version in `gradle/libs.versions.toml`.
 
@@ -100,7 +101,14 @@ the CLI and retaining INFO for other libraries:
                      filePattern="${sys:user.home}/.oh/oh-%d{yyyy-MM-dd_HH-mm-ss-SSS}-%i.log">
             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level %logger - %msg%n"/>
             <OnStartupTriggeringPolicy minSize="0"/>
-            <DefaultRolloverStrategy fileIndex="nomax"/>
+            <DefaultRolloverStrategy fileIndex="nomax">
+                <Delete basePath="${sys:user.home}/.oh" maxDepth="1">
+                    <SortByModificationTime recentFirst="true"/>
+                    <IfFileName glob="oh-*.log">
+                        <IfAccumulatedFileCount exceeds="5"/>
+                    </IfFileName>
+                </Delete>
+            </DefaultRolloverStrategy>
         </RollingFile>
     </Appenders>
     <Loggers>
