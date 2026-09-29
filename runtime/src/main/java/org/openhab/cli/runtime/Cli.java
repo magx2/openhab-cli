@@ -1,6 +1,5 @@
 package org.openhab.cli.runtime;
 
-import java.util.concurrent.Callable;
 import org.openhab.cli.engine.Version;
 import org.openhab.cli.runtime.command.action.ActionCommand;
 import org.openhab.cli.runtime.command.addons.AddonsCommand;
@@ -84,7 +83,10 @@ import picocli.CommandLine.Command;
             "98: I/O operation failed (for example, reading the properties file)", //
             "99: openHAB API request failed" //
         })
-public class Cli implements Callable<Integer> {
+public class Cli implements Runnable {
+    @CommandLine.Spec
+    private CommandLine.Model.CommandSpec spec;
+
     /** Supplies the application version embedded by the engine build. */
     public static class VersionProvider implements CommandLine.IVersionProvider {
         @Override
@@ -111,9 +113,9 @@ public class Cli implements Callable<Integer> {
                 .setExitCodeExceptionMapper(component.exitCodeMapper());
     }
 
+    /** Prints usage when the CLI is invoked without a subcommand. */
     @Override
-    public Integer call() throws Exception {
-        System.out.println("run");
-        return 1;
+    public void run() {
+        spec.commandLine().usage(spec.commandLine().getOut());
     }
 }
