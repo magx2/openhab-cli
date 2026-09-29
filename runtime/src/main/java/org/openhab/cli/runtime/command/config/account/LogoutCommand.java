@@ -5,6 +5,7 @@ import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import lombok.RequiredArgsConstructor;
 import org.openhab.cli.runtime.PropertiesFileOptions;
+import org.openhab.cli.runtime.service.Console;
 import org.openhab.cli.runtime.service.PropertiesReader;
 import picocli.CommandLine;
 
@@ -28,6 +29,7 @@ public class LogoutCommand implements Callable<Integer> {
     private Method method;
 
     private final PropertiesReader propertiesReader;
+    private final Console console;
 
     /** Supported authentication methods; an omitted method selects both. */
     public enum Method {
@@ -49,7 +51,7 @@ public class LogoutCommand implements Callable<Integer> {
         }
     }
 
-    /** Removes the selected credentials in one write; logging out of a missing file is a no-op. */
+    /** Removes selected credentials and confirms their absence from the selected properties file. */
     @Override
     public Integer call() {
         var changes = new HashMap<String, String>();
@@ -60,6 +62,14 @@ public class LogoutCommand implements Callable<Integer> {
             changes.put("auth.username", null);
             changes.put("auth.password", null);
         }
-        return propertiesReader.update(options.getPropertiesFile(), changes);
+        var result = propertiesReader.update(options.getPropertiesFile(), changes);
+        if (result == 0) {
+            var credentials = method == null
+                    ? "All login credentials"
+                    : method == Method.oauth ? "OAuth credentials" : "Username/password credentials";
+            console.write("Properties file: " + PropertiesReader.resolvePath(options.getPropertiesFile()));
+            console.write(credentials + " cleared (not saved in this file). Server tokens have not been revoked.");
+        }
+        return result;
     }
 }
