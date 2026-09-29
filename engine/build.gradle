@@ -1,45 +1,45 @@
 plugins {
-    id 'java'
+	id 'java'
 }
 
 repositories {
-    mavenLocal()
-    mavenCentral()
-    gradlePluginPortal()
+	mavenLocal()
+	mavenCentral()
+	gradlePluginPortal()
 }
 
 dependencies {
-    implementation project(':openapi')
-    implementation libs.slf4j.api
-    implementation libs.okhttp
-    implementation libs.okhttp.logging
+	implementation project(':openapi')
+	implementation libs.slf4j.api
+	implementation libs.okhttp
+	implementation libs.okhttp.logging
 
-    testImplementation platform('org.junit:junit-bom:5.11.4')
-    testImplementation 'org.junit.jupiter:junit-jupiter'
-    testImplementation 'org.mockito:mockito-core:5.14.2'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	testImplementation platform('org.junit:junit-bom:5.11.4')
+	testImplementation 'org.junit.jupiter:junit-jupiter'
+	testImplementation 'org.mockito:mockito-core:5.14.2'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 def apiSpec = rootProject.layout.projectDirectory.file('openapi/src/main/open-hab/spec.json')
 def apiVersion = providers.fileContents(apiSpec).asText.map { json ->
-    def value = new groovy.json.JsonSlurper().parseText(json).info?.version?.toString()
-    if (!value?.trim()) {
-        throw new GradleException('OpenAPI spec must define info.version')
-    }
-    value
+	def value = new groovy.json.JsonSlurper().parseText(json).info?.version?.toString()
+	if (!value?.trim()) {
+		throw new GradleException('OpenAPI spec must define info.version')
+	}
+	value
 }.get()
 
 tasks.named('test') {
-    useJUnitPlatform()
-    systemProperty 'expectedProjectVersion', project.version.toString()
-    systemProperty 'expectedApiVersion', apiVersion
+	useJUnitPlatform()
+	systemProperty 'expectedProjectVersion', project.version.toString()
+	systemProperty 'expectedApiVersion', apiVersion
 }
 
 tasks.named('processResources') {
-    def projectVersion = project.version.toString()
-    inputs.property('projectVersion', projectVersion)
-    inputs.property('apiVersion', apiVersion)
-    filesMatching('org/openhab/cli/engine/version.properties') {
-        expand(version: projectVersion, apiVersion: apiVersion)
-    }
+	def projectVersion = project.version.toString()
+	inputs.property('projectVersion', projectVersion)
+	inputs.property('apiVersion', apiVersion)
+	filesMatching('org/openhab/cli/engine/version.properties') {
+		expand(version: projectVersion, apiVersion: apiVersion)
+	}
 }

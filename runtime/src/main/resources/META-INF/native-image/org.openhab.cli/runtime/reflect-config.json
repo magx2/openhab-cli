@@ -1,10 +1,20 @@
 [
   {
     "name": "java.lang.management.ManagementFactory",
-    "methods": [{"name": "getRuntimeMXBean", "parameterTypes": []}]
+    "methods": [
+      {
+        "name": "getRuntimeMXBean",
+        "parameterTypes": []
+      }
+    ]
   },
   {
     "name": "java.lang.management.RuntimeMXBean",
-    "methods": [{"name": "getStartTime", "parameterTypes": []}]
+    "methods": [
+      {
+        "name": "getStartTime",
+        "parameterTypes": []
+      }
+    ]
   }
 ]

@@ -1,101 +1,103 @@
 plugins {
-    id 'application'
-    id 'com.gradleup.shadow' version '9.3.1'
-    id 'org.graalvm.buildtools.native' version '0.11.5'
+	id 'application'
+	id 'com.gradleup.shadow' version '9.3.1'
+	id 'org.graalvm.buildtools.native' version '0.11.5'
 }
 
 application {
-    mainClass = 'org.openhab.cli.runtime.Cli'
+	mainClass = 'org.openhab.cli.runtime.Cli'
 }
 
 tasks.named('shadowJar') {
-    mergeServiceFiles()
-    transform(com.github.jengelman.gradle.plugins.shadow.transformers.Log4j2PluginsCacheFileTransformer)
+	mergeServiceFiles()
+	transform(com.github.jengelman.gradle.plugins.shadow.transformers.Log4j2PluginsCacheFileTransformer)
 }
 
 // Gson also reflects on generated models, including their nested adapters and enums.
 def modelClasses = project(':openapi').layout.buildDirectory.dir('classes/java/main')
 def modelClassFiles = fileTree(modelClasses).matching {
-    include 'org/openhab/cli/client/model/**/*.class'
+	include 'org/openhab/cli/client/model/**/*.class'
 }
 def nativeMetadata = layout.buildDirectory.dir('generated/native-metadata')
 def generateNativeMetadata = tasks.register('generateNativeMetadata') {
-    dependsOn ':openapi:classes'
-    inputs.dir(modelClasses)
-    outputs.dir(nativeMetadata)
-    doLast {
-        def root = modelClasses.get().asFile.toPath()
-        def models = modelClassFiles.files.collect { file ->
-            [name: root.relativize(file.toPath()).toString().replace('\\', '/').replace('/', '.').replaceAll(/\.class$/, ''),
-             allDeclaredConstructors: true, allDeclaredFields: true, allDeclaredMethods: true,
-             unsafeAllocated: true]
-        }.sort { it.name }
-        def output = nativeMetadata.get().file('reflect-config.json').asFile
-        output.parentFile.mkdirs()
-        output.setText(groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(models)) + '\n', 'UTF-8')
-    }
+	dependsOn ':openapi:classes'
+	inputs.dir(modelClasses)
+	outputs.dir(nativeMetadata)
+	doLast {
+		def root = modelClasses.get().asFile.toPath()
+		def models = modelClassFiles.files.collect { file ->
+			[name: root.relativize(file.toPath()).toString().replace('\\', '/').replace('/', '.').replaceAll(/\.class$/, ''),
+				allDeclaredConstructors: true, allDeclaredFields: true, allDeclaredMethods: true,
+				unsafeAllocated: true]
+		}.sort { it.name }
+		def output = nativeMetadata.get().file('reflect-config.json').asFile
+		output.parentFile.mkdirs()
+		output.setText(groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(models)) + '\n', 'UTF-8')
+	}
 }
 
 graalvmNative {
-    toolchainDetection = false
-    metadataRepository { enabled = true }
-    binaries {
-        main {
-            imageName = 'oh'
-            mainClass = application.mainClass
-            configurationFileDirectories.from(nativeMetadata)
-            resources.includedPatterns.addAll('log4j2.xml', 'org/openhab/cli/engine/version.properties')
-            buildArgs.add('--enable-url-protocols=http,https')
-            buildArgs.add('-march=compatibility')
-        }
-    }
+	toolchainDetection = false
+	metadataRepository { enabled = true }
+	binaries {
+		main {
+			imageName = 'oh'
+			mainClass = application.mainClass
+			configurationFileDirectories.from(nativeMetadata)
+			resources.includedPatterns.addAll('log4j2.xml', 'org/openhab/cli/engine/version.properties')
+			buildArgs.add('--enable-url-protocols=http,https')
+			buildArgs.add('-march=compatibility')
+		}
+	}
 }
 
 tasks.named('nativeCompile') {
-    dependsOn generateNativeMetadata
+	dependsOn generateNativeMetadata
 }
 
 base {
-    archivesName = 'oh'
+	archivesName = 'oh'
 }
 
 repositories {
-    mavenLocal()
-    mavenCentral()
-    gradlePluginPortal()
+	mavenLocal()
+	mavenCentral()
+	gradlePluginPortal()
 }
 
 dependencies {
-    def daggerVersion = '2.59.2'
+	def daggerVersion = '2.59.2'
 
-    implementation project(':engine')
-    implementation project(':openapi')
-    implementation libs.gson
+	implementation project(':engine')
+	implementation project(':openapi')
+	implementation libs.gson
 
-    implementation libs.okhttp.logging
-    implementation libs.slf4j.api
-    implementation libs.slf4j.jul
-    runtimeOnly libs.log4j.core
-    runtimeOnly libs.log4j.slf4j
-    implementation 'info.picocli:picocli:4.7.7'
-    annotationProcessor 'info.picocli:picocli-codegen:4.7.7'
+	implementation libs.okhttp.logging
+	implementation libs.slf4j.api
+	implementation libs.slf4j.jul
+	runtimeOnly libs.log4j.core
+	runtimeOnly libs.log4j.slf4j
+	implementation 'info.picocli:picocli:4.7.7'
+	annotationProcessor 'info.picocli:picocli-codegen:4.7.7'
 
-    implementation "com.google.dagger:dagger:${daggerVersion}"
-    annotationProcessor "com.google.dagger:dagger-compiler:${daggerVersion}"
-    testAnnotationProcessor "com.google.dagger:dagger-compiler:${daggerVersion}"
+	implementation "com.google.dagger:dagger:${daggerVersion}"
+	annotationProcessor "com.google.dagger:dagger-compiler:${daggerVersion}"
+	testAnnotationProcessor "com.google.dagger:dagger-compiler:${daggerVersion}"
 
-    testImplementation platform('org.junit:junit-bom:5.11.4')
-    testImplementation 'org.junit.jupiter:junit-jupiter'
-    testImplementation 'org.mockito:mockito-core:5.14.2'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	testImplementation platform('org.junit:junit-bom:5.11.4')
+	testImplementation 'org.junit.jupiter:junit-jupiter'
+	testImplementation 'org.mockito:mockito-core:5.14.2'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 tasks.named('test') {
-    useJUnitPlatform()
-    systemProperty 'loggingTestClasspath', sourceSets.test.runtimeClasspath.asPath
-    systemProperty 'user.home', layout.buildDirectory.dir('test-home').get().asFile.absolutePath
+	useJUnitPlatform()
+	systemProperty 'loggingTestClasspath', sourceSets.test.runtimeClasspath.asPath
+	systemProperty 'user.home', layout.buildDirectory.dir('test-home').get().asFile.absolutePath
 }
 
 compileJava {
-    options.compilerArgs += ["-Aproject=${project.group}/${project.name}"]
+	options.compilerArgs += [
+		"-Aproject=${project.group}/${project.name}"
+	]
 }

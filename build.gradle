@@ -6,122 +6,143 @@
  */
 
 plugins {
-    id 'org.openapi.generator' version '7.25.0'
-    id 'com.diffplug.spotless' version '8.10.2'
+	id 'org.openapi.generator' version '7.25.0'
+	id 'com.diffplug.spotless' version '8.10.2'
 }
 
 repositories {
-    mavenCentral()
+	mavenCentral()
 }
 
 // Let Git identify repository text files, including untracked files and dotfiles.
 // Ignored build output and files marked/detected as binary are not formatted.
 def repositoryTextFiles = providers.exec {
-    commandLine 'git', 'ls-files', '--cached', '--others', '--exclude-standard', '--eol', '-z'
+	commandLine 'git', 'ls-files', '--cached', '--others', '--exclude-standard', '--eol', '-z'
 }.standardOutput.asText.map { listing ->
-    listing.split('\u0000').findAll { entry ->
-        def metadata = entry.substring(0, entry.indexOf('\t'))
-        !metadata.contains('w/-text') && !metadata.contains('attr/-text')
-    }.collect { entry -> entry.substring(entry.indexOf('\t') + 1) }.unique()
+	listing.split('\u0000').findAll { entry ->
+		def metadata = entry.substring(0, entry.indexOf('\t'))
+		!metadata.contains('w/-text') && !metadata.contains('attr/-text')
+	}.collect { entry -> entry.substring(entry.indexOf('\t') + 1) }.unique()
 }
 
 // Use Git's text-file list so ignored output and binaries never enter a formatter.
 def textFiles = repositoryTextFiles.get()
 def filesWithExtensions = { extensions ->
-    files(textFiles.findAll { path -> extensions.any { path.endsWith(it) } })
+	files(textFiles.findAll { path -> extensions.any { path.endsWith(it) } })
 }
-def structuredExtensions = ['.java', '.yml', '.yaml', '.md', '.json', '.properties', '.gradle', '.xml']
+def structuredExtensions = [
+	'.java',
+	'.yml',
+	'.yaml',
+	'.md',
+	'.json',
+	'.properties',
+	'.gradle',
+	'.xml'
+]
 
 spotless {
-    lineEndings = com.diffplug.spotless.LineEnding.UNIX
-    format('prettier') {
-        target filesWithExtensions(['.yml', '.yaml', '.md', '.properties'])
-        prettier(['prettier': '3.9.9', 'prettier-plugin-properties': '0.3.1'])
-            .config(['plugins': ['prettier-plugin-properties'], 'tabWidth': 2,
-                     'proseWrap': 'preserve', 'keySeparator': '='])
-    }
-    json {
-        target filesWithExtensions(['.json'])
-        gson().indentWithSpaces(2)
-        endWithNewline()
-    }
-    groovyGradle {
-        target filesWithExtensions(['.gradle'])
-        greclipse()
-        endWithNewline()
-    }
-    format('xml') {
-        target filesWithExtensions(['.xml'])
-        eclipseWtp('xml')
-        endWithNewline()
-    }
-    format('text') {
-        // Basic whitespace hygiene for TOML, scripts, dotfiles and other text.
-        target files(textFiles.findAll { path -> !structuredExtensions.any { path.endsWith(it) } })
-        trimTrailingWhitespace()
-        endWithNewline()
-    }
+	lineEndings = com.diffplug.spotless.LineEnding.UNIX
+	format('prettier') {
+		target filesWithExtensions([
+			'.yml',
+			'.yaml',
+			'.md',
+			'.properties'
+		])
+		prettier(['prettier': '3.9.9', 'prettier-plugin-properties': '0.3.1'])
+		.config(['plugins': ['prettier-plugin-properties'], 'tabWidth': 2,
+			'proseWrap': 'preserve', 'keySeparator': '='])
+	}
+	json {
+		target filesWithExtensions(['.json'])
+		gson().indentWithSpaces(2)
+		endWithNewline()
+	}
+	groovyGradle {
+		target filesWithExtensions(['.gradle'])
+		greclipse()
+		endWithNewline()
+	}
+	format('xml') {
+		target filesWithExtensions(['.xml'])
+		eclipseWtp('xml')
+		endWithNewline()
+	}
+	format('text') {
+		// Basic whitespace hygiene for TOML, scripts, dotfiles and other text.
+		target files(textFiles.findAll { path ->
+			!structuredExtensions.any {
+				path.endsWith(it)
+			}
+		})
+		trimTrailingWhitespace()
+		endWithNewline()
+	}
 }
 
 def testLoggingConfiguration = layout.projectDirectory.file('config/log4j2-test.xml')
 
 subprojects {
-    version = rootProject.version
+	version = rootProject.version
 
-    plugins.withId('java') {
-        dependencies {
-            testRuntimeOnly rootProject.libs.log4j.core
-            testRuntimeOnly rootProject.libs.log4j.slf4j
-        }
-        tasks.withType(Test).configureEach {
-            inputs.file(testLoggingConfiguration)
-            systemProperty 'log4j.configurationFile', testLoggingConfiguration.asFile.toURI().toString()
-            testLogging.showStandardStreams = true
-        }
-        tasks.named('jar') {
-            manifest.attributes('Implementation-Version': project.version.toString())
-        }
-        apply plugin: 'com.diffplug.spotless'
-        spotless {
-            lineEndings = com.diffplug.spotless.LineEnding.UNIX
-            java {
-                target 'src/**/*.java'
-                palantirJavaFormat()
-            }
-        }
-    }
+	plugins.withId('java') {
+		dependencies {
+			testRuntimeOnly rootProject.libs.log4j.core
+			testRuntimeOnly rootProject.libs.log4j.slf4j
+		}
+		tasks.withType(Test).configureEach {
+			inputs.file(testLoggingConfiguration)
+			systemProperty 'log4j.configurationFile', testLoggingConfiguration.asFile.toURI().toString()
+			testLogging.showStandardStreams = true
+		}
+		tasks.named('jar') {
+			manifest.attributes('Implementation-Version': project.version.toString())
+		}
+		apply plugin: 'com.diffplug.spotless'
+		spotless {
+			lineEndings = com.diffplug.spotless.LineEnding.UNIX
+			java {
+				target 'src/**/*.java'
+				palantirJavaFormat()
+			}
+		}
+	}
 }
 
-configure([project(':engine'), project(':runtime')]) {
-    plugins.withId('java') {
-        def lombokDependency = 'org.projectlombok:lombok:1.18.48'
-        dependencies {
-            compileOnly lombokDependency
-            annotationProcessor lombokDependency
-            testCompileOnly lombokDependency
-            testAnnotationProcessor lombokDependency
-        }
-    }
+configure([
+	project(':engine'),
+	project(':runtime')
+]) {
+	plugins.withId('java') {
+		def lombokDependency = 'org.projectlombok:lombok:1.18.48'
+		dependencies {
+			compileOnly lombokDependency
+			annotationProcessor lombokDependency
+			testCompileOnly lombokDependency
+			testAnnotationProcessor lombokDependency
+		}
+	}
 }
 
 openApiGenerate {
-    generatorName = 'java'
-    inputSpec = layout.projectDirectory.file('openapi/src/main/open-hab/spec.json').asFile.absolutePath
-    outputDir = layout.buildDirectory.dir('generated/openapi').get().asFile.absolutePath
-    apiPackage = 'org.openhab.cli.client.api'
-    modelPackage = 'org.openhab.cli.client.model'
-    invokerPackage = 'org.openhab.cli.client'
-    generateApiTests = false
-    generateModelTests = false
-    // Keep array aliases as named models when they are used in oneOf schemas.
-    generateAliasAsModel = true
-    // Avoid collisions between schema names and Gson's JSON types.
-    modelNameMappings = [
-        JsonElement: 'OpenHabJsonElement',
-        JsonArray: 'OpenHabJsonArray',
-        JsonObject: 'OpenHabJsonObject',
-        JsonPrimitive: 'OpenHabJsonPrimitive',
-        JsonNull: 'OpenHabJsonNull'
-    ]
-    configOptions = [hideGenerationTimestamp: 'true', artifactVersion: project.version.toString()]
+	generatorName = 'java'
+	inputSpec = layout.projectDirectory.file('openapi/src/main/open-hab/spec.json').asFile.absolutePath
+	outputDir = layout.buildDirectory.dir('generated/openapi').get().asFile.absolutePath
+	apiPackage = 'org.openhab.cli.client.api'
+	modelPackage = 'org.openhab.cli.client.model'
+	invokerPackage = 'org.openhab.cli.client'
+	generateApiTests = false
+	generateModelTests = false
+	// Keep array aliases as named models when they are used in oneOf schemas.
+	generateAliasAsModel = true
+	// Avoid collisions between schema names and Gson's JSON types.
+	modelNameMappings = [
+		JsonElement: 'OpenHabJsonElement',
+		JsonArray: 'OpenHabJsonArray',
+		JsonObject: 'OpenHabJsonObject',
+		JsonPrimitive: 'OpenHabJsonPrimitive',
+		JsonNull: 'OpenHabJsonNull'
+	]
+	configOptions = [hideGenerationTimestamp: 'true', artifactVersion: project.version.toString()]
 }

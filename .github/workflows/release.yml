@@ -24,7 +24,7 @@ jobs:
       - uses: actions/setup-java@v5
         with:
           distribution: temurin
-          java-version: '21'
+          java-version: "21"
           cache: gradle
       - name: Clean and check before preparing the release
         run: ./gradlew --no-daemon clean check
@@ -96,7 +96,7 @@ jobs:
       - uses: actions/setup-java@v5
         with:
           distribution: temurin
-          java-version: '21'
+          java-version: "21"
           cache: gradle
       - name: Build and smoke-test the runnable JAR
         env:
@@ -121,7 +121,7 @@ jobs:
         include:
           - os: ubuntu-22.04
             platform: linux-x86_64
-            extension: ''
+            extension: ""
           - os: windows-2022
             platform: windows-x86_64
             extension: .exe
@@ -141,7 +141,7 @@ jobs:
           git checkout --detach "$RELEASE_SHA"
       - uses: graalvm/setup-graalvm@v1
         with:
-          java-version: '21'
+          java-version: "21"
           distribution: graalvm-community
           github-token: ${{ secrets.GITHUB_TOKEN }}
           cache: gradle

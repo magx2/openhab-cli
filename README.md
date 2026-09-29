@@ -159,38 +159,38 @@ Operations with a response print JSON using the shared output options. Operation
 with no response body return successfully without printing JSON. Commands use
 the shared authentication, connection, TLS, and timeout settings.
 
-| Command group | Operations |
-| --- | ---: |
-| `action` | 2 |
-| `addons` | 10 |
-| `audio` | 4 |
-| `auth` | 5 |
-| `channeltypes` | 3 |
-| `configdescriptions` | 2 |
-| `discovery` | 3 |
-| `events` | 3 |
-| `fileformat` | 9 |
-| `iconsets` | 1 |
-| `inbox` | 5 |
-| `items` | 19 |
-| `links` | 7 |
-| `logging` | 4 |
-| `moduletypes` | 2 |
-| `persistence` | 10 |
-| `profiletypes` | 1 |
-| `root` | 1 |
-| `rules` | 18 |
-| `services` | 6 |
-| `sitemaps` | 11 |
-| `systeminfo` | 2 |
-| `tags` | 5 |
-| `templates` | 2 |
-| `things` | 12 |
-| `thingtypes` | 2 |
-| `transformations` | 5 |
-| `ui` | 6 |
-| `uuid` | 1 |
-| `voice` | 14 |
+| Command group        | Operations |
+| -------------------- | ---------: |
+| `action`             |          2 |
+| `addons`             |         10 |
+| `audio`              |          4 |
+| `auth`               |          5 |
+| `channeltypes`       |          3 |
+| `configdescriptions` |          2 |
+| `discovery`          |          3 |
+| `events`             |          3 |
+| `fileformat`         |          9 |
+| `iconsets`           |          1 |
+| `inbox`              |          5 |
+| `items`              |         19 |
+| `links`              |          7 |
+| `logging`            |          4 |
+| `moduletypes`        |          2 |
+| `persistence`        |         10 |
+| `profiletypes`       |          1 |
+| `root`               |          1 |
+| `rules`              |         18 |
+| `services`           |          6 |
+| `sitemaps`           |         11 |
+| `systeminfo`         |          2 |
+| `tags`               |          5 |
+| `templates`          |          2 |
+| `things`             |         12 |
+| `thingtypes`         |          2 |
+| `transformations`    |          5 |
+| `ui`                 |          6 |
+| `uuid`               |          1 |
+| `voice`              |         14 |
 
 `engineinternal` is registered as an empty group because the engine class does
 not currently expose any operations.

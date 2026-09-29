@@ -1,23 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration>
-    <Appenders>
-        <RollingFile name="File" fileName="${sys:user.home}/.oh/oh.log"
-                     filePattern="${sys:user.home}/.oh/oh-%d{yyyy-MM-dd_HH-mm-ss-SSS}-%i.log">
-            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level %logger - %msg%n"/>
-            <OnStartupTriggeringPolicy minSize="0"/>
-            <DefaultRolloverStrategy fileIndex="nomax">
-                <Delete basePath="${sys:user.home}/.oh" maxDepth="1">
-                    <SortByModificationTime recentFirst="true"/>
-                    <IfFileName glob="oh-*.log">
-                        <IfAccumulatedFileCount exceeds="5"/>
-                    </IfFileName>
-                </Delete>
-            </DefaultRolloverStrategy>
-        </RollingFile>
-    </Appenders>
-    <Loggers>
-        <Root level="info">
-            <AppenderRef ref="File"/>
-        </Root>
-    </Loggers>
+	<Appenders>
+		<RollingFile name="File"
+			fileName="${sys:user.home}/.oh/oh.log"
+			filePattern="${sys:user.home}/.oh/oh-%d{yyyy-MM-dd_HH-mm-ss-SSS}-%i.log">
+			<PatternLayout
+				pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level %logger - %msg%n" />
+			<OnStartupTriggeringPolicy minSize="0" />
+			<DefaultRolloverStrategy fileIndex="nomax">
+				<Delete basePath="${sys:user.home}/.oh" maxDepth="1">
+					<SortByModificationTime recentFirst="true" />
+					<IfFileName glob="oh-*.log">
+						<IfAccumulatedFileCount exceeds="5" />
+					</IfFileName>
+				</Delete>
+			</DefaultRolloverStrategy>
+		</RollingFile>
+	</Appenders>
+	<Loggers>
+		<Root level="info">
+			<AppenderRef ref="File" />
+		</Root>
+	</Loggers>
 </Configuration>
