@@ -1,325 +1,119 @@
 # openhab-cli
 
-Generate the Java openHAB REST API client and model classes from
-`openapi/src/main/open-hab/spec.json`:
+[![Gradle check](https://github.com/magx2/openhab-cli/actions/workflows/check.yml/badge.svg)](https://github.com/magx2/openhab-cli/actions/workflows/check.yml)
+[![Latest release](https://img.shields.io/github/v/release/magx2/openhab-cli)](https://github.com/magx2/openhab-cli/releases/latest)
 
-```sh
-./gradlew :openApiGenerate
+`openhab-cli` is a command-line client for the [openHAB REST API](https://www.openhab.org/docs/configuration/restdocs). It provides the `oh` command for inspecting and managing an openHAB installation from a terminal, a script, or an AI coding agent.
+
+The command tree follows the openHAB API. It covers items, things, rules, add-ons, persistence, services, sitemaps, voice, and the other endpoints exposed by the bundled OpenAPI specification.
+
+## Installation
+
+Download the latest build from [GitHub Releases](https://github.com/magx2/openhab-cli/releases/latest). Each release contains:
+
+- a Linux x86-64 executable;
+- a Windows x86-64 executable; and
+- a runnable JAR for other platforms. The JAR requires Java 21 or newer.
+
+Rename the native executable to `oh` (`oh.exe` on Windows) and place it in a directory on your `PATH`. On Linux, make it executable first:
+
+```bash
+chmod +x oh-<version>-linux-x86_64
+sudo mv oh-<version>-linux-x86_64 /usr/local/bin/oh
 ```
 
-Generated sources are written to `build/generated/openapi/src/main/java`.
+Run the JAR directly with:
 
-The `openapi` subproject compiles the generated client. The `engine` subproject
-depends on it, and compilation runs generation automatically.
-
-Format repository sources and configuration with Spotless:
-
-```sh
-./gradlew spotlessApply
+```bash
+java -jar oh-<version>.jar
 ```
 
-`./gradlew spotlessCheck` checks formatting and also runs as part of `build`.
-Java uses Palantir Java Format; YAML and Markdown use Prettier; JSON uses Gson;
-properties use Prettier's properties plugin; Gradle uses Groovy Eclipse; XML uses
-Eclipse WTP. Other text files (including TOML, scripts and dotfiles) receive
-trailing-whitespace cleanup and a final newline. All formats use Unix line endings.
-Generated output and binary files are excluded.
+## Initial setup
 
-Node.js and npm must be available on PATH for Prettier. Spotless installs its pinned
-formatter packages automatically; no manual npm install is required.
+Save the URL of your openHAB server:
 
-Commands that call openHAB require a server URL. Supply `--base-url=http://localhost:8080`
-or set it in `~/.oh/oh-cli.properties` (or the file selected by `--properties-file`):
-
-```properties
-config.rest.baseUrl=http://localhost:8080
+```bash
+oh _config server set https://openhab.example.com
 ```
 
-CLI options override file settings. The REST path defaults to `/rest` and is appended
-to the server URL; customize it with `--base-path` or `config.rest.basePath`.
+Next, save an OAuth token. Omitting its value opens an interactive prompt, which keeps the token out of your shell history:
 
-Manage the saved server URL with `_config server`:
-
-```sh
-oh _config server set http://localhost:8080
-oh _config server set --base-url=http://localhost:8080
-oh _config server set  # prompts for the URL
-oh _config server clear
+```bash
+oh _config account login --oauth-token
 ```
 
-These commands store or remove `config.rest.baseUrl`, preserving other properties.
-Use `-p /path/to/client.properties` to select a file; otherwise they use
-`~/.oh/oh-cli.properties`. Setting creates the default directory and file if needed.
+Username and password authentication is also supported:
 
-Manage saved credentials with `_config account`:
-
-```sh
-oh _config account status
-oh _config account login --oauth-token=your-token
-oh _config account login --username=your-user --password
-oh _config account logout oauth
-oh _config account logout username/password
-oh _config account logout
+```bash
+oh _config account login --username --password
 ```
 
-`--username`, `--password`, or `--oauth-token` without a value prompts for input.
-All three also accept inline values, for example `--username=your-user`. To prompt
-for both basic credentials, use `oh _config account login --username --password`. Login stores
-credentials in `~/.oh/oh-cli.properties`, creating it if needed.
-Pass `-p /path/to/client.properties` to any account subcommand to select another file.
-Credentials are stored as plain Java properties. Login replaces the other authentication
-method and preserves unrelated settings. Status reports only the saved method, not
-secrets, and does not verify credentials with the server. Logout removes the selected
-method (`basic` and `username/pass` also select username/password), or all credentials
-when no method is supplied. It does not revoke tokens on the server.
+Token authentication is recommended. To use a username and password, enable Basic Authentication in **Main UI → Settings → API Security** on the openHAB server.
 
-Runtime logging uses SLF4J with Log4j 2 and writes INFO-and-higher messages only
-to `~/.oh/oh.log`. Each JVM startup archives the previous log as
-`~/.oh/oh-<timestamp>-<index>.log`. Only the five newest archived logs are retained, in addition to the active log.
-Logs include date and time, without thread names.
-JDK `java.util.logging` messages are forwarded to the same backend at CLI startup.
-All projects share the SLF4J version in `gradle/libs.versions.toml`.
+The default configuration file is `~/.oh/oh-cli.properties`. Pass `--properties-file` to a configuration command to use another file.
 
-Gradle tests use the shared `config/log4j2-test.xml` configuration to send DEBUG
-and higher SLF4J messages to stdout. Test output is shown in the Gradle console.
+## Usage
 
-Existing properties files in the working directory are not moved automatically; move yours
-to `~/.oh/oh-cli.properties` or select it with `--properties-file`. Likewise, move any
-custom logging configuration from `~/oh/log4j2.xml` to `~/.oh/log4j2.xml`.
+Run `oh` to list the available command groups:
 
-To override the bundled logging configuration, create `~/.oh/log4j2.xml`. The CLI
-loads this file at startup when present; otherwise it uses the bundled defaults.
-
-The location uses the home directory of the Java process:
-
-- Windows Java: typically `C:\Users\<username>\.oh\log4j2.xml`.
-- Ubuntu/WSL Java: typically `/home/<username>/.oh/log4j2.xml`.
-
-These are separate locations even when Windows and WSL share the same checkout.
-Create the `.oh` directory and save the following as `log4j2.xml`. This example
-keeps file-only logging and startup rollover, while enabling DEBUG messages for
-the CLI and retaining INFO for other libraries:
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<Configuration>
-    <Appenders>
-        <RollingFile name="File" fileName="${sys:user.home}/.oh/oh.log"
-                     filePattern="${sys:user.home}/.oh/oh-%d{yyyy-MM-dd_HH-mm-ss-SSS}-%i.log">
-            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level %logger - %msg%n"/>
-            <OnStartupTriggeringPolicy minSize="0"/>
-            <DefaultRolloverStrategy fileIndex="nomax">
-                <Delete basePath="${sys:user.home}/.oh" maxDepth="1">
-                    <SortByModificationTime recentFirst="true"/>
-                    <IfFileName glob="oh-*.log">
-                        <IfAccumulatedFileCount exceeds="5"/>
-                    </IfFileName>
-                </Delete>
-            </DefaultRolloverStrategy>
-        </RollingFile>
-    </Appenders>
-    <Loggers>
-        <Logger name="org.openhab.cli" level="debug"/>
-        <Root level="info">
-            <AppenderRef ref="File"/>
-        </Root>
-    </Loggers>
-</Configuration>
+```bash
+oh
 ```
 
-To customize this example:
+Append `--help` at any level of the command tree to inspect its commands and options:
 
-- Change the root `level` to `trace`, `debug`, `info`, `warn`, `error`, or `off`.
-- Add a `Logger` with a package or class name to override its level. It inherits
-  the root file appender, so it does not need its own `AppenderRef`.
-- Change `fileName` and `filePattern` together to choose another log location.
-- Change `PatternLayout` to adjust the output. The example includes timestamps
-  and omits thread names; add `%t` if you want thread names.
-
-Restart the CLI after editing the file. This file replaces the bundled
-configuration completely; remove or rename it to restore the defaults. The
-example retains all archived logs, so remove old archives as needed.
-
-Use `<group> --help` to list operations and `<group> <operation> --help` to see
-arguments. Every engine API operation has a matching CLI command. Required
-operation arguments are positional; optional values use named kebab-case flags.
-The existing `action availableActionsForThing <thingUID> [<acceptLanguage>]`
-syntax is also preserved. Optional booleans accept `--flag` or `--flag=false`.
-
-Pass models, maps, and collections as a single JSON argument. For example, these
-argument lists can be passed to the CLI (examples use Bash quoting):
-
-```sh
-action availableActionsForThing --base-url=http://localhost:8080 -- thing:test en
-action executeThingAction --base-url=http://localhost:8080 --request-body='{"input":"value"}' -- thing:test action:test
-things updateThing --base-url=http://localhost:8080 --accept-language=en -- thing:test '{"UID":"thing:test","thingTypeUID":"binding:type","channels":[],"configuration":{},"properties":{}}'
+```bash
+oh items --help
+oh items itemByName --help
 ```
 
-Operations with a response print JSON using the shared output options. Operations
-with no response body return successfully without printing JSON. Commands use
-the shared authentication, connection, TLS, and timeout settings.
+For example, list every item:
 
-| Command group        | Operations |
-| -------------------- | ---------: |
-| `action`             |          2 |
-| `addons`             |         10 |
-| `audio`              |          4 |
-| `auth`               |          5 |
-| `channeltypes`       |          3 |
-| `configdescriptions` |          2 |
-| `discovery`          |          3 |
-| `events`             |          3 |
-| `fileformat`         |          9 |
-| `iconsets`           |          1 |
-| `inbox`              |          5 |
-| `items`              |         19 |
-| `links`              |          7 |
-| `logging`            |          4 |
-| `moduletypes`        |          2 |
-| `persistence`        |         10 |
-| `profiletypes`       |          1 |
-| `root`               |          1 |
-| `rules`              |         18 |
-| `services`           |          6 |
-| `sitemaps`           |         11 |
-| `systeminfo`         |          2 |
-| `tags`               |          5 |
-| `templates`          |          2 |
-| `things`             |         12 |
-| `thingtypes`         |          2 |
-| `transformations`    |          5 |
-| `ui`                 |          6 |
-| `uuid`               |          1 |
-| `voice`              |         14 |
-
-`engineinternal` is registered as an empty group because the engine class does
-not currently expose any operations.
-
-## Fish completions
-
-Print the completion script to stdout (the default action is `show`):
-
-```sh
-oh _config shell fish completion show
+```bash
+oh items items
 ```
 
-Install it for your user:
+Retrieve one item by name:
 
-```sh
+```bash
+oh items itemByName KitchenLight
+```
+
+Enum values are case-insensitive. JSON output is pretty-printed by default; use `--no-pretty-print` when compact output is more convenient for a script.
+
+## Shell completion
+
+Install completion definitions for Bash or Fish:
+
+```bash
+oh _config shell bash completion install
 oh _config shell fish completion install
 ```
 
-This writes `oh.fish` to `$XDG_CONFIG_HOME/fish/completions`, or
-`~/.config/fish/completions` when `XDG_CONFIG_HOME` is unset. Fish autoloads the
-file for `oh`. To refresh completions in an existing shell, source the installed
-file or start a new Fish session. Run `install` again after upgrading the CLI.
-Completions include command groups, operations, options and enum values; they do
-not query an openHAB server for item or thing identifiers.
+Use `show` instead of `install` to print the completion script to standard output.
 
-## Bash completions
+## Updating
 
-```sh
-oh _config shell bash completion show     # Print the script (default action)
-oh _config shell bash completion install  # Install it for your user
-```
-
-Actions are case-insensitive. Installation writes `completions/oh.bash` under
-the first absolute directory in `$BASH_COMPLETION_USER_DIR`, or under
-`$XDG_DATA_HOME/bash-completion` (default: `~/.local/share/bash-completion`).
-The `bash-completion` package must be enabled in your shell for automatic loading.
-Alternatively, load the script directly without that package:
+Check whether a newer release is available:
 
 ```bash
-source <(oh _config shell bash completion show)
-```
-
-Start a new Bash session or source the installed file to refresh completions.
-Run `install` again after upgrading the CLI. Completion generation uses Picocli's
-command model and does not contact an openHAB server.
-
-## Releases
-
-Run **Release** from the GitHub Actions tab, selecting `master`. Other branches
-are skipped. The workflow first runs `./gradlew clean check`, then removes
-`-SNAPSHOT` from `gradle.properties`, commits the release version and creates an
-annotated `vMAJOR.MINOR.PATCH` tag locally. A Git bundle transfers that unpushed
-commit to three parallel builds: a runnable JAR, a Linux x86_64 executable and a
-Windows x86_64 executable.
-
-After all builds and smoke tests pass, the workflow increments the minor version,
-resets the patch to zero and commits the next `-SNAPSHOT` version. For example,
-`0.1.0-SNAPSHOT` releases `v0.1.0` and leaves `master` at `0.2.0-SNAPSHOT`.
-It creates a draft release and uploads all three assets before atomically pushing
-both commits and the tag. It then publishes the draft. Publishing must follow the
-push so that the release points to the actual release commit.
-
-The workflow needs `GITHUB_TOKEN` permission to write repository contents, and
-repository rules must allow it to push to `master` and create release tags. It
-refuses to push if `master` has advanced since the run started. If the final push
-fails, the draft remains available for inspection; delete it before retrying from
-the current `master`. If only publication fails after a successful push, publish
-the existing draft instead of running another release. Build artifacts and failed
-test reports are retained for three days.
-
-For local builds, use `./gradlew :runtime:shadowJar` and run the resulting
-`runtime/build/libs/oh-<version>-all.jar` with `java -jar` (Java 21 or newer).
-With GraalVM for Java 21 installed, `./gradlew :runtime:nativeCompile` creates
-`runtime/build/native/nativeCompile/oh` (`oh.exe` on Windows). Native executables
-must be built on their target operating system. The release workflow uses the
-[GraalVM setup action](https://github.com/graalvm/setup-graalvm) and
-[Native Build Tools](https://graalvm.github.io/native-build-tools/latest/gradle-plugin).
-
-## Updating the CLI
-
-Check for a newer stable GitHub release (the default action), or install it:
-
-```sh
 oh _config update check
-oh _config update run
-# For a runnable JAR:
-java -jar oh.jar _config update run
 ```
 
-The updater follows the approach used by
-[bigboy's SelfUpdate](https://github.com/magx2/bigboy/blob/master/cli/src/main/java/pl/grzeslowski/commandcenter/cli/SelfUpdate.java).
-It contacts `magx2/openhab-cli` releases directly; `gh` is not required. It keeps
-whichever format you are running: a standalone JAR, Linux x86_64 native executable,
-or Windows x86_64 native executable. JAR updates work on Linux and Windows with
-Java 21 or newer. Development classpaths and other native architectures are not
-supported. No openHAB connection settings are needed.
+Install the latest release:
 
-Use `--release=0.1.0` (or `--release=v0.1.0`) to select a published stable release.
-Add `--force` to reinstall it or downgrade. Version comparison uses the application
-version from Gradle, excluding the REST API prefix shown by `oh --version`.
-Checking never downloads an asset or changes the installation. A missing release,
-network failure or invalid download is reported as an error. The command returns
-0 on success, 98 for I/O failures, and 1 for other failures or interruption.
-Failure messages go to stderr, and exception details go to the configured logger.
+```bash
+oh _config update run
+```
 
-The download is checked against its release size and GitHub SHA-256 digest when
-provided, and its file format is checked before installation. The existing
-filename is retained, even when it contains the old version number; symlinks
-continue pointing to the same resolved installation path.
+The updater supports the Linux and Windows native executables as well as the runnable JAR. On Linux, it requests `sudo` only when replacing an installation that requires elevated permissions.
 
-On Linux, replacement is atomic and retains file permissions. For system-wide
-installations, `sudo` prompts for your password in the terminal if required;
-the CLI does not read or store it. Run updates from an interactive terminal when
-elevation is needed.
+## Building from source
 
-On Windows, PowerShell stages the replacement and finishes after the CLI process
-exits, allowing both locked JARs and native executables to be replaced. Protected
-installation directories trigger the normal Windows UAC prompt. The command
-prints the path to a temporary `status.txt`: `READY` means replacement is pending,
-`DONE` means it succeeded, and `ERROR` includes a failure reason. Wait for `DONE`
-before running the updated CLI. Close other processes using the same installation;
-the helper retries locked files for up to two minutes. Failed replacement leaves
-the previous installation in place. The temporary status and helper log are kept
-for diagnosis and can be removed after checking the result.
+The project uses the Gradle wrapper and Java 21:
 
-Diagnostic output redacts authentication credentials: `Properties.toString()` omits
-free-form settings, and generated OAuth token/session models mask their secrets in
-`toString()`. Their getters and JSON serialization retain the real values.
-`--api-client-debugging` uses OkHttp BODY logging through `Console.writeDebug`,
-which writes to stderr and the DEBUG logger. Authorization, Proxy-Authorization,
-Cookie and Set-Cookie header values are hidden. URLs and request/response bodies
-are included, so credentials in query parameters or bodies are not redacted.
+```bash
+./gradlew clean build
+```
+
+The runnable JAR is written to `runtime/build/libs/`.
