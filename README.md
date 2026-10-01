@@ -81,6 +81,46 @@ oh items itemByName KitchenLight
 
 Enum values are case-insensitive. JSON output is pretty-printed by default; use `--no-pretty-print` when compact output is more convenient for a script.
 
+## Logs and issue reports
+
+The CLI writes logs to `~/.oh/oh.log` (`%USERPROFILE%\.oh\oh.log` on Windows). The active log is archived each time the CLI starts, and the five newest archives are retained as `~/.oh/oh-*.log`. Windows and WSL have separate home directories and therefore separate log files.
+
+The default log level is INFO. To enable DEBUG logging, create `~/.oh/log4j2.xml` with the following content:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+  <Appenders>
+    <RollingFile
+      name="File"
+      fileName="${sys:user.home}/.oh/oh.log"
+      filePattern="${sys:user.home}/.oh/oh-%d{yyyy-MM-dd_HH-mm-ss-SSS}-%i.log"
+    >
+      <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level %logger - %msg%n" />
+      <OnStartupTriggeringPolicy minSize="0" />
+      <DefaultRolloverStrategy fileIndex="nomax">
+        <Delete basePath="${sys:user.home}/.oh" maxDepth="1">
+          <SortByModificationTime recentFirst="true" />
+          <IfFileName glob="oh-*.log">
+            <IfAccumulatedFileCount exceeds="5" />
+          </IfFileName>
+        </Delete>
+      </DefaultRolloverStrategy>
+    </RollingFile>
+  </Appenders>
+  <Loggers>
+    <Logger name="org.openhab.cli" level="debug" />
+    <Root level="info">
+      <AppenderRef ref="File" />
+    </Root>
+  </Loggers>
+</Configuration>
+```
+
+Restart the CLI and reproduce the problem. For HTTP request and response details, also add `--api-client-debugging` to the failing command. Authorization and cookie headers are hidden, but URLs and message bodies may still contain private openHAB data.
+
+When submitting a bug report, attach the DEBUG `oh.log` file. Review it first and remove tokens, passwords, personal information, and other sensitive values. Remove `~/.oh/log4j2.xml` when DEBUG logging is no longer needed.
+
 ## Shell completion
 
 Install completion definitions for Bash or Fish:
